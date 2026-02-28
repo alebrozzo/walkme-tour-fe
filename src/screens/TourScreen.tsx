@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useLayoutEffect, useState } from 'react';
+import React, { useCallback, useEffect, useLayoutEffect, useRef, useState } from 'react';
 import {
   ActivityIndicator,
   FlatList,
@@ -120,6 +120,9 @@ export default function TourScreen({ navigation, route }: Props) {
     savedItinerary?.stops ?? null,
   );
   const [loading, setLoading] = useState(false);
+  const lastPrefsRef = useRef<TripPreferences | null>(savedItinerary?.preferences ?? null);
+  const pinnedRef = useRef(pinned);
+  pinnedRef.current = pinned;
 
   // When a saved itinerary appears (e.g. freshly pinned), sync local state
   useEffect(() => {
@@ -131,8 +134,7 @@ export default function TourScreen({ navigation, route }: Props) {
   // Clean up itinerary when leaving the screen if the tour is not pinned
   useEffect(() => {
     return () => {
-      // Only clean up if tour is not currently pinned
-      if (!isPinned(tour.id)) {
+      if (!pinnedRef.current) {
         removeItinerary(tour.id);
       }
     };
@@ -159,6 +161,7 @@ export default function TourScreen({ navigation, route }: Props) {
       setLoading(true);
       const stops = await generateRecommendedStops(tour.stops, prefs);
       setGeneratedStops(stops);
+      lastPrefsRef.current = prefs;
       setLoading(false);
 
       // Save itinerary if tour is pinned
@@ -171,11 +174,9 @@ export default function TourScreen({ navigation, route }: Props) {
 
   // When pin state changes while we have generated stops, save or prepare for cleanup
   useEffect(() => {
-    if (generatedStops && pinned) {
-      // Just got pinned — persist the itinerary
-      if (!savedItinerary) {
-        saveItinerary({ tourId: tour.id, preferences: { days: 0, hoursPerDay: 0 }, stops: generatedStops });
-      }
+    if (generatedStops && pinned && !savedItinerary) {
+      const prefs = lastPrefsRef.current ?? { days: 0, hoursPerDay: 0 };
+      saveItinerary({ tourId: tour.id, preferences: prefs, stops: generatedStops });
     }
   }, [pinned, generatedStops, savedItinerary, saveItinerary, tour.id]);
 
