@@ -1,10 +1,11 @@
-import React from 'react';
+import React, { useLayoutEffect } from 'react';
 import { FlatList, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { RootStackParamList, Stop } from '../types';
 import { TYPE_ICON } from '../constants/stopTypes';
 import { useLanguage } from '../contexts/LanguageContext';
+import { usePinned } from '../contexts/PinnedContext';
 
 type Props = NativeStackScreenProps<RootStackParamList, 'Tour'>;
 
@@ -41,6 +42,18 @@ function StopRow({ stop, tourColor, onPress }: StopRowProps) {
 export default function TourScreen({ navigation, route }: Props) {
   const { tour } = route.params;
   const { t, language } = useLanguage();
+  const { isPinned, togglePin } = usePinned();
+  const pinned = isPinned(tour.id);
+
+  useLayoutEffect(() => {
+    navigation.setOptions({
+      headerRight: () => (
+        <TouchableOpacity onPress={() => togglePin(tour)} hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}>
+          <Text style={styles.pinButton}>{pinned ? '📌' : '📍'}</Text>
+        </TouchableOpacity>
+      ),
+    });
+  }, [navigation, tour, pinned, togglePin]);
 
   return (
     <SafeAreaView style={styles.safeArea} edges={['bottom']}>
@@ -187,5 +200,8 @@ const styles = StyleSheet.create({
     color: '#BDC3C7',
     marginStart: 8,
     fontWeight: '300',
+  },
+  pinButton: {
+    fontSize: 22,
   },
 });

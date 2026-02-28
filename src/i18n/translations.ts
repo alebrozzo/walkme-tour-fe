@@ -44,6 +44,9 @@ export interface Translations {
   stopTypes: Record<StopType, string>;
   language: string;
   selectLanguage: string;
+  pinCity: string;
+  unpinCity: string;
+  pinnedCities: string;
 }
 
 const en: Translations = {
@@ -85,6 +88,9 @@ const en: Translations = {
   },
   language: 'Language',
   selectLanguage: 'Select Language',
+  pinCity: 'Pin city',
+  unpinCity: 'Unpin city',
+  pinnedCities: 'Pinned Cities',
 };
 
 const ar: Translations = {
@@ -126,6 +132,9 @@ const ar: Translations = {
   },
   language: 'اللغة',
   selectLanguage: 'اختر اللغة',
+  pinCity: 'تثبيت المدينة',
+  unpinCity: 'إلغاء التثبيت',
+  pinnedCities: 'المدن المثبتة',
 };
 
 const he: Translations = {
@@ -167,6 +176,9 @@ const he: Translations = {
   },
   language: 'שפה',
   selectLanguage: 'בחר שפה',
+  pinCity: 'נעץ עיר',
+  unpinCity: 'הסר נעיצה',
+  pinnedCities: 'ערים מנועצות',
 };
 
 const es: Translations = {
@@ -208,6 +220,9 @@ const es: Translations = {
   },
   language: 'Idioma',
   selectLanguage: 'Seleccionar idioma',
+  pinCity: 'Fijar ciudad',
+  unpinCity: 'Desfijar ciudad',
+  pinnedCities: 'Ciudades fijadas',
 };
 
 const fr: Translations = {
@@ -249,6 +264,9 @@ const fr: Translations = {
   },
   language: 'Langue',
   selectLanguage: 'Sélectionner la langue',
+  pinCity: 'Épingler la ville',
+  unpinCity: 'Désépingler la ville',
+  pinnedCities: 'Villes épinglées',
 };
 
 export const TRANSLATIONS: Record<LanguageCode, Translations> = { en, ar, he, es, fr };
