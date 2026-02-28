@@ -21,6 +21,8 @@ export interface Translations {
   appTitle: string;
   headerTitle: string;
   headerSubtitle: string;
+  searchPlaceholder: string;
+  searchNoResults: string;
   difficulty: Record<'easy' | 'moderate' | 'hard', string>;
   units: {
     min: string;
@@ -48,6 +50,8 @@ const en: Translations = {
   appTitle: 'WalkMe Tour',
   headerTitle: 'Walking Tours',
   headerSubtitle: 'Explore the world one step at a time',
+  searchPlaceholder: 'Search for a city…',
+  searchNoResults: 'No cities found',
   difficulty: {
     easy: 'Easy',
     moderate: 'Moderate',
@@ -87,6 +91,8 @@ const ar: Translations = {
   appTitle: 'جولة WalkMe',
   headerTitle: 'جولات سير',
   headerSubtitle: 'استكشف العالم خطوة بخطوة',
+  searchPlaceholder: 'ابحث عن مدينة…',
+  searchNoResults: 'لا توجد مدن',
   difficulty: {
     easy: 'سهل',
     moderate: 'متوسط',
@@ -126,6 +132,8 @@ const he: Translations = {
   appTitle: 'WalkMe טיול',
   headerTitle: 'סיורים רגליים',
   headerSubtitle: 'גלה את העולם צעד אחר צעד',
+  searchPlaceholder: 'חפש עיר…',
+  searchNoResults: 'לא נמצאו ערים',
   difficulty: {
     easy: 'קל',
     moderate: 'בינוני',
@@ -165,6 +173,8 @@ const es: Translations = {
   appTitle: 'WalkMe Tour',
   headerTitle: 'Tours a Pie',
   headerSubtitle: 'Explora el mundo paso a paso',
+  searchPlaceholder: 'Buscar una ciudad…',
+  searchNoResults: 'No se encontraron ciudades',
   difficulty: {
     easy: 'Fácil',
     moderate: 'Moderado',
@@ -204,6 +214,8 @@ const fr: Translations = {
   appTitle: 'WalkMe Tour',
   headerTitle: 'Visites à Pied',
   headerSubtitle: 'Explorez le monde pas à pas',
+  searchPlaceholder: 'Rechercher une ville…',
+  searchNoResults: 'Aucune ville trouvée',
   difficulty: {
     easy: 'Facile',
     moderate: 'Modéré',

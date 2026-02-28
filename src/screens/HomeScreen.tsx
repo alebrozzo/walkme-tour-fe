@@ -1,63 +1,27 @@
-import React, { useLayoutEffect, useState } from 'react';
-import { FlatList, Modal, StyleSheet, Text, TouchableOpacity, TouchableWithoutFeedback, View } from 'react-native';
+import React, { useLayoutEffect, useMemo, useState } from 'react';
+import { FlatList, Modal, StyleSheet, Text, TextInput, TouchableOpacity, TouchableWithoutFeedback, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import tours from '../data/tours';
-import { Difficulty, RootStackParamList, Tour } from '../types';
+import { RootStackParamList, Tour } from '../types';
 import { useLanguage } from '../contexts/LanguageContext';
 
 type Props = NativeStackScreenProps<RootStackParamList, 'Home'>;
 
-const DIFFICULTY_COLOR: Record<Difficulty, string> = {
-  easy: '#27AE60',
-  moderate: '#F39C12',
-  hard: '#E74C3C',
-};
-
-interface TourCardProps {
+interface CityResultProps {
   tour: Tour;
   onPress: () => void;
 }
 
-function TourCard({ tour, onPress }: TourCardProps) {
-  const { t } = useLanguage();
+function CityResult({ tour, onPress }: CityResultProps) {
   return (
-    <TouchableOpacity style={styles.card} onPress={onPress} activeOpacity={0.85}>
-      <View style={[styles.colorBar, { backgroundColor: tour.color }]} />
-      <View style={styles.cardContent}>
-        <View style={styles.cardHeader}>
-          <View>
-            <Text style={styles.cityName}>{tour.city}</Text>
-            <Text style={styles.countryName}>{tour.country}</Text>
-          </View>
-          <View style={[styles.difficultyBadge, { backgroundColor: DIFFICULTY_COLOR[tour.difficulty] }]}>
-            <Text style={styles.difficultyText}>{t.difficulty[tour.difficulty]}</Text>
-          </View>
-        </View>
-
-        <Text style={styles.description} numberOfLines={2}>
-          {tour.description}
-        </Text>
-
-        <View style={styles.metaRow}>
-          <View style={styles.metaItem}>
-            <Text style={styles.metaIcon}>🕐</Text>
-            <Text style={styles.metaText}>
-              {tour.duration} {t.units.min}
-            </Text>
-          </View>
-          <View style={styles.metaItem}>
-            <Text style={styles.metaIcon}>📍</Text>
-            <Text style={styles.metaText}>
-              {tour.distance} {t.units.km}
-            </Text>
-          </View>
-          <View style={styles.metaItem}>
-            <Text style={styles.metaIcon}>🏛️</Text>
-            <Text style={styles.metaText}>{t.units.stops(tour.stops.length)}</Text>
-          </View>
-        </View>
+    <TouchableOpacity style={styles.resultRow} onPress={onPress} activeOpacity={0.8}>
+      <View style={[styles.resultColorDot, { backgroundColor: tour.color }]} />
+      <View style={styles.resultTextContainer}>
+        <Text style={styles.resultCity}>{tour.city}</Text>
+        <Text style={styles.resultCountry}>{tour.country}</Text>
       </View>
+      <Text style={styles.resultChevron}>›</Text>
     </TouchableOpacity>
   );
 }
@@ -65,6 +29,7 @@ function TourCard({ tour, onPress }: TourCardProps) {
 export default function HomeScreen({ navigation }: Props) {
   const { t, language, languages, setLanguage } = useLanguage();
   const [showLangPicker, setShowLangPicker] = useState(false);
+  const [query, setQuery] = useState('');
 
   useLayoutEffect(() => {
     navigation.setOptions({
@@ -77,20 +42,48 @@ export default function HomeScreen({ navigation }: Props) {
     });
   }, [navigation, t, setShowLangPicker]);
 
+  const filtered = useMemo(() => {
+    const q = query.trim().toLowerCase();
+    if (!q) return [];
+    return tours.filter((tour) => tour.city.toLowerCase().includes(q));
+  }, [query]);
+
+  const hasQuery = query.trim().length > 0;
+
   return (
     <SafeAreaView style={styles.safeArea} edges={['bottom']}>
-      <FlatList
-        data={tours}
-        keyExtractor={(item) => item.id}
-        contentContainerStyle={styles.list}
-        ListHeaderComponent={
-          <View style={styles.header}>
-            <Text style={styles.headerTitle}>{t.headerTitle}</Text>
-            <Text style={styles.headerSubtitle}>{t.headerSubtitle}</Text>
-          </View>
-        }
-        renderItem={({ item }) => <TourCard tour={item} onPress={() => navigation.navigate('Tour', { tour: item })} />}
-      />
+      <View style={styles.searchContainer}>
+        <Text style={styles.searchIcon}>🔍</Text>
+        <TextInput
+          style={styles.searchInput}
+          placeholder={t.searchPlaceholder}
+          placeholderTextColor="#A0A9B3"
+          value={query}
+          onChangeText={setQuery}
+          autoCorrect={false}
+          clearButtonMode="while-editing"
+          textAlign={language.isRTL ? 'right' : 'left'}
+        />
+      </View>
+
+      {hasQuery && (
+        <FlatList
+          data={filtered}
+          keyExtractor={(item) => item.id}
+          contentContainerStyle={styles.resultsList}
+          keyboardShouldPersistTaps="handled"
+          ListEmptyComponent={<Text style={styles.noResults}>{t.searchNoResults}</Text>}
+          renderItem={({ item }) => (
+            <CityResult
+              tour={item}
+              onPress={() => {
+                setQuery('');
+                navigation.navigate('Tour', { tour: item });
+              }}
+            />
+          )}
+        />
+      )}
 
       {/* Language picker modal */}
       <Modal visible={showLangPicker} transparent animationType="fade" onRequestClose={() => setShowLangPicker(false)}>
@@ -127,89 +120,77 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: '#F5F6FA',
   },
-  list: {
-    padding: 16,
-    paddingBottom: 32,
-  },
-  header: {
-    marginBottom: 24,
-  },
-  headerTitle: {
-    fontSize: 32,
-    fontWeight: '700',
-    color: '#1A1A2E',
-  },
-  headerSubtitle: {
-    fontSize: 15,
-    color: '#7F8C8D',
-    marginTop: 4,
-  },
-  card: {
+  searchContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    margin: 16,
+    paddingHorizontal: 14,
+    paddingVertical: 10,
     backgroundColor: '#FFFFFF',
     borderRadius: 12,
-    marginBottom: 16,
-    flexDirection: 'row',
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.08,
+    shadowOpacity: 0.07,
     shadowRadius: 6,
     elevation: 3,
   },
-  colorBar: {
-    width: 6,
+  searchIcon: {
+    fontSize: 18,
+    marginEnd: 8,
   },
-  cardContent: {
+  searchInput: {
     flex: 1,
-    padding: 16,
+    fontSize: 16,
+    color: '#1A1A2E',
+    padding: 0,
   },
-  cardHeader: {
+  resultsList: {
+    paddingHorizontal: 16,
+    paddingBottom: 32,
+  },
+  noResults: {
+    textAlign: 'center',
+    color: '#7F8C8D',
+    fontSize: 15,
+    marginTop: 32,
+  },
+  resultRow: {
+    backgroundColor: '#FFFFFF',
+    borderRadius: 12,
+    marginBottom: 10,
+    paddingHorizontal: 14,
+    paddingVertical: 14,
     flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'flex-start',
-    marginBottom: 8,
+    alignItems: 'center',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 1 },
+    shadowOpacity: 0.06,
+    shadowRadius: 4,
+    elevation: 2,
   },
-  cityName: {
-    fontSize: 20,
+  resultColorDot: {
+    width: 14,
+    height: 14,
+    borderRadius: 7,
+    marginEnd: 12,
+  },
+  resultTextContainer: {
+    flex: 1,
+  },
+  resultCity: {
+    fontSize: 18,
     fontWeight: '700',
     color: '#1A1A2E',
   },
-  countryName: {
+  resultCountry: {
     fontSize: 13,
     color: '#7F8C8D',
     marginTop: 2,
   },
-  difficultyBadge: {
-    paddingHorizontal: 10,
-    paddingVertical: 4,
-    borderRadius: 12,
-  },
-  difficultyText: {
-    color: '#FFFFFF',
-    fontSize: 12,
-    fontWeight: '600',
-  },
-  description: {
-    fontSize: 14,
-    color: '#5D6D7E',
-    lineHeight: 20,
-    marginBottom: 12,
-  },
-  metaRow: {
-    flexDirection: 'row',
-    gap: 16,
-  },
-  metaItem: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 4,
-  },
-  metaIcon: {
-    fontSize: 14,
-  },
-  metaText: {
-    fontSize: 13,
-    color: '#7F8C8D',
-    fontWeight: '500',
+  resultChevron: {
+    fontSize: 22,
+    color: '#BDC3C7',
+    fontWeight: '300',
   },
   langButton: {
     padding: 4,
@@ -268,3 +249,4 @@ const styles = StyleSheet.create({
     fontWeight: '700',
   },
 });
+
