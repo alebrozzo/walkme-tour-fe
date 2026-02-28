@@ -1,5 +1,5 @@
-import React, { createContext, useCallback, useContext, useState } from 'react';
-import { I18nManager } from 'react-native';
+import { createContext, type ReactNode, useCallback, useContext, useEffect, useState } from 'react';
+import { I18nManager, Platform } from 'react-native';
 import { Language, LanguageCode, LANGUAGES, Translations, TRANSLATIONS } from '../i18n/translations';
 
 interface LanguageContextValue {
@@ -22,9 +22,20 @@ const LanguageContext = createContext<LanguageContextValue>({
   appKey: 0,
 });
 
-export function LanguageProvider({ children }: { children: React.ReactNode }) {
+export function LanguageProvider({ children }: { children: ReactNode }) {
   const [language, setLanguageState] = useState<Language>(defaultLanguage);
   const [appKey, setAppKey] = useState(0);
+
+  useEffect(() => {
+    if (Platform.OS !== 'web' || typeof document === 'undefined') {
+      return;
+    }
+
+    const dir = language.isRTL ? 'rtl' : 'ltr';
+    document.documentElement.setAttribute('dir', dir);
+    document.documentElement.setAttribute('lang', language.code);
+    document.body.style.direction = dir;
+  }, [language]);
 
   const setLanguage = useCallback((code: LanguageCode) => {
     const newLang = LANGUAGES.find((l) => l.code === code) ?? defaultLanguage;
