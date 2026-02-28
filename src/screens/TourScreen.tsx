@@ -43,8 +43,9 @@ export default function TourScreen({ navigation, route }: Props) {
   const { t, language } = useLanguage();
 
   return (
-    <SafeAreaView style={[styles.safeArea, { direction: language.isRTL ? 'rtl' : 'ltr' }]} edges={['bottom']}>
+    <SafeAreaView style={styles.safeArea} edges={['bottom']}>
       <FlatList
+        style={{ direction: language.isRTL ? 'rtl' : 'ltr' }}
         data={tour.stops}
         keyExtractor={(item) => item.id}
         contentContainerStyle={styles.list}
