@@ -73,7 +73,8 @@ const tours: Tour[] = [
     id: '2',
     city: 'Rome',
     country: 'Italy',
-    description: 'Walk through 2,500 years of history in the Eternal City, from ancient ruins to Baroque fountains.',
+    description:
+      'Walk through 2,500 years of history in the Eternal City, from ancient ruins to Baroque fountains.',
     duration: 240,
     distance: 7.2,
     difficulty: 'easy',
