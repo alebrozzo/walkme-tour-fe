@@ -28,12 +28,12 @@ function InfoRow({ icon, label, value }: InfoRowProps) {
 
 export default function StopScreen({ route }: Props) {
   const { stop, tourColor } = route.params;
-  const { t } = useLanguage();
+  const { t, language } = useLanguage();
 
   const stopTypeLabel = t.stopTypes[stop.type] ?? stop.type.charAt(0).toUpperCase() + stop.type.slice(1);
 
   return (
-    <SafeAreaView style={styles.safeArea} edges={['bottom']}>
+    <SafeAreaView style={[styles.safeArea, { direction: language.isRTL ? 'rtl' : 'ltr' }]} edges={['bottom']}>
       <ScrollView contentContainerStyle={styles.scroll}>
         {/* Header */}
         <View style={[styles.header, { backgroundColor: tourColor }]}>

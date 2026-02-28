@@ -40,10 +40,10 @@ function StopRow({ stop, tourColor, onPress }: StopRowProps) {
 
 export default function TourScreen({ navigation, route }: Props) {
   const { tour } = route.params;
-  const { t } = useLanguage();
+  const { t, language } = useLanguage();
 
   return (
-    <SafeAreaView style={styles.safeArea} edges={['bottom']}>
+    <SafeAreaView style={[styles.safeArea, { direction: language.isRTL ? 'rtl' : 'ltr' }]} edges={['bottom']}>
       <FlatList
         data={tour.stops}
         keyExtractor={(item) => item.id}
