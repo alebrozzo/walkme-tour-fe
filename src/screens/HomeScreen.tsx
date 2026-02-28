@@ -16,7 +16,7 @@ interface CityResultProps {
 function CityResult({ tour, onPress }: CityResultProps) {
   const { language } = useLanguage();
   return (
-    <TouchableOpacity style={styles.resultRow} onPress={onPress} activeOpacity={0.8}>
+    <TouchableOpacity style={[styles.resultRow, { direction: language.isRTL ? 'rtl' : 'ltr' }]} onPress={onPress} activeOpacity={0.8}>
       <View style={[styles.resultColorDot, { backgroundColor: tour.color }]} />
       <View style={styles.resultTextContainer}>
         <Text style={styles.resultCity}>{tour.city}</Text>
@@ -53,7 +53,7 @@ export default function HomeScreen({ navigation }: Props) {
 
   return (
     <SafeAreaView style={styles.safeArea} edges={['bottom']}>
-      <View style={styles.searchContainer}>
+      <View style={[styles.searchContainer, { direction: language.isRTL ? 'rtl' : 'ltr' }]}>
         <Text style={styles.searchIcon}>🔍</Text>
         <TextInput
           style={styles.searchInput}
