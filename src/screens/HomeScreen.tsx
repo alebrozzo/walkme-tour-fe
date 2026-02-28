@@ -1,33 +1,32 @@
 import React from 'react';
-import {
-  FlatList,
-  StyleSheet,
-  Text,
-  TouchableOpacity,
-  View,
-} from 'react-native';
+import { FlatList, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import tours from '../data/tours';
+import { Difficulty, RootStackParamList, Tour } from '../types';
 
-const DIFFICULTY_LABEL = {
+type Props = NativeStackScreenProps<RootStackParamList, 'Home'>;
+
+const DIFFICULTY_LABEL: Record<Difficulty, string> = {
   easy: 'Easy',
   moderate: 'Moderate',
   hard: 'Hard',
 };
 
-const DIFFICULTY_COLOR = {
+const DIFFICULTY_COLOR: Record<Difficulty, string> = {
   easy: '#27AE60',
   moderate: '#F39C12',
   hard: '#E74C3C',
 };
 
-function TourCard({ tour, onPress }) {
+interface TourCardProps {
+  tour: Tour;
+  onPress: () => void;
+}
+
+function TourCard({ tour, onPress }: TourCardProps) {
   return (
-    <TouchableOpacity
-      style={[styles.card, { borderLeftColor: tour.color }]}
-      onPress={onPress}
-      activeOpacity={0.85}
-    >
+    <TouchableOpacity style={[styles.card, { borderLeftColor: tour.color }]} onPress={onPress} activeOpacity={0.85}>
       <View style={[styles.colorBar, { backgroundColor: tour.color }]} />
       <View style={styles.cardContent}>
         <View style={styles.cardHeader}>
@@ -35,15 +34,8 @@ function TourCard({ tour, onPress }) {
             <Text style={styles.cityName}>{tour.city}</Text>
             <Text style={styles.countryName}>{tour.country}</Text>
           </View>
-          <View
-            style={[
-              styles.difficultyBadge,
-              { backgroundColor: DIFFICULTY_COLOR[tour.difficulty] },
-            ]}
-          >
-            <Text style={styles.difficultyText}>
-              {DIFFICULTY_LABEL[tour.difficulty]}
-            </Text>
+          <View style={[styles.difficultyBadge, { backgroundColor: DIFFICULTY_COLOR[tour.difficulty] }]}>
+            <Text style={styles.difficultyText}>{DIFFICULTY_LABEL[tour.difficulty]}</Text>
           </View>
         </View>
 
@@ -70,7 +62,7 @@ function TourCard({ tour, onPress }) {
   );
 }
 
-export default function HomeScreen({ navigation }) {
+export default function HomeScreen({ navigation }: Props) {
   return (
     <SafeAreaView style={styles.safeArea} edges={['bottom']}>
       <FlatList
@@ -80,17 +72,10 @@ export default function HomeScreen({ navigation }) {
         ListHeaderComponent={
           <View style={styles.header}>
             <Text style={styles.headerTitle}>Walking Tours</Text>
-            <Text style={styles.headerSubtitle}>
-              Explore the world one step at a time
-            </Text>
+            <Text style={styles.headerSubtitle}>Explore the world one step at a time</Text>
           </View>
         }
-        renderItem={({ item }) => (
-          <TourCard
-            tour={item}
-            onPress={() => navigation.navigate('Tour', { tour: item })}
-          />
-        )}
+        renderItem={({ item }) => <TourCard tour={item} onPress={() => navigation.navigate('Tour', { tour: item })} />}
       />
     </SafeAreaView>
   );

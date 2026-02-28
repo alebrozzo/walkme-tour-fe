@@ -6,8 +6,9 @@ import { SafeAreaProvider } from 'react-native-safe-area-context';
 import HomeScreen from './src/screens/HomeScreen';
 import StopScreen from './src/screens/StopScreen';
 import TourScreen from './src/screens/TourScreen';
+import { RootStackParamList } from './src/types';
 
-const Stack = createNativeStackNavigator();
+const Stack = createNativeStackNavigator<RootStackParamList>();
 
 export default function App() {
   return (
@@ -20,14 +21,9 @@ export default function App() {
             headerStyle: { backgroundColor: '#FFFFFF' },
             headerTintColor: '#1A1A2E',
             headerTitleStyle: { fontWeight: '700' },
-            headerBackTitleVisible: false,
           }}
         >
-          <Stack.Screen
-            name="Home"
-            component={HomeScreen}
-            options={{ title: 'WalkMe Tour' }}
-          />
+          <Stack.Screen name="Home" component={HomeScreen} options={{ title: 'WalkMe Tour' }} />
           <Stack.Screen
             name="Tour"
             component={TourScreen}

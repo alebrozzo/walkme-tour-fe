@@ -1,8 +1,12 @@
 import React from 'react';
 import { ScrollView, StyleSheet, Text, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import { NativeStackScreenProps } from '@react-navigation/native-stack';
+import { RootStackParamList, StopType } from '../types';
 
-const TYPE_ICON = {
+type Props = NativeStackScreenProps<RootStackParamList, 'Stop'>;
+
+const TYPE_ICON: Record<StopType, string> = {
   landmark: '🏛️',
   museum: '🖼️',
   neighborhood: '🏘️',
@@ -14,7 +18,13 @@ const TYPE_ICON = {
   beach: '🏖️',
 };
 
-function InfoRow({ icon, label, value }) {
+interface InfoRowProps {
+  icon: string;
+  label: string;
+  value: string;
+}
+
+function InfoRow({ icon, label, value }: InfoRowProps) {
   return (
     <View style={styles.infoRow}>
       <Text style={styles.infoIcon}>{icon}</Text>
@@ -26,7 +36,7 @@ function InfoRow({ icon, label, value }) {
   );
 }
 
-export default function StopScreen({ route }) {
+export default function StopScreen({ route }: Props) {
   const { stop, tourColor } = route.params;
 
   return (
@@ -34,13 +44,9 @@ export default function StopScreen({ route }) {
       <ScrollView contentContainerStyle={styles.scroll}>
         {/* Header */}
         <View style={[styles.header, { backgroundColor: tourColor }]}>
-          <Text style={styles.typeIcon}>
-            {TYPE_ICON[stop.type] || '📌'}
-          </Text>
+          <Text style={styles.typeIcon}>{TYPE_ICON[stop.type] ?? '📌'}</Text>
           <Text style={styles.stopName}>{stop.name}</Text>
-          <Text style={styles.stopType}>
-            {stop.type.charAt(0).toUpperCase() + stop.type.slice(1)}
-          </Text>
+          <Text style={styles.stopType}>{stop.type.charAt(0).toUpperCase() + stop.type.slice(1)}</Text>
         </View>
 
         <View style={styles.body}>
@@ -50,11 +56,7 @@ export default function StopScreen({ route }) {
             <View style={styles.divider} />
             <InfoRow icon="⏱" label="Time at stop" value={`${stop.duration} minutes`} />
             <View style={styles.divider} />
-            <InfoRow
-              icon="🔢"
-              label="Stop number"
-              value={`Stop ${stop.order} on the tour`}
-            />
+            <InfoRow icon="🔢" label="Stop number" value={`Stop ${stop.order} on the tour`} />
           </View>
 
           {/* Description */}
@@ -64,7 +66,7 @@ export default function StopScreen({ route }) {
           </View>
 
           {/* Tips */}
-          {stop.tips ? (
+          {stop.tips ?
             <>
               <Text style={styles.sectionTitle}>Visitor Tips</Text>
               <View style={[styles.card, styles.tipsCard]}>
@@ -72,7 +74,7 @@ export default function StopScreen({ route }) {
                 <Text style={styles.tipsText}>{stop.tips}</Text>
               </View>
             </>
-          ) : null}
+          : null}
         </View>
       </ScrollView>
     </SafeAreaView>

@@ -1,14 +1,12 @@
 import React from 'react';
-import {
-  FlatList,
-  StyleSheet,
-  Text,
-  TouchableOpacity,
-  View,
-} from 'react-native';
+import { FlatList, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import { NativeStackScreenProps } from '@react-navigation/native-stack';
+import { RootStackParamList, Stop, StopType } from '../types';
 
-const TYPE_ICON = {
+type Props = NativeStackScreenProps<RootStackParamList, 'Tour'>;
+
+const TYPE_ICON: Record<StopType, string> = {
   landmark: '🏛️',
   museum: '🖼️',
   neighborhood: '🏘️',
@@ -20,21 +18,21 @@ const TYPE_ICON = {
   beach: '🏖️',
 };
 
-function StopRow({ stop, tourColor, onPress }) {
+interface StopRowProps {
+  stop: Stop;
+  tourColor: string;
+  onPress: () => void;
+}
+
+function StopRow({ stop, tourColor, onPress }: StopRowProps) {
   return (
-    <TouchableOpacity
-      style={styles.stopRow}
-      onPress={onPress}
-      activeOpacity={0.85}
-    >
+    <TouchableOpacity style={styles.stopRow} onPress={onPress} activeOpacity={0.85}>
       <View style={[styles.orderBubble, { backgroundColor: tourColor }]}>
         <Text style={styles.orderText}>{stop.order}</Text>
       </View>
       <View style={styles.stopInfo}>
         <View style={styles.stopNameRow}>
-          <Text style={styles.stopIcon}>
-            {TYPE_ICON[stop.type] || '📌'}
-          </Text>
+          <Text style={styles.stopIcon}>{TYPE_ICON[stop.type] ?? '📌'}</Text>
           <Text style={styles.stopName}>{stop.name}</Text>
         </View>
         <Text style={styles.stopAddress} numberOfLines={1}>
@@ -47,7 +45,7 @@ function StopRow({ stop, tourColor, onPress }) {
   );
 }
 
-export default function TourScreen({ navigation, route }) {
+export default function TourScreen({ navigation, route }: Props) {
   const { tour } = route.params;
 
   return (
@@ -65,9 +63,7 @@ export default function TourScreen({ navigation, route }) {
               <View style={styles.heroMeta}>
                 <Text style={styles.heroMetaItem}>🕐 {tour.duration} min</Text>
                 <Text style={styles.heroMetaItem}>📍 {tour.distance} km</Text>
-                <Text style={styles.heroMetaItem}>
-                  🏛️ {tour.stops.length} stops
-                </Text>
+                <Text style={styles.heroMetaItem}>🏛️ {tour.stops.length} stops</Text>
               </View>
             </View>
             <Text style={styles.sectionTitle}>Stops</Text>
@@ -77,9 +73,7 @@ export default function TourScreen({ navigation, route }) {
           <StopRow
             stop={item}
             tourColor={tour.color}
-            onPress={() =>
-              navigation.navigate('Stop', { stop: item, tourColor: tour.color })
-            }
+            onPress={() => navigation.navigate('Stop', { stop: item, tourColor: tour.color })}
           />
         )}
       />

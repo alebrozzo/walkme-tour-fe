@@ -1,10 +1,12 @@
-const tours = [
+import { Tour } from '../types';
+
+const tours: Tour[] = [
   {
     id: '1',
     city: 'Paris',
     country: 'France',
     description:
-      "Discover the City of Light on foot, from the iconic Eiffel Tower to the charming streets of Montmartre.",
+      'Discover the City of Light on foot, from the iconic Eiffel Tower to the charming streets of Montmartre.',
     duration: 180,
     distance: 6.5,
     difficulty: 'moderate',
@@ -19,7 +21,7 @@ const tours = [
         description:
           "The iconic iron lattice tower built by Gustave Eiffel for the 1889 World's Fair. At 330 metres tall, it was the world's tallest structure for over 40 years.",
         duration: 45,
-        tips: "Book tickets online to avoid long queues. The view from the second floor offers the best balance of height and detail.",
+        tips: 'Book tickets online to avoid long queues. The view from the second floor offers the best balance of height and detail.',
       },
       {
         id: '1-2',
@@ -30,7 +32,7 @@ const tours = [
         description:
           "Housed in a former railway station, the Musée d'Orsay holds the world's largest collection of Impressionist and Post-Impressionist masterpieces, including works by Monet, Renoir, and Van Gogh.",
         duration: 60,
-        tips: "The museum is closed on Mondays. The café on the top floor has wonderful views of the Seine.",
+        tips: 'The museum is closed on Mondays. The café on the top floor has wonderful views of the Seine.',
       },
       {
         id: '1-3',
@@ -39,9 +41,9 @@ const tours = [
         address: 'Parvis Notre-Dame - Pl. Jean-Paul II, 75004 Paris',
         type: 'landmark',
         description:
-          "A masterpiece of French Gothic architecture dating from the 12th century. The cathedral is undergoing restoration following the 2019 fire.",
+          'A masterpiece of French Gothic architecture dating from the 12th century. The cathedral is undergoing restoration following the 2019 fire.',
         duration: 30,
-        tips: "Even if entering is not possible, the exterior and the plaza are worth visiting. Look out for the famous gargoyles.",
+        tips: 'Even if entering is not possible, the exterior and the plaza are worth visiting. Look out for the famous gargoyles.',
       },
       {
         id: '1-4',
@@ -63,7 +65,7 @@ const tours = [
         description:
           "A radical example of high-tech architecture, the Pompidou Centre houses Europe's largest modern art museum. Its colorful pipes and exposed structure make it a landmark in its own right.",
         duration: 45,
-        tips: "The rooftop terrace offers sweeping views of Paris at no extra charge beyond the museum ticket.",
+        tips: 'The rooftop terrace offers sweeping views of Paris at no extra charge beyond the museum ticket.',
       },
     ],
   },
@@ -71,8 +73,7 @@ const tours = [
     id: '2',
     city: 'Rome',
     country: 'Italy',
-    description:
-      "Walk through 2,500 years of history in the Eternal City, from ancient ruins to Baroque fountains.",
+    description: 'Walk through 2,500 years of history in the Eternal City, from ancient ruins to Baroque fountains.',
     duration: 240,
     distance: 7.2,
     difficulty: 'easy',
@@ -87,7 +88,7 @@ const tours = [
         description:
           "The world's largest amphitheatre, completed in 80 AD. It could hold up to 80,000 spectators who gathered to watch gladiatorial contests, animal hunts, and public spectacles.",
         duration: 60,
-        tips: "Book tickets in advance — the queues without a booking can take hours. The combined ticket includes the Roman Forum and Palatine Hill.",
+        tips: 'Book tickets in advance — the queues without a booking can take hours. The combined ticket includes the Roman Forum and Palatine Hill.',
       },
       {
         id: '2-2',
@@ -96,9 +97,9 @@ const tours = [
         address: 'Via Sacra, 00186 Roma',
         type: 'landmark',
         description:
-          "The heart of ancient Rome, the Forum was a rectangular plaza surrounded by ruins of government buildings, temples, and markets. It was the centre of Roman public life for centuries.",
+          'The heart of ancient Rome, the Forum was a rectangular plaza surrounded by ruins of government buildings, temples, and markets. It was the centre of Roman public life for centuries.',
         duration: 45,
-        tips: "Walk to the top of Palatine Hill for a panoramic view of the entire Forum below.",
+        tips: 'Walk to the top of Palatine Hill for a panoramic view of the entire Forum below.',
       },
       {
         id: '2-3',
@@ -107,9 +108,9 @@ const tours = [
         address: 'Piazza di Trevi, 00187 Roma',
         type: 'landmark',
         description:
-          "The largest Baroque fountain in Rome and one of the most famous fountains in the world. The tradition of throwing a coin over your left shoulder with your right hand ensures a return to Rome.",
+          'The largest Baroque fountain in Rome and one of the most famous fountains in the world. The tradition of throwing a coin over your left shoulder with your right hand ensures a return to Rome.',
         duration: 20,
-        tips: "Visit early in the morning or late at night to avoid the largest crowds and get the best photos.",
+        tips: 'Visit early in the morning or late at night to avoid the largest crowds and get the best photos.',
       },
       {
         id: '2-4',
@@ -118,9 +119,9 @@ const tours = [
         address: 'Piazza della Rotonda, 00186 Roma',
         type: 'landmark',
         description:
-          "Built around 125 AD, the Pantheon is the best-preserved ancient Roman building. Its magnificent dome with the open oculus is a marvel of engineering that influenced architecture for centuries.",
+          'Built around 125 AD, the Pantheon is the best-preserved ancient Roman building. Its magnificent dome with the open oculus is a marvel of engineering that influenced architecture for centuries.',
         duration: 30,
-        tips: "Arrive early — the interior can get very crowded. Look up at the oculus: the only source of natural light in the building.",
+        tips: 'Arrive early — the interior can get very crowded. Look up at the oculus: the only source of natural light in the building.',
       },
       {
         id: '2-5',
@@ -131,7 +132,7 @@ const tours = [
         description:
           "A stunning Baroque piazza built on the site of a 1st-century stadium. It is home to three magnificent fountains, including Bernini's famous Fountain of the Four Rivers.",
         duration: 25,
-        tips: "The surrounding cafes are touristy, but sitting at the piazza with a gelato is an unmissable Roman experience.",
+        tips: 'The surrounding cafes are touristy, but sitting at the piazza with a gelato is an unmissable Roman experience.',
       },
       {
         id: '2-6',
@@ -142,7 +143,7 @@ const tours = [
         description:
           "One of the world's greatest art collections, culminating in Michelangelo's breathtaking Sistine Chapel ceiling. The museums contain galleries of Greek, Roman and Renaissance art.",
         duration: 120,
-        tips: "Book tickets well in advance. Photography is permitted in the museums but not in the Sistine Chapel.",
+        tips: 'Book tickets well in advance. Photography is permitted in the museums but not in the Sistine Chapel.',
       },
     ],
   },
@@ -166,7 +167,7 @@ const tours = [
         description:
           "Tokyo's oldest and most significant Buddhist temple, founded in 645 AD. The iconic Kaminarimon (Thunder Gate) with its massive red lantern is one of Japan's most photographed sights.",
         duration: 45,
-        tips: "Visit at sunrise for a serene experience before the crowds arrive. Draw an omikuji (fortune slip) for a traditional experience.",
+        tips: 'Visit at sunrise for a serene experience before the crowds arrive. Draw an omikuji (fortune slip) for a traditional experience.',
       },
       {
         id: '3-2',
@@ -188,7 +189,7 @@ const tours = [
         description:
           "Japan's first public park, home to multiple world-class museums, a zoo, Ueno Tosho-gu shrine, and the famous Shinobazu Pond. Renowned for cherry blossom season.",
         duration: 60,
-        tips: "The Tokyo National Museum is the largest art museum in Japan. During hanami (cherry blossom) season in late March, the park is spectacular.",
+        tips: 'The Tokyo National Museum is the largest art museum in Japan. During hanami (cherry blossom) season in late March, the park is spectacular.',
       },
       {
         id: '3-4',
@@ -210,7 +211,7 @@ const tours = [
         description:
           "A Shinto shrine dedicated to Emperor Meiji and Empress Shoken, set in a forested 70-hectare park in the heart of the city. Tokyo's most visited shrine.",
         duration: 40,
-        tips: "Walk the long forested path to the main shrine — the transition from the busy city to calm forest is remarkable.",
+        tips: 'Walk the long forested path to the main shrine — the transition from the busy city to calm forest is remarkable.',
       },
     ],
   },
@@ -232,9 +233,9 @@ const tours = [
         address: 'Central Park, New York, NY 10024',
         type: 'park',
         description:
-          "An 843-acre urban oasis in the heart of Manhattan. Designed by Frederick Law Olmsted and Calvert Vaux, Central Park contains meadows, lakes, forests, and iconic landmarks like Bethesda Fountain and Strawberry Fields.",
+          'An 843-acre urban oasis in the heart of Manhattan. Designed by Frederick Law Olmsted and Calvert Vaux, Central Park contains meadows, lakes, forests, and iconic landmarks like Bethesda Fountain and Strawberry Fields.',
         duration: 60,
-        tips: "Rent a Citi Bike to cover more ground. Visit the Conservatory Garden in the northeast corner for a peaceful, less-visited gem.",
+        tips: 'Rent a Citi Bike to cover more ground. Visit the Conservatory Garden in the northeast corner for a peaceful, less-visited gem.',
       },
       {
         id: '4-2',
@@ -245,7 +246,7 @@ const tours = [
         description:
           "One of the world's largest and most comprehensive art museums, the Met houses over two million works spanning 5,000 years of human history from every corner of the globe.",
         duration: 90,
-        tips: "The Egyptian Temple of Dendur and the rooftop sculpture garden are crowd favourites.",
+        tips: 'The Egyptian Temple of Dendur and the rooftop sculpture garden are crowd favourites.',
       },
       {
         id: '4-3',
@@ -256,7 +257,7 @@ const tours = [
         description:
           "The commercial and entertainment hub of Manhattan, Times Square is famous for its towering LED billboards, Broadway theatres, and its role as the site of the New Year's Eve ball drop.",
         duration: 30,
-        tips: "Visit at night for the full neon spectacle. Browse the TKTS booth for same-day discounted Broadway tickets.",
+        tips: 'Visit at night for the full neon spectacle. Browse the TKTS booth for same-day discounted Broadway tickets.',
       },
       {
         id: '4-4',
@@ -265,9 +266,9 @@ const tours = [
         address: 'New York, NY 10011',
         type: 'park',
         description:
-          "An elevated linear park built on a former New York Central Railroad spur. The 1.45-mile greenway offers unique views of the city, contemporary art installations, and beautiful plantings.",
+          'An elevated linear park built on a former New York Central Railroad spur. The 1.45-mile greenway offers unique views of the city, contemporary art installations, and beautiful plantings.',
         duration: 45,
-        tips: "Enter at 14th Street and walk north or south. The park is free and open daily. Chelsea Market at the base is great for food.",
+        tips: 'Enter at 14th Street and walk north or south. The park is free and open daily. Chelsea Market at the base is great for food.',
       },
       {
         id: '4-5',
@@ -276,9 +277,9 @@ const tours = [
         address: 'Brooklyn Bridge, New York, NY 10038',
         type: 'landmark',
         description:
-          "Completed in 1883, the Brooklyn Bridge was the longest suspension bridge in the world at the time. The pedestrian walkway offers stunning views of Lower Manhattan, the East River, and the Manhattan Bridge.",
+          'Completed in 1883, the Brooklyn Bridge was the longest suspension bridge in the world at the time. The pedestrian walkway offers stunning views of Lower Manhattan, the East River, and the Manhattan Bridge.',
         duration: 30,
-        tips: "Walk from Manhattan to Brooklyn for the best views of the skyline. Start early in the morning or at sunset for spectacular light and fewer cyclists.",
+        tips: 'Walk from Manhattan to Brooklyn for the best views of the skyline. Start early in the morning or at sunset for spectacular light and fewer cyclists.',
       },
     ],
   },
@@ -302,27 +303,27 @@ const tours = [
         description:
           "Antoni Gaudí's unfinished masterpiece and the most visited monument in Spain. The basilica has been under construction since 1882 and blends Gothic and Art Nouveau styles in an extraordinary way.",
         duration: 60,
-        tips: "Book tickets online months in advance. Visit in the morning when sunlight streams through the stained glass windows on the eastern facade.",
+        tips: 'Book tickets online months in advance. Visit in the morning when sunlight streams through the stained glass windows on the eastern facade.',
       },
       {
         id: '5-2',
         order: 2,
-        name: "Park Güell",
+        name: 'Park Güell',
         address: "Carrer d'Olot, s/n, 08024 Barcelona",
         type: 'park',
         description:
-          "A public park designed by Antoni Gaudí, featuring colourful mosaic terraces, gingerbread gatehouses, a forest of tilted stone columns, and sweeping views over the city and the Mediterranean.",
+          'A public park designed by Antoni Gaudí, featuring colourful mosaic terraces, gingerbread gatehouses, a forest of tilted stone columns, and sweeping views over the city and the Mediterranean.',
         duration: 60,
         tips: "The Monumental Zone requires a timed ticket — book online. The park's outer areas are free to explore.",
       },
       {
         id: '5-3',
         order: 3,
-        name: "Gothic Quarter (Barri Gòtic)",
+        name: 'Gothic Quarter (Barri Gòtic)',
         address: 'Barri Gòtic, 08002 Barcelona',
         type: 'neighborhood',
         description:
-          "The historic centre of Barcelona with a labyrinth of medieval streets built over Roman ruins. Home to the Barcelona Cathedral, Plaça Reial, and countless tapas bars and artisan shops.",
+          'The historic centre of Barcelona with a labyrinth of medieval streets built over Roman ruins. Home to the Barcelona Cathedral, Plaça Reial, and countless tapas bars and artisan shops.',
         duration: 45,
         tips: "Look down: Roman walls are incorporated into medieval buildings throughout. Seek out the Temple d'August for Roman columns inside a Gothic courtyard.",
       },
@@ -335,7 +336,7 @@ const tours = [
         description:
           "Barcelona's most famous public market, overflowing with fresh produce, jamón, seafood, and fresh juice stalls. A sensory feast and a vital part of Catalan culinary culture.",
         duration: 30,
-        tips: "Head to the back of the market for better prices and more authentic produce stalls. Arrive before noon as many vendors close in the afternoon.",
+        tips: 'Head to the back of the market for better prices and more authentic produce stalls. Arrive before noon as many vendors close in the afternoon.',
       },
       {
         id: '5-5',
@@ -346,7 +347,7 @@ const tours = [
         description:
           "Barcelona's most famous city beach, sitting just minutes from the Gothic Quarter. The wide sandy shore stretches along the Mediterranean coast, lined with chiringuitos (beach bars) and restaurants.",
         duration: 45,
-        tips: "Walk along the Passeig Marítim promenade. Late afternoon is ideal. Try fideuà (noodle paella) at one of the seafront restaurants.",
+        tips: 'Walk along the Passeig Marítim promenade. Late afternoon is ideal. Try fideuà (noodle paella) at one of the seafront restaurants.',
       },
     ],
   },
