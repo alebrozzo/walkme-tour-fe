@@ -34,6 +34,17 @@ export interface Tour {
   stops: Stop[];
 }
 
+export interface TripPreferences {
+  days: number;
+  hoursPerDay: number;
+}
+
+export interface GeneratedItinerary {
+  tourId: string;
+  preferences: TripPreferences;
+  stops: Stop[];
+}
+
 export type RootStackParamList = {
   Home: undefined;
   Tour: { tour: Tour };
