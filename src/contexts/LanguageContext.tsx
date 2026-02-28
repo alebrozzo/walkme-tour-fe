@@ -11,7 +11,8 @@ interface LanguageContextValue {
   appKey: number;
 }
 
-const defaultLanguage = LANGUAGES[0]; // English (LTR)
+const DEFAULT_LANGUAGE_CODE: LanguageCode = 'en';
+const defaultLanguage = LANGUAGES.find((l) => l.code === DEFAULT_LANGUAGE_CODE) ?? LANGUAGES[0];
 
 const LanguageContext = createContext<LanguageContextValue>({
   language: defaultLanguage,
@@ -36,7 +37,7 @@ export function LanguageProvider({ children }: { children: React.ReactNode }) {
 
   return (
     <LanguageContext.Provider
-      value={{ language, t: TRANSLATIONS[language.code as LanguageCode], setLanguage, languages: LANGUAGES, appKey }}
+      value={{ language, t: TRANSLATIONS[language.code], setLanguage, languages: LANGUAGES, appKey }}
     >
       {children}
     </LanguageContext.Provider>

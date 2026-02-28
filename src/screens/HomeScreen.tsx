@@ -5,7 +5,6 @@ import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import tours from '../data/tours';
 import { Difficulty, RootStackParamList, Tour } from '../types';
 import { useLanguage } from '../contexts/LanguageContext';
-import { LanguageCode } from '../i18n/translations';
 
 type Props = NativeStackScreenProps<RootStackParamList, 'Home'>;
 
@@ -105,7 +104,7 @@ export default function HomeScreen({ navigation }: Props) {
                     key={lang.code}
                     style={[styles.langOption, language.code === lang.code && styles.langOptionSelected]}
                     onPress={() => {
-                      setLanguage(lang.code as LanguageCode);
+                      setLanguage(lang.code);
                       setShowLangPicker(false);
                     }}
                   >

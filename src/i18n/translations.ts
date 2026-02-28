@@ -1,3 +1,5 @@
+import { StopType } from '../types';
+
 export type LanguageCode = 'en' | 'ar' | 'he' | 'es' | 'fr';
 
 export interface Language {
@@ -37,7 +39,7 @@ export interface Translations {
     about: string;
     visitorTips: string;
   };
-  stopTypes: Record<string, string>;
+  stopTypes: Record<StopType, string>;
   language: string;
   selectLanguage: string;
 }
