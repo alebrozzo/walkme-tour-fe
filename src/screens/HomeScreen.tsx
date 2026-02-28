@@ -34,9 +34,7 @@ function TourCard({ tour, onPress }: TourCardProps) {
             <Text style={styles.cityName}>{tour.city}</Text>
             <Text style={styles.countryName}>{tour.country}</Text>
           </View>
-          <View
-            style={[styles.difficultyBadge, { backgroundColor: DIFFICULTY_COLOR[tour.difficulty] }]}
-          >
+          <View style={[styles.difficultyBadge, { backgroundColor: DIFFICULTY_COLOR[tour.difficulty] }]}>
             <Text style={styles.difficultyText}>{DIFFICULTY_LABEL[tour.difficulty]}</Text>
           </View>
         </View>
@@ -77,9 +75,7 @@ export default function HomeScreen({ navigation }: Props) {
             <Text style={styles.headerSubtitle}>Explore the world one step at a time</Text>
           </View>
         }
-        renderItem={({ item }) => (
-          <TourCard tour={item} onPress={() => navigation.navigate('Tour', { tour: item })} />
-        )}
+        renderItem={({ item }) => <TourCard tour={item} onPress={() => navigation.navigate('Tour', { tour: item })} />}
       />
     </SafeAreaView>
   );

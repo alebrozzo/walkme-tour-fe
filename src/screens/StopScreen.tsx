@@ -35,9 +35,7 @@ export default function StopScreen({ route }: Props) {
         <View style={[styles.header, { backgroundColor: tourColor }]}>
           <Text style={styles.typeIcon}>{TYPE_ICON[stop.type] ?? '📌'}</Text>
           <Text style={styles.stopName}>{stop.name}</Text>
-          <Text style={styles.stopType}>
-            {stop.type.charAt(0).toUpperCase() + stop.type.slice(1)}
-          </Text>
+          <Text style={styles.stopType}>{stop.type.charAt(0).toUpperCase() + stop.type.slice(1)}</Text>
         </View>
 
         <View style={styles.body}>
