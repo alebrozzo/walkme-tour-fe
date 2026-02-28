@@ -14,6 +14,7 @@ interface CityResultProps {
 }
 
 function CityResult({ tour, onPress }: CityResultProps) {
+  const { language } = useLanguage();
   return (
     <TouchableOpacity style={styles.resultRow} onPress={onPress} activeOpacity={0.8}>
       <View style={[styles.resultColorDot, { backgroundColor: tour.color }]} />
@@ -21,7 +22,7 @@ function CityResult({ tour, onPress }: CityResultProps) {
         <Text style={styles.resultCity}>{tour.city}</Text>
         <Text style={styles.resultCountry}>{tour.country}</Text>
       </View>
-      <Text style={styles.resultChevron}>›</Text>
+      <Text style={styles.resultChevron}>{language.isRTL ? '‹' : '›'}</Text>
     </TouchableOpacity>
   );
 }
@@ -61,9 +62,13 @@ export default function HomeScreen({ navigation }: Props) {
           value={query}
           onChangeText={setQuery}
           autoCorrect={false}
-          clearButtonMode="while-editing"
           textAlign={language.isRTL ? 'right' : 'left'}
         />
+        {hasQuery && (
+          <TouchableOpacity onPress={() => setQuery('')} style={styles.clearButton} hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}>
+            <Text style={styles.clearButtonText}>✕</Text>
+          </TouchableOpacity>
+        )}
       </View>
 
       {hasQuery && (
@@ -143,6 +148,14 @@ const styles = StyleSheet.create({
     fontSize: 16,
     color: '#1A1A2E',
     padding: 0,
+  },
+  clearButton: {
+    marginStart: 8,
+    padding: 2,
+  },
+  clearButtonText: {
+    fontSize: 14,
+    color: '#95A5A6',
   },
   resultsList: {
     paddingHorizontal: 16,
