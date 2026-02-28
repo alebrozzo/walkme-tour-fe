@@ -57,7 +57,7 @@ const en: Translations = {
     min: 'min',
     km: 'km',
     stops: (n) => `${n} stop${n === 1 ? '' : 's'}`,
-    minutes: (n) => `${n} minutes`,
+    minutes: (n) => `${n} minute${n === 1 ? '' : 's'}`,
   },
   tour: { stopsSection: 'Stops' },
   stop: {
