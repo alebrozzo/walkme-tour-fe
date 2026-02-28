@@ -1,10 +1,21 @@
 import React, { useLayoutEffect, useMemo, useState } from 'react';
-import { FlatList, Modal, StyleSheet, Text, TextInput, TouchableOpacity, TouchableWithoutFeedback, View } from 'react-native';
+import {
+  Modal,
+  Pressable,
+  ScrollView,
+  StyleSheet,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  TouchableWithoutFeedback,
+  View,
+} from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import tours from '../data/tours';
 import { RootStackParamList, Tour } from '../types';
 import { useLanguage } from '../contexts/LanguageContext';
+import { usePinned } from '../contexts/PinnedContext';
 
 type Props = NativeStackScreenProps<RootStackParamList, 'Home'>;
 
@@ -16,7 +27,11 @@ interface CityResultProps {
 function CityResult({ tour, onPress }: CityResultProps) {
   const { language } = useLanguage();
   return (
-    <TouchableOpacity style={[styles.resultRow, { direction: language.isRTL ? 'rtl' : 'ltr' }]} onPress={onPress} activeOpacity={0.8}>
+    <TouchableOpacity
+      style={[styles.resultRow, { direction: language.isRTL ? 'rtl' : 'ltr' }]}
+      onPress={onPress}
+      activeOpacity={0.8}
+    >
       <View style={[styles.resultColorDot, { backgroundColor: tour.color }]} />
       <View style={styles.resultTextContainer}>
         <Text style={styles.resultCity}>{tour.city}</Text>
@@ -27,8 +42,41 @@ function CityResult({ tour, onPress }: CityResultProps) {
   );
 }
 
+interface PinnedCardProps {
+  tour: Tour;
+  onPress: () => void;
+  onUnpin: () => void;
+}
+
+function PinnedCard({ tour, onPress, onUnpin }: PinnedCardProps) {
+  const { t, language } = useLanguage();
+  return (
+    <View style={[styles.pinnedCard, { backgroundColor: tour.color, direction: language.isRTL ? 'rtl' : 'ltr' }]}>
+      <Pressable
+        style={styles.pinnedCardContent}
+        onPress={onPress}
+        android_ripple={null}
+        accessibilityRole="button"
+        accessibilityLabel={tour.city}
+      >
+        <Text style={styles.pinnedCardCity}>{tour.city}</Text>
+        <Text style={styles.pinnedCardCountry}>{tour.country}</Text>
+      </Pressable>
+      <TouchableOpacity
+        onPress={onUnpin}
+        hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
+        accessibilityRole="button"
+        accessibilityLabel={t.unpinCity}
+      >
+        <Text style={styles.pinnedCardUnpin}>📌</Text>
+      </TouchableOpacity>
+    </View>
+  );
+}
+
 export default function HomeScreen({ navigation }: Props) {
   const { t, language, languages, setLanguage } = useLanguage();
+  const { pinnedTours, togglePin } = usePinned();
   const [showLangPicker, setShowLangPicker] = useState(false);
   const [query, setQuery] = useState('');
 
@@ -50,45 +98,71 @@ export default function HomeScreen({ navigation }: Props) {
   }, [query]);
 
   const hasQuery = query.trim().length > 0;
+  const directionStyle = useMemo(
+    () => ({ direction: language.isRTL ? ('rtl' as const) : ('ltr' as const) }),
+    [language.isRTL],
+  );
 
   return (
     <SafeAreaView style={styles.safeArea} edges={['bottom']}>
-      <View style={[styles.searchContainer, { direction: language.isRTL ? 'rtl' : 'ltr' }]}>
-        <Text style={styles.searchIcon}>🔍</Text>
-        <TextInput
-          style={styles.searchInput}
-          placeholder={t.searchPlaceholder}
-          placeholderTextColor="#A0A9B3"
-          value={query}
-          onChangeText={setQuery}
-          autoCorrect={false}
-          textAlign={language.isRTL ? 'right' : 'left'}
-        />
-        {hasQuery && (
-          <TouchableOpacity onPress={() => setQuery('')} style={styles.clearButton} hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}>
-            <Text style={styles.clearButtonText}>✕</Text>
-          </TouchableOpacity>
-        )}
-      </View>
-
-      {hasQuery && (
-        <FlatList
-          data={filtered}
-          keyExtractor={(item) => item.id}
-          contentContainerStyle={styles.resultsList}
-          keyboardShouldPersistTaps="handled"
-          ListEmptyComponent={<Text style={styles.noResults}>{t.searchNoResults}</Text>}
-          renderItem={({ item }) => (
-            <CityResult
-              tour={item}
-              onPress={() => {
-                setQuery('');
-                navigation.navigate('Tour', { tour: item });
-              }}
+      <ScrollView keyboardShouldPersistTaps="handled" contentContainerStyle={styles.scrollContent}>
+        <View style={directionStyle}>
+          <View style={styles.searchContainer}>
+            <Text style={styles.searchIcon}>🔍</Text>
+            <TextInput
+              style={styles.searchInput}
+              placeholder={t.searchPlaceholder}
+              placeholderTextColor="#A0A9B3"
+              value={query}
+              onChangeText={setQuery}
+              autoCorrect={false}
+              textAlign={language.isRTL ? 'right' : 'left'}
             />
+            {hasQuery && (
+              <TouchableOpacity
+                onPress={() => setQuery('')}
+                style={styles.clearButton}
+                hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
+              >
+                <Text style={styles.clearButtonText}>✕</Text>
+              </TouchableOpacity>
+            )}
+          </View>
+
+          {hasQuery && (
+            <View style={styles.resultsList}>
+              {filtered.length === 0 ? (
+                <Text style={styles.noResults}>{t.searchNoResults}</Text>
+              ) : (
+                filtered.map((item) => (
+                  <CityResult
+                    key={item.id}
+                    tour={item}
+                    onPress={() => {
+                      setQuery('');
+                      navigation.navigate('Tour', { tour: item });
+                    }}
+                  />
+                ))
+              )}
+            </View>
           )}
-        />
-      )}
+
+          {!hasQuery && pinnedTours.length > 0 && (
+            <View style={styles.pinnedSection}>
+              <Text style={styles.pinnedSectionTitle}>{t.pinnedCities}</Text>
+              {pinnedTours.map((tour) => (
+                <PinnedCard
+                  key={tour.id}
+                  tour={tour}
+                  onPress={() => navigation.navigate('Tour', { tour })}
+                  onUnpin={() => togglePin(tour)}
+                />
+              ))}
+            </View>
+          )}
+        </View>
+      </ScrollView>
 
       {/* Language picker modal */}
       <Modal visible={showLangPicker} transparent animationType="fade" onRequestClose={() => setShowLangPicker(false)}>
@@ -124,6 +198,9 @@ const styles = StyleSheet.create({
   safeArea: {
     flex: 1,
     backgroundColor: '#F5F6FA',
+  },
+  scrollContent: {
+    flexGrow: 1,
   },
   searchContainer: {
     flexDirection: 'row',
@@ -205,6 +282,45 @@ const styles = StyleSheet.create({
     color: '#BDC3C7',
     fontWeight: '300',
   },
+  pinnedSection: {
+    paddingHorizontal: 16,
+    paddingBottom: 32,
+  },
+  pinnedSectionTitle: {
+    fontSize: 18,
+    fontWeight: '700',
+    color: '#1A1A2E',
+    marginBottom: 12,
+  },
+  pinnedCard: {
+    borderRadius: 12,
+    marginBottom: 10,
+    paddingHorizontal: 16,
+    paddingVertical: 16,
+    flexDirection: 'row',
+    alignItems: 'center',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 6,
+    elevation: 3,
+  },
+  pinnedCardContent: {
+    flex: 1,
+  },
+  pinnedCardCity: {
+    fontSize: 18,
+    fontWeight: '700',
+    color: '#FFFFFF',
+  },
+  pinnedCardCountry: {
+    fontSize: 13,
+    color: 'rgba(255,255,255,0.8)',
+    marginTop: 2,
+  },
+  pinnedCardUnpin: {
+    fontSize: 20,
+  },
   langButton: {
     padding: 4,
   },
@@ -262,4 +378,3 @@ const styles = StyleSheet.create({
     fontWeight: '700',
   },
 });
-

@@ -4,6 +4,7 @@ import { StatusBar } from 'expo-status-bar';
 import React from 'react';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { LanguageProvider, useLanguage } from './src/contexts/LanguageContext';
+import { PinnedProvider } from './src/contexts/PinnedContext';
 import HomeScreen from './src/screens/HomeScreen';
 import StopScreen from './src/screens/StopScreen';
 import TourScreen from './src/screens/TourScreen';
@@ -64,7 +65,9 @@ function AppNavigator() {
 export default function App() {
   return (
     <LanguageProvider>
-      <AppNavigator />
+      <PinnedProvider>
+        <AppNavigator />
+      </PinnedProvider>
     </LanguageProvider>
   );
 }
