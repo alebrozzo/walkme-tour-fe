@@ -1,6 +1,7 @@
 import React, { useLayoutEffect, useMemo, useState } from 'react';
 import {
   Modal,
+  Pressable,
   ScrollView,
   StyleSheet,
   Text,
@@ -50,23 +51,26 @@ interface PinnedCardProps {
 function PinnedCard({ tour, onPress, onUnpin }: PinnedCardProps) {
   const { t, language } = useLanguage();
   return (
-    <TouchableOpacity
-      style={[styles.pinnedCard, { backgroundColor: tour.color, direction: language.isRTL ? 'rtl' : 'ltr' }]}
-      onPress={onPress}
-      activeOpacity={0.85}
-    >
-      <View style={styles.pinnedCardContent}>
+    <View style={[styles.pinnedCard, { backgroundColor: tour.color, direction: language.isRTL ? 'rtl' : 'ltr' }]}>
+      <Pressable
+        style={styles.pinnedCardContent}
+        onPress={onPress}
+        android_ripple={null}
+        accessibilityRole="button"
+        accessibilityLabel={tour.city}
+      >
         <Text style={styles.pinnedCardCity}>{tour.city}</Text>
         <Text style={styles.pinnedCardCountry}>{tour.country}</Text>
-      </View>
+      </Pressable>
       <TouchableOpacity
         onPress={onUnpin}
         hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
+        accessibilityRole="button"
         accessibilityLabel={t.unpinCity}
       >
         <Text style={styles.pinnedCardUnpin}>📌</Text>
       </TouchableOpacity>
-    </TouchableOpacity>
+    </View>
   );
 }
 
