@@ -4,6 +4,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { RootStackParamList, Stop } from '../types';
 import { TYPE_ICON } from '../constants/stopTypes';
+import { useLanguage } from '../contexts/LanguageContext';
 
 type Props = NativeStackScreenProps<RootStackParamList, 'Tour'>;
 
@@ -14,6 +15,7 @@ interface StopRowProps {
 }
 
 function StopRow({ stop, tourColor, onPress }: StopRowProps) {
+  const { t, language } = useLanguage();
   return (
     <TouchableOpacity style={styles.stopRow} onPress={onPress} activeOpacity={0.85}>
       <View style={[styles.orderBubble, { backgroundColor: tourColor }]}>
@@ -27,15 +29,18 @@ function StopRow({ stop, tourColor, onPress }: StopRowProps) {
         <Text style={styles.stopAddress} numberOfLines={1}>
           {stop.address}
         </Text>
-        <Text style={styles.stopDuration}>⏱ {stop.duration} min</Text>
+        <Text style={styles.stopDuration}>
+          ⏱ {stop.duration} {t.units.min}
+        </Text>
       </View>
-      <Text style={styles.chevron}>›</Text>
+      <Text style={styles.chevron}>{language.isRTL ? '‹' : '›'}</Text>
     </TouchableOpacity>
   );
 }
 
 export default function TourScreen({ navigation, route }: Props) {
   const { tour } = route.params;
+  const { t } = useLanguage();
 
   return (
     <SafeAreaView style={styles.safeArea} edges={['bottom']}>
@@ -50,12 +55,16 @@ export default function TourScreen({ navigation, route }: Props) {
               <Text style={styles.heroCountry}>{tour.country}</Text>
               <Text style={styles.heroDescription}>{tour.description}</Text>
               <View style={styles.heroMeta}>
-                <Text style={styles.heroMetaItem}>🕐 {tour.duration} min</Text>
-                <Text style={styles.heroMetaItem}>📍 {tour.distance} km</Text>
-                <Text style={styles.heroMetaItem}>🏛️ {tour.stops.length} stops</Text>
+                <Text style={styles.heroMetaItem}>
+                  🕐 {tour.duration} {t.units.min}
+                </Text>
+                <Text style={styles.heroMetaItem}>
+                  📍 {tour.distance} {t.units.km}
+                </Text>
+                <Text style={styles.heroMetaItem}>🏛️ {t.units.stops(tour.stops.length)}</Text>
               </View>
             </View>
-            <Text style={styles.sectionTitle}>Stops</Text>
+            <Text style={styles.sectionTitle}>{t.tour.stopsSection}</Text>
           </View>
         }
         renderItem={({ item }) => (
@@ -137,7 +146,7 @@ const styles = StyleSheet.create({
     borderRadius: 16,
     alignItems: 'center',
     justifyContent: 'center',
-    marginRight: 12,
+    marginEnd: 12,
   },
   orderText: {
     color: '#FFFFFF',
@@ -175,7 +184,7 @@ const styles = StyleSheet.create({
   chevron: {
     fontSize: 22,
     color: '#BDC3C7',
-    marginLeft: 8,
+    marginStart: 8,
     fontWeight: '300',
   },
 });

@@ -4,6 +4,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { RootStackParamList } from '../types';
 import { TYPE_ICON } from '../constants/stopTypes';
+import { useLanguage } from '../contexts/LanguageContext';
 
 type Props = NativeStackScreenProps<RootStackParamList, 'Stop'>;
 
@@ -27,6 +28,9 @@ function InfoRow({ icon, label, value }: InfoRowProps) {
 
 export default function StopScreen({ route }: Props) {
   const { stop, tourColor } = route.params;
+  const { t } = useLanguage();
+
+  const stopTypeLabel = t.stopTypes[stop.type] ?? stop.type.charAt(0).toUpperCase() + stop.type.slice(1);
 
   return (
     <SafeAreaView style={styles.safeArea} edges={['bottom']}>
@@ -35,21 +39,21 @@ export default function StopScreen({ route }: Props) {
         <View style={[styles.header, { backgroundColor: tourColor }]}>
           <Text style={styles.typeIcon}>{TYPE_ICON[stop.type] ?? '📌'}</Text>
           <Text style={styles.stopName}>{stop.name}</Text>
-          <Text style={styles.stopType}>{stop.type.charAt(0).toUpperCase() + stop.type.slice(1)}</Text>
+          <Text style={styles.stopType}>{stopTypeLabel}</Text>
         </View>
 
         <View style={styles.body}>
           {/* Info cards */}
           <View style={styles.infoCard}>
-            <InfoRow icon="📍" label="Address" value={stop.address} />
+            <InfoRow icon="📍" label={t.stop.address} value={stop.address} />
             <View style={styles.divider} />
-            <InfoRow icon="⏱" label="Time at stop" value={`${stop.duration} minutes`} />
+            <InfoRow icon="⏱" label={t.stop.timeAtStop} value={t.units.minutes(stop.duration)} />
             <View style={styles.divider} />
-            <InfoRow icon="🔢" label="Stop number" value={`Stop ${stop.order} on the tour`} />
+            <InfoRow icon="🔢" label={t.stop.stopNumber} value={t.stop.stopOnTour(stop.order)} />
           </View>
 
           {/* Description */}
-          <Text style={styles.sectionTitle}>About</Text>
+          <Text style={styles.sectionTitle}>{t.stop.about}</Text>
           <View style={styles.card}>
             <Text style={styles.description}>{stop.description}</Text>
           </View>
@@ -57,7 +61,7 @@ export default function StopScreen({ route }: Props) {
           {/* Tips */}
           {stop.tips ? (
             <>
-              <Text style={styles.sectionTitle}>Visitor Tips</Text>
+              <Text style={styles.sectionTitle}>{t.stop.visitorTips}</Text>
               <View style={[styles.card, styles.tipsCard]}>
                 <Text style={styles.tipsIcon}>💡</Text>
                 <Text style={styles.tipsText}>{stop.tips}</Text>
