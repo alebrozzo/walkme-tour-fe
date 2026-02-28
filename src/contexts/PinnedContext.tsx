@@ -1,4 +1,4 @@
-import React, { createContext, useCallback, useContext, useMemo, useState } from 'react';
+import React, { createContext, useCallback, useContext, useMemo, useRef, useState } from 'react';
 import { GeneratedItinerary, Tour } from '../types';
 
 interface PinnedContextValue {
@@ -24,21 +24,24 @@ export function PinnedProvider({ children }: { children: React.ReactNode }) {
   const [itineraries, setItineraries] = useState<Record<string, GeneratedItinerary>>({});
 
   const pinnedIds = useMemo(() => new Set(pinnedTours.map((t) => t.id)), [pinnedTours]);
+  const pinnedIdsRef = useRef(pinnedIds);
+  pinnedIdsRef.current = pinnedIds;
 
   const isPinned = useCallback((tourId: string) => pinnedIds.has(tourId), [pinnedIds]);
 
   const togglePin = useCallback((tour: Tour) => {
-    setPinnedTours((prev) => {
-      const wasPinned = prev.some((t) => t.id === tour.id);
-      return wasPinned ? prev.filter((t) => t.id !== tour.id) : [...prev, tour];
-    });
-    // Remove itinerary when unpinning (independent call, not nested)
-    setItineraries((curr) => {
-      if (!(tour.id in curr)) return curr;
-      const next = { ...curr };
-      delete next[tour.id];
-      return next;
-    });
+    const wasPinned = pinnedIdsRef.current.has(tour.id);
+    setPinnedTours((prev) =>
+      wasPinned ? prev.filter((t) => t.id !== tour.id) : [...prev, tour],
+    );
+    if (wasPinned) {
+      setItineraries((curr) => {
+        if (!(tour.id in curr)) return curr;
+        const next = { ...curr };
+        delete next[tour.id];
+        return next;
+      });
+    }
   }, []);
 
   const getItinerary = useCallback(
