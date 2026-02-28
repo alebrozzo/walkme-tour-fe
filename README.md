@@ -22,8 +22,8 @@ A React Native app for guided walking tours in cities around the world, built wi
 
 | Library | Purpose |
 |---------|---------|
-| [Expo](https://expo.dev/) (~55) | Build toolchain & runtime |
-| [React Native](https://reactnative.dev/) (0.83) | Core UI framework |
+| [Expo](https://expo.dev/) (~54) | Build toolchain & runtime |
+| [React Native](https://reactnative.dev/) (0.81) | Core UI framework |
 | [@react-navigation/native](https://reactnavigation.org/) | Navigation container |
 | [@react-navigation/native-stack](https://reactnavigation.org/) | Stack navigator |
 | [react-native-screens](https://github.com/software-mansion/react-native-screens) | Native screen optimisation |
@@ -66,22 +66,26 @@ After running `npm start`, scan the QR code with Expo Go on your phone, or press
 
 ```
 walkme-tour/
-├── App.js                  # Root component – navigation setup
+├── App.tsx                 # Root component – navigation setup
 ├── app.json                # Expo configuration
-├── index.js                # Entry point
+├── index.ts                # Entry point
 ├── assets/                 # App icons and splash screen
 └── src/
+    ├── constants/
+    │   └── stopTypes.ts    # Shared stop-type icon mapping
     ├── data/
-    │   └── tours.js        # Tour & stop data for all cities
-    └── screens/
-        ├── HomeScreen.js   # Tour list
-        ├── TourScreen.js   # Stop list for a tour
-        └── StopScreen.js   # Stop detail view
+    │   └── tours.ts        # Tour & stop data for all cities
+    ├── screens/
+    │   ├── HomeScreen.tsx  # Tour list
+    │   ├── TourScreen.tsx  # Stop list for a tour
+    │   └── StopScreen.tsx  # Stop detail view
+    └── types/
+        └── index.ts        # Shared TypeScript types
 ```
 
 ## Adding a New City Tour
 
-Open `src/data/tours.js` and add a new entry to the `tours` array following the existing pattern:
+Open `src/data/tours.ts` and add a new entry to the `tours` array following the existing pattern:
 
 ```js
 {
