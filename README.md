@@ -12,22 +12,22 @@ A React Native app for guided walking tours in cities around the world, built wi
 
 ## Screens
 
-| Screen | Description |
-|--------|-------------|
+| Screen   | Description                                                                             |
+| -------- | --------------------------------------------------------------------------------------- |
 | **Home** | Lists all available city tours with distance, duration, difficulty, and number of stops |
-| **Tour** | Shows the selected tour's hero banner and ordered list of stops |
-| **Stop** | Displays full details for a single stop: address, type, description, and visitor tips |
+| **Tour** | Shows the selected tour's hero banner and ordered list of stops                         |
+| **Stop** | Displays full details for a single stop: address, type, description, and visitor tips   |
 
 ## Tech Stack
 
-| Library | Purpose |
-|---------|---------|
-| [Expo](https://expo.dev/) (~54) | Build toolchain & runtime |
-| [React Native](https://reactnative.dev/) (0.81) | Core UI framework |
-| [@react-navigation/native](https://reactnavigation.org/) | Navigation container |
-| [@react-navigation/native-stack](https://reactnavigation.org/) | Stack navigator |
-| [react-native-screens](https://github.com/software-mansion/react-native-screens) | Native screen optimisation |
-| [react-native-safe-area-context](https://github.com/th3rdwave/react-native-safe-area-context) | Safe area handling |
+| Library                                                                                       | Purpose                    |
+| --------------------------------------------------------------------------------------------- | -------------------------- |
+| [Expo](https://expo.dev/) (~54)                                                               | Build toolchain & runtime  |
+| [React Native](https://reactnative.dev/) (0.81)                                               | Core UI framework          |
+| [@react-navigation/native](https://reactnavigation.org/)                                      | Navigation container       |
+| [@react-navigation/native-stack](https://reactnavigation.org/)                                | Stack navigator            |
+| [react-native-screens](https://github.com/software-mansion/react-native-screens)              | Native screen optimisation |
+| [react-native-safe-area-context](https://github.com/th3rdwave/react-native-safe-area-context) | Safe area handling         |
 
 ## Getting Started
 

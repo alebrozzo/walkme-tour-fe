@@ -55,7 +55,7 @@ export default function StopScreen({ route }: Props) {
           </View>
 
           {/* Tips */}
-          {stop.tips ?
+          {stop.tips ? (
             <>
               <Text style={styles.sectionTitle}>Visitor Tips</Text>
               <View style={[styles.card, styles.tipsCard]}>
@@ -63,7 +63,7 @@ export default function StopScreen({ route }: Props) {
                 <Text style={styles.tipsText}>{stop.tips}</Text>
               </View>
             </>
-          : null}
+          ) : null}
         </View>
       </ScrollView>
     </SafeAreaView>
