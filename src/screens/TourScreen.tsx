@@ -123,6 +123,7 @@ export default function TourScreen({ navigation, route }: Props) {
   const lastPrefsRef = useRef<TripPreferences | null>(savedItinerary?.preferences ?? null);
   const pinnedRef = useRef(pinned);
   pinnedRef.current = pinned;
+  const cancelRef = useRef<(() => void) | null>(null);
 
   // When a saved itinerary appears (e.g. freshly pinned), sync local state
   useEffect(() => {
@@ -134,6 +135,7 @@ export default function TourScreen({ navigation, route }: Props) {
   // Clean up itinerary when leaving the screen if the tour is not pinned
   useEffect(() => {
     return () => {
+      cancelRef.current?.();
       if (!pinnedRef.current) {
         removeItinerary(tour.id);
       }
@@ -158,15 +160,22 @@ export default function TourScreen({ navigation, route }: Props) {
 
   const handleGenerate = useCallback(
     async (prefs: TripPreferences) => {
+      let cancelled = false;
+      cancelRef.current = () => { cancelled = true; };
       setLoading(true);
-      const stops = await generateRecommendedStops(tour.stops, prefs);
-      setGeneratedStops(stops);
-      lastPrefsRef.current = prefs;
-      setLoading(false);
+      try {
+        const stops = await generateRecommendedStops(tour.stops, prefs);
+        if (cancelled) return;
+        setGeneratedStops(stops);
+        lastPrefsRef.current = prefs;
 
-      // Save itinerary if tour is pinned
-      if (isPinned(tour.id)) {
-        saveItinerary({ tourId: tour.id, preferences: prefs, stops });
+        if (isPinned(tour.id)) {
+          saveItinerary({ tourId: tour.id, preferences: prefs, stops });
+        }
+      } finally {
+        if (!cancelled) {
+          setLoading(false);
+        }
       }
     },
     [tour, isPinned, saveItinerary],
@@ -175,13 +184,15 @@ export default function TourScreen({ navigation, route }: Props) {
   // When pin state changes while we have generated stops, save or prepare for cleanup
   useEffect(() => {
     if (generatedStops && pinned && !savedItinerary) {
-      const prefs = lastPrefsRef.current ?? { days: 0, hoursPerDay: 0 };
+      const prefs = lastPrefsRef.current;
+      if (!prefs) {
+        return;
+      }
       saveItinerary({ tourId: tour.id, preferences: prefs, stops: generatedStops });
     }
   }, [pinned, generatedStops, savedItinerary, saveItinerary, tour.id]);
 
-  // If tour is pinned and has a saved itinerary, show stops directly
-  // If we have generated stops (from form submission), show them
+  // Use the currently generated stops (kept in sync with any saved itinerary)
   const stopsToShow = generatedStops;
 
   if (loading) {
@@ -199,6 +210,29 @@ export default function TourScreen({ navigation, route }: Props) {
     return (
       <SafeAreaView style={styles.safeArea} edges={['bottom']}>
         <PreferencesForm tour={tour} onGenerate={handleGenerate} />
+      </SafeAreaView>
+    );
+  }
+
+  if (stopsToShow.length === 0) {
+    return (
+      <SafeAreaView style={styles.safeArea} edges={['bottom']}>
+        <View style={{ direction: language.isRTL ? 'rtl' : 'ltr' }}>
+          <View style={[styles.heroBanner, { backgroundColor: tour.color }]}>
+            <Text style={styles.heroCity}>{tour.city}</Text>
+            <Text style={styles.heroCountry}>{tour.country}</Text>
+          </View>
+          <View style={styles.emptyContainer}>
+            <Text style={styles.emptyText}>{t.tour.noRecommendedStops}</Text>
+            <TouchableOpacity
+              style={[styles.generateButton, { backgroundColor: tour.color }]}
+              onPress={() => setGeneratedStops(null)}
+              activeOpacity={0.85}
+            >
+              <Text style={styles.generateButtonText}>{t.tour.adjustPreferences}</Text>
+            </TouchableOpacity>
+          </View>
+        </View>
       </SafeAreaView>
     );
   }
@@ -405,5 +439,16 @@ const styles = StyleSheet.create({
   loadingText: {
     fontSize: 16,
     color: '#7F8C8D',
+  },
+  emptyContainer: {
+    padding: 32,
+    alignItems: 'center',
+    gap: 20,
+  },
+  emptyText: {
+    fontSize: 16,
+    color: '#7F8C8D',
+    textAlign: 'center',
+    lineHeight: 24,
   },
 });

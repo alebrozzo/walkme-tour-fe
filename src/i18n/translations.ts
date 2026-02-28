@@ -31,7 +31,6 @@ export interface Translations {
     minutes: (n: number) => string;
   };
   tour: {
-    stopsSection: string;
     planYourVisit: string;
     daysStaying: string;
     hoursPerDay: string;
@@ -39,6 +38,8 @@ export interface Translations {
     generateStops: string;
     generating: string;
     recommendedStops: string;
+    noRecommendedStops: string;
+    adjustPreferences: string;
   };
   stop: {
     address: string;
@@ -74,7 +75,6 @@ const en: Translations = {
     minutes: (n) => `${n} minute${n === 1 ? '' : 's'}`,
   },
   tour: {
-    stopsSection: 'Stops',
     planYourVisit: 'Plan Your Visit',
     daysStaying: 'How many days are you staying?',
     hoursPerDay: 'Hours per day for walking & visiting',
@@ -82,6 +82,8 @@ const en: Translations = {
     generateStops: 'Get Recommended Stops',
     generating: 'Generating your itinerary…',
     recommendedStops: 'Recommended Stops',
+    noRecommendedStops: 'No stops fit your available time. Try adjusting your preferences.',
+    adjustPreferences: 'Adjust Preferences',
   },
   stop: {
     address: 'Address',
@@ -127,7 +129,6 @@ const ar: Translations = {
     minutes: (n) => `${n} دقائق`,
   },
   tour: {
-    stopsSection: 'المحطات',
     planYourVisit: 'خطط لزيارتك',
     daysStaying: 'كم يوماً ستبقى؟',
     hoursPerDay: 'ساعات المشي والزيارة في اليوم',
@@ -135,6 +136,8 @@ const ar: Translations = {
     generateStops: 'احصل على محطات مقترحة',
     generating: 'جارٍ إنشاء خطتك…',
     recommendedStops: 'المحطات المقترحة',
+    noRecommendedStops: 'لا توجد محطات تناسب وقتك المتاح. حاول تعديل تفضيلاتك.',
+    adjustPreferences: 'تعديل التفضيلات',
   },
   stop: {
     address: 'العنوان',
@@ -180,7 +183,6 @@ const he: Translations = {
     minutes: (n) => `${n} דקות`,
   },
   tour: {
-    stopsSection: 'עצירות',
     planYourVisit: 'תכנן את הביקור שלך',
     daysStaying: 'כמה ימים אתה נשאר?',
     hoursPerDay: 'שעות ביום להליכה וביקורים',
@@ -188,6 +190,8 @@ const he: Translations = {
     generateStops: 'קבל עצירות מומלצות',
     generating: 'מייצר את המסלול שלך…',
     recommendedStops: 'עצירות מומלצות',
+    noRecommendedStops: 'אין עצירות שמתאימות לזמן שלך. נסה לשנות את ההעדפות.',
+    adjustPreferences: 'שנה העדפות',
   },
   stop: {
     address: 'כתובת',
@@ -233,7 +237,6 @@ const es: Translations = {
     minutes: (n) => `${n} minutos`,
   },
   tour: {
-    stopsSection: 'Paradas',
     planYourVisit: 'Planifica tu visita',
     daysStaying: '¿Cuántos días te quedas?',
     hoursPerDay: 'Horas por día para caminar y visitar',
@@ -241,6 +244,8 @@ const es: Translations = {
     generateStops: 'Obtener paradas recomendadas',
     generating: 'Generando tu itinerario…',
     recommendedStops: 'Paradas recomendadas',
+    noRecommendedStops: 'No hay paradas que se ajusten a tu tiempo disponible. Intenta ajustar tus preferencias.',
+    adjustPreferences: 'Ajustar preferencias',
   },
   stop: {
     address: 'Dirección',
@@ -286,7 +291,6 @@ const fr: Translations = {
     minutes: (n) => `${n} minutes`,
   },
   tour: {
-    stopsSection: 'Arrêts',
     planYourVisit: 'Planifiez votre visite',
     daysStaying: 'Combien de jours restez-vous ?',
     hoursPerDay: 'Heures par jour de marche et visites',
@@ -294,6 +298,8 @@ const fr: Translations = {
     generateStops: 'Obtenir les arrêts recommandés',
     generating: 'Génération de votre itinéraire…',
     recommendedStops: 'Arrêts recommandés',
+    noRecommendedStops: 'Aucun arrêt ne correspond à votre temps disponible. Essayez d\'ajuster vos préférences.',
+    adjustPreferences: 'Ajuster les préférences',
   },
   stop: {
     address: 'Adresse',

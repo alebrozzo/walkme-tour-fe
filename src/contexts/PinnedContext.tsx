@@ -30,16 +30,14 @@ export function PinnedProvider({ children }: { children: React.ReactNode }) {
   const togglePin = useCallback((tour: Tour) => {
     setPinnedTours((prev) => {
       const wasPinned = prev.some((t) => t.id === tour.id);
-      if (wasPinned) {
-        // Remove itinerary when unpinning
-        setItineraries((curr) => {
-          const next = { ...curr };
-          delete next[tour.id];
-          return next;
-        });
-        return prev.filter((t) => t.id !== tour.id);
-      }
-      return [...prev, tour];
+      return wasPinned ? prev.filter((t) => t.id !== tour.id) : [...prev, tour];
+    });
+    // Remove itinerary when unpinning (independent call, not nested)
+    setItineraries((curr) => {
+      if (!(tour.id in curr)) return curr;
+      const next = { ...curr };
+      delete next[tour.id];
+      return next;
     });
   }, []);
 
