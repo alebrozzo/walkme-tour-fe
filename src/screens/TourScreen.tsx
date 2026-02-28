@@ -2,21 +2,10 @@ import React from 'react';
 import { FlatList, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
-import { RootStackParamList, Stop, StopType } from '../types';
+import { RootStackParamList, Stop } from '../types';
+import { TYPE_ICON } from '../constants/stopTypes';
 
 type Props = NativeStackScreenProps<RootStackParamList, 'Tour'>;
-
-const TYPE_ICON: Record<StopType, string> = {
-  landmark: '🏛️',
-  museum: '🖼️',
-  neighborhood: '🏘️',
-  temple: '⛩️',
-  shrine: '⛩️',
-  park: '🌳',
-  piazza: '🏟️',
-  market: '🛒',
-  beach: '🏖️',
-};
 
 interface StopRowProps {
   stop: Stop;

@@ -33,6 +33,8 @@ export default function App() {
                 backgroundColor: route.params.tour.color,
               },
               headerTintColor: '#FFFFFF',
+              statusBarStyle: 'light',
+              statusBarColor: route.params.tour.color,
             })}
           />
           <Stack.Screen
@@ -44,6 +46,8 @@ export default function App() {
                 backgroundColor: route.params.tourColor,
               },
               headerTintColor: '#FFFFFF',
+              statusBarStyle: 'light',
+              statusBarColor: route.params.tourColor,
             })}
           />
         </Stack.Navigator>

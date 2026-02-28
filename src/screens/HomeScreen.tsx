@@ -26,7 +26,7 @@ interface TourCardProps {
 
 function TourCard({ tour, onPress }: TourCardProps) {
   return (
-    <TouchableOpacity style={[styles.card, { borderLeftColor: tour.color }]} onPress={onPress} activeOpacity={0.85}>
+    <TouchableOpacity style={styles.card} onPress={onPress} activeOpacity={0.85}>
       <View style={[styles.colorBar, { backgroundColor: tour.color }]} />
       <View style={styles.cardContent}>
         <View style={styles.cardHeader}>
