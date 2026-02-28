@@ -1,7 +1,7 @@
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { StatusBar } from 'expo-status-bar';
-import React from 'react';
+import { StyleSheet, View } from 'react-native';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { LanguageProvider, useLanguage } from './src/contexts/LanguageContext';
 import HomeScreen from './src/screens/HomeScreen';
@@ -12,10 +12,10 @@ import { RootStackParamList } from './src/types';
 const Stack = createNativeStackNavigator<RootStackParamList>();
 
 function AppNavigator() {
-  const { appKey, t } = useLanguage();
+  const { appKey, language, t } = useLanguage();
 
   return (
-    <React.Fragment key={appKey}>
+    <View key={appKey} style={[styles.appRoot, language.isRTL ? styles.rtl : styles.ltr]}>
       <SafeAreaProvider>
         <NavigationContainer>
           <StatusBar style="auto" />
@@ -57,9 +57,21 @@ function AppNavigator() {
           </Stack.Navigator>
         </NavigationContainer>
       </SafeAreaProvider>
-    </React.Fragment>
+    </View>
   );
 }
+
+const styles = StyleSheet.create({
+  appRoot: {
+    flex: 1,
+  },
+  ltr: {
+    direction: 'ltr',
+  },
+  rtl: {
+    direction: 'rtl',
+  },
+});
 
 export default function App() {
   return (
