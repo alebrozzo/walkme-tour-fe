@@ -31,7 +31,15 @@ export interface Translations {
     minutes: (n: number) => string;
   };
   tour: {
-    stopsSection: string;
+    planYourVisit: string;
+    daysStaying: string;
+    hoursPerDay: string;
+    hoursPerDayHint: string;
+    generateStops: string;
+    generating: string;
+    recommendedStops: string;
+    noRecommendedStops: string;
+    adjustPreferences: string;
   };
   stop: {
     address: string;
@@ -66,7 +74,17 @@ const en: Translations = {
     stops: (n) => `${n} stop${n === 1 ? '' : 's'}`,
     minutes: (n) => `${n} minute${n === 1 ? '' : 's'}`,
   },
-  tour: { stopsSection: 'Stops' },
+  tour: {
+    planYourVisit: 'Plan Your Visit',
+    daysStaying: 'How many days are you staying?',
+    hoursPerDay: 'Hours per day for walking & visiting',
+    hoursPerDayHint: 'Exclude time for resting and eating',
+    generateStops: 'Get Recommended Stops',
+    generating: 'Generating your itinerary…',
+    recommendedStops: 'Recommended Stops',
+    noRecommendedStops: 'No stops fit your available time. Try adjusting your preferences.',
+    adjustPreferences: 'Adjust Preferences',
+  },
   stop: {
     address: 'Address',
     timeAtStop: 'Time at stop',
@@ -110,7 +128,17 @@ const ar: Translations = {
     stops: (n) => `${n} محطات`,
     minutes: (n) => `${n} دقائق`,
   },
-  tour: { stopsSection: 'المحطات' },
+  tour: {
+    planYourVisit: 'خطط لزيارتك',
+    daysStaying: 'كم يوماً ستبقى؟',
+    hoursPerDay: 'ساعات المشي والزيارة في اليوم',
+    hoursPerDayHint: 'لا تشمل وقت الراحة والأكل',
+    generateStops: 'احصل على محطات مقترحة',
+    generating: 'جارٍ إنشاء خطتك…',
+    recommendedStops: 'المحطات المقترحة',
+    noRecommendedStops: 'لا توجد محطات تناسب وقتك المتاح. حاول تعديل تفضيلاتك.',
+    adjustPreferences: 'تعديل التفضيلات',
+  },
   stop: {
     address: 'العنوان',
     timeAtStop: 'الوقت عند المحطة',
@@ -154,7 +182,17 @@ const he: Translations = {
     stops: (n) => `${n} עצירות`,
     minutes: (n) => `${n} דקות`,
   },
-  tour: { stopsSection: 'עצירות' },
+  tour: {
+    planYourVisit: 'תכנן את הביקור שלך',
+    daysStaying: 'כמה ימים אתה נשאר?',
+    hoursPerDay: 'שעות ביום להליכה וביקורים',
+    hoursPerDayHint: 'לא כולל זמן מנוחה ואכילה',
+    generateStops: 'קבל עצירות מומלצות',
+    generating: 'מייצר את המסלול שלך…',
+    recommendedStops: 'עצירות מומלצות',
+    noRecommendedStops: 'אין עצירות שמתאימות לזמן שלך. נסה לשנות את ההעדפות.',
+    adjustPreferences: 'שנה העדפות',
+  },
   stop: {
     address: 'כתובת',
     timeAtStop: 'זמן בעצירה',
@@ -198,7 +236,17 @@ const es: Translations = {
     stops: (n) => `${n} parada${n === 1 ? '' : 's'}`,
     minutes: (n) => `${n} minutos`,
   },
-  tour: { stopsSection: 'Paradas' },
+  tour: {
+    planYourVisit: 'Planifica tu visita',
+    daysStaying: '¿Cuántos días te quedas?',
+    hoursPerDay: 'Horas por día para caminar y visitar',
+    hoursPerDayHint: 'Sin incluir tiempo de descanso y comida',
+    generateStops: 'Obtener paradas recomendadas',
+    generating: 'Generando tu itinerario…',
+    recommendedStops: 'Paradas recomendadas',
+    noRecommendedStops: 'No hay paradas que se ajusten a tu tiempo disponible. Intenta ajustar tus preferencias.',
+    adjustPreferences: 'Ajustar preferencias',
+  },
   stop: {
     address: 'Dirección',
     timeAtStop: 'Tiempo en parada',
@@ -242,7 +290,17 @@ const fr: Translations = {
     stops: (n) => `${n} arrêt${n === 1 ? '' : 's'}`,
     minutes: (n) => `${n} minutes`,
   },
-  tour: { stopsSection: 'Arrêts' },
+  tour: {
+    planYourVisit: 'Planifiez votre visite',
+    daysStaying: 'Combien de jours restez-vous ?',
+    hoursPerDay: 'Heures par jour de marche et visites',
+    hoursPerDayHint: 'Sans compter le repos et les repas',
+    generateStops: 'Obtenir les arrêts recommandés',
+    generating: 'Génération de votre itinéraire…',
+    recommendedStops: 'Arrêts recommandés',
+    noRecommendedStops: 'Aucun arrêt ne correspond à votre temps disponible. Essayez d\'ajuster vos préférences.',
+    adjustPreferences: 'Ajuster les préférences',
+  },
   stop: {
     address: 'Adresse',
     timeAtStop: "Temps à l'arrêt",
