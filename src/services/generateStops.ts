@@ -6,10 +6,7 @@ const API_DELAY_MS = 1500;
  * Generates a recommended list of stops based on trip preferences and available stops.
  * Mimics an async API call so it can be swapped for a real AI-powered endpoint later.
  */
-export async function generateRecommendedStops(
-  allStops: Stop[],
-  preferences: TripPreferences,
-): Promise<Stop[]> {
+export async function generateRecommendedStops(allStops: Stop[], preferences: TripPreferences): Promise<Stop[]> {
   // Simulate network delay
   await new Promise((resolve) => setTimeout(resolve, API_DELAY_MS));
 
@@ -21,9 +18,12 @@ export async function generateRecommendedStops(
 
   for (const stop of allStops) {
     if (remaining <= 0) break;
+    // Account for walking time to next stop (if available) when budgeting
+    const walkTime = stop.walkingTime ?? 0;
+    const totalStopTime = stop.duration + walkTime;
     if (stop.duration <= remaining) {
       selected.push({ ...stop, order: selected.length + 1 });
-      remaining -= stop.duration;
+      remaining -= totalStopTime;
     }
   }
 

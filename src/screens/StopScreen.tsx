@@ -50,6 +50,12 @@ export default function StopScreen({ route }: Props) {
             <InfoRow icon="⏱" label={t.stop.timeAtStop} value={t.units.minutes(stop.duration)} />
             <View style={styles.divider} />
             <InfoRow icon="🔢" label={t.stop.stopNumber} value={t.stop.stopOnTour(stop.order)} />
+            {stop.price != null ? (
+              <>
+                <View style={styles.divider} />
+                <InfoRow icon="💰" label={t.stop.price} value={stop.price} />
+              </>
+            ) : null}
           </View>
 
           {/* Description */}
