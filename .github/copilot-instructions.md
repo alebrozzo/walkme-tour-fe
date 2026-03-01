@@ -29,12 +29,12 @@ index.ts       # Entry point (registers App)
 
 ## Commands
 
-| Task | Command |
-|------|---------|
-| Start dev server | `npm start` |
-| Type-check | `npm run typecheck` |
-| Lint | `npm run lint` |
-| Format | `npm run format` |
+| Task             | Command             |
+| ---------------- | ------------------- |
+| Start dev server | `npm start`         |
+| Type-check       | `npm run typecheck` |
+| Lint             | `npm run lint`      |
+| Format           | `npm run format`    |
 
 Always run `npm run lint` and `npm run format` before considering code complete.
 
@@ -62,20 +62,32 @@ Always run `npm run lint` and `npm run format` before considering code complete.
   ```ts
   const cancelRef = useRef<(() => void) | null>(null);
 
-  const handleAsync = useCallback(async () => {
-    let cancelled = false;
-    cancelRef.current = () => { cancelled = true; };
-    setLoading(true);
-    try {
-      const result = await someAsyncCall();
-      if (cancelled) return;
-      setState(result);
-    } finally {
-      if (!cancelled) setLoading(false);
-    }
-  }, [/* deps */]);
+  const handleAsync = useCallback(
+    async () => {
+      let cancelled = false;
+      cancelRef.current = () => {
+        cancelled = true;
+      };
+      setLoading(true);
+      try {
+        const result = await someAsyncCall();
+        if (cancelled) return;
+        setState(result);
+      } finally {
+        if (!cancelled) setLoading(false);
+      }
+    },
+    [
+      /* deps */
+    ],
+  );
 
-  useEffect(() => () => { cancelRef.current?.(); }, []);
+  useEffect(
+    () => () => {
+      cancelRef.current?.();
+    },
+    [],
+  );
   ```
 
 ### State Management

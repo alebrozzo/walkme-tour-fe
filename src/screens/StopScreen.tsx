@@ -1,7 +1,8 @@
-import React from 'react';
-import { ScrollView, StyleSheet, Text, View } from 'react-native';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
+import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
+import * as Speech from 'expo-speech';
 import { RootStackParamList } from '../types';
 import { TYPE_ICON } from '../constants/stopTypes';
 import { useLanguage } from '../contexts/LanguageContext';
@@ -29,8 +30,49 @@ function InfoRow({ icon, label, value }: InfoRowProps) {
 export default function StopScreen({ route }: Props) {
   const { stop, tourColor } = route.params;
   const { t, language } = useLanguage();
+  const [isSpeaking, setIsSpeaking] = useState(false);
+  const cancelRef = useRef<(() => void) | null>(null);
 
   const stopTypeLabel = t.stopTypes[stop.type] ?? stop.type.charAt(0).toUpperCase() + stop.type.slice(1);
+
+  const handleListen = useCallback(async () => {
+    if (isSpeaking) {
+      await Speech.stop();
+      setIsSpeaking(false);
+      return;
+    }
+
+    let cancelled = false;
+    cancelRef.current = () => {
+      cancelled = true;
+      Speech.stop();
+    };
+
+    setIsSpeaking(true);
+    try {
+      Speech.speak(stop.description, {
+        language: language.code,
+        onDone: () => {
+          if (!cancelled) setIsSpeaking(false);
+        },
+        onStopped: () => {
+          if (!cancelled) setIsSpeaking(false);
+        },
+        onError: () => {
+          if (!cancelled) setIsSpeaking(false);
+        },
+      });
+    } catch {
+      if (!cancelled) setIsSpeaking(false);
+    }
+  }, [isSpeaking, stop.description, language.code]);
+
+  useEffect(
+    () => () => {
+      cancelRef.current?.();
+    },
+    [],
+  );
 
   return (
     <SafeAreaView style={styles.safeArea} edges={['bottom']}>
@@ -48,8 +90,6 @@ export default function StopScreen({ route }: Props) {
             <InfoRow icon="📍" label={t.stop.address} value={stop.address} />
             <View style={styles.divider} />
             <InfoRow icon="⏱" label={t.stop.timeAtStop} value={t.units.minutes(stop.duration)} />
-            <View style={styles.divider} />
-            <InfoRow icon="🔢" label={t.stop.stopNumber} value={t.stop.stopOnTour(stop.order)} />
             {stop.price ? (
               <>
                 <View style={styles.divider} />
@@ -59,7 +99,20 @@ export default function StopScreen({ route }: Props) {
           </View>
 
           {/* Description */}
-          <Text style={styles.sectionTitle}>{t.stop.about}</Text>
+          <View style={styles.sectionHeader}>
+            <Text style={styles.sectionTitle}>{t.stop.about}</Text>
+            <Pressable
+              style={[styles.listenButton, isSpeaking && styles.listenButtonActive]}
+              onPress={handleListen}
+              accessibilityRole="button"
+              accessibilityLabel={isSpeaking ? t.stop.stopListening : t.stop.listenAbout}
+            >
+              <Text style={styles.listenButtonIcon}>{isSpeaking ? '⏹' : '🔊'}</Text>
+              <Text style={[styles.listenButtonText, isSpeaking && styles.listenButtonTextActive]}>
+                {isSpeaking ? t.stop.stopListening : t.stop.listenAbout}
+              </Text>
+            </Pressable>
+          </View>
           <View style={styles.card}>
             <Text style={styles.description}>{stop.description}</Text>
           </View>
@@ -158,6 +211,38 @@ const styles = StyleSheet.create({
     fontWeight: '700',
     color: '#1A1A2E',
     marginBottom: 10,
+  },
+  sectionHeader: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    marginBottom: 10,
+  },
+  listenButton: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 4,
+    paddingHorizontal: 12,
+    paddingVertical: 6,
+    borderRadius: 20,
+    backgroundColor: '#EEF2FF',
+    borderWidth: 1,
+    borderColor: '#C7D2FE',
+  },
+  listenButtonActive: {
+    backgroundColor: '#FEE2E2',
+    borderColor: '#FCA5A5',
+  },
+  listenButtonIcon: {
+    fontSize: 14,
+  },
+  listenButtonText: {
+    fontSize: 13,
+    fontWeight: '600',
+    color: '#4F46E5',
+  },
+  listenButtonTextActive: {
+    color: '#DC2626',
   },
   card: {
     backgroundColor: '#FFFFFF',
