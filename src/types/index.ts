@@ -20,6 +20,10 @@ export interface Stop {
   description: string;
   duration: number;
   tips?: string;
+  /** Walking time in minutes to reach the next stop. Omitted for the last stop. */
+  walkingTime?: number;
+  /** Entry price as a display string (e.g. "€15"). Omitted when free. */
+  price?: string;
 }
 
 export interface Tour {

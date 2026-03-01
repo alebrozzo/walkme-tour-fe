@@ -22,6 +22,8 @@ const tours: Tour[] = [
           "The iconic iron lattice tower built by Gustave Eiffel for the 1889 World's Fair. At 330 metres tall, it was the world's tallest structure for over 40 years.",
         duration: 45,
         tips: 'Book tickets online to avoid long queues. The view from the second floor offers the best balance of height and detail.',
+        walkingTime: 15,
+        price: '€17',
       },
       {
         id: '1-2',
@@ -33,6 +35,8 @@ const tours: Tour[] = [
           "Housed in a former railway station, the Musée d'Orsay holds the world's largest collection of Impressionist and Post-Impressionist masterpieces, including works by Monet, Renoir, and Van Gogh.",
         duration: 60,
         tips: 'The museum is closed on Mondays. The café on the top floor has wonderful views of the Seine.',
+        walkingTime: 15,
+        price: '€16',
       },
       {
         id: '1-3',
@@ -44,6 +48,7 @@ const tours: Tour[] = [
           'A masterpiece of French Gothic architecture dating from the 12th century. The cathedral is undergoing restoration following the 2019 fire.',
         duration: 30,
         tips: 'Even if entering is not possible, the exterior and the plaza are worth visiting. Look out for the famous gargoyles.',
+        walkingTime: 10,
       },
       {
         id: '1-4',
@@ -55,6 +60,7 @@ const tours: Tour[] = [
           "One of Paris's most fashionable and historic neighborhoods, home to medieval architecture, art galleries, boutiques, and some of the city's best falafel.",
         duration: 30,
         tips: "Stroll through Place des Vosges, Paris's oldest planned square. Try a falafel from L'As du Fallafel on Rue des Rosiers.",
+        walkingTime: 8,
       },
       {
         id: '1-5',
@@ -66,6 +72,7 @@ const tours: Tour[] = [
           "A radical example of high-tech architecture, the Pompidou Centre houses Europe's largest modern art museum. Its colorful pipes and exposed structure make it a landmark in its own right.",
         duration: 45,
         tips: 'The rooftop terrace offers sweeping views of Paris at no extra charge beyond the museum ticket.',
+        price: '€15',
       },
     ],
   },
@@ -89,6 +96,8 @@ const tours: Tour[] = [
           "The world's largest amphitheatre, completed in 80 AD. It could hold up to 80,000 spectators who gathered to watch gladiatorial contests, animal hunts, and public spectacles.",
         duration: 60,
         tips: 'Book tickets in advance — the queues without a booking can take hours. The combined ticket includes the Roman Forum and Palatine Hill.',
+        walkingTime: 5,
+        price: '€16',
       },
       {
         id: '2-2',
@@ -100,6 +109,7 @@ const tours: Tour[] = [
           'The heart of ancient Rome, the Forum was a rectangular plaza surrounded by ruins of government buildings, temples, and markets. It was the centre of Roman public life for centuries.',
         duration: 45,
         tips: 'Walk to the top of Palatine Hill for a panoramic view of the entire Forum below.',
+        walkingTime: 15,
       },
       {
         id: '2-3',
@@ -111,6 +121,7 @@ const tours: Tour[] = [
           'The largest Baroque fountain in Rome and one of the most famous fountains in the world. The tradition of throwing a coin over your left shoulder with your right hand ensures a return to Rome.',
         duration: 20,
         tips: 'Visit early in the morning or late at night to avoid the largest crowds and get the best photos.',
+        walkingTime: 10,
       },
       {
         id: '2-4',
@@ -122,6 +133,8 @@ const tours: Tour[] = [
           'Built around 125 AD, the Pantheon is the best-preserved ancient Roman building. Its magnificent dome with the open oculus is a marvel of engineering that influenced architecture for centuries.',
         duration: 30,
         tips: 'Arrive early — the interior can get very crowded. Look up at the oculus: the only source of natural light in the building.',
+        walkingTime: 5,
+        price: '€5',
       },
       {
         id: '2-5',
@@ -133,6 +146,7 @@ const tours: Tour[] = [
           "A stunning Baroque piazza built on the site of a 1st-century stadium. It is home to three magnificent fountains, including Bernini's famous Fountain of the Four Rivers.",
         duration: 25,
         tips: 'The surrounding cafes are touristy, but sitting at the piazza with a gelato is an unmissable Roman experience.',
+        walkingTime: 15,
       },
       {
         id: '2-6',
@@ -144,6 +158,7 @@ const tours: Tour[] = [
           "One of the world's greatest art collections, culminating in Michelangelo's breathtaking Sistine Chapel ceiling. The museums contain galleries of Greek, Roman and Renaissance art.",
         duration: 120,
         tips: 'Book tickets well in advance. Photography is permitted in the museums but not in the Sistine Chapel.',
+        price: '€17',
       },
     ],
   },
@@ -168,6 +183,7 @@ const tours: Tour[] = [
           "Tokyo's oldest and most significant Buddhist temple, founded in 645 AD. The iconic Kaminarimon (Thunder Gate) with its massive red lantern is one of Japan's most photographed sights.",
         duration: 45,
         tips: 'Visit at sunrise for a serene experience before the crowds arrive. Draw an omikuji (fortune slip) for a traditional experience.',
+        walkingTime: 15,
       },
       {
         id: '3-2',
@@ -179,6 +195,7 @@ const tours: Tour[] = [
           "The world's capital of anime, manga, and electronics. Multi-storey buildings crammed with gadgets, figurines, arcade machines, and maid cafes make this one of Tokyo's most unique districts.",
         duration: 45,
         tips: "Explore the side streets as well as the main boulevard — many of the best shops are on upper floors of buildings you'd easily walk past.",
+        walkingTime: 10,
       },
       {
         id: '3-3',
@@ -190,6 +207,7 @@ const tours: Tour[] = [
           "Japan's first public park, home to multiple world-class museums, a zoo, Ueno Tosho-gu shrine, and the famous Shinobazu Pond. Renowned for cherry blossom season.",
         duration: 60,
         tips: 'The Tokyo National Museum is the largest art museum in Japan. During hanami (cherry blossom) season in late March, the park is spectacular.',
+        walkingTime: 20,
       },
       {
         id: '3-4',
@@ -201,6 +219,7 @@ const tours: Tour[] = [
           "The world's busiest pedestrian crossing, where hundreds of people cross simultaneously from all directions. The surrounding neon signs, screens, and shops are quintessential modern Tokyo.",
         duration: 20,
         tips: "Watch from above at the Starbucks on the corner or from the Shibuya Sky observation deck for the best bird's-eye view of the famous crossing.",
+        walkingTime: 10,
       },
       {
         id: '3-5',
@@ -236,6 +255,7 @@ const tours: Tour[] = [
           'An 843-acre urban oasis in the heart of Manhattan. Designed by Frederick Law Olmsted and Calvert Vaux, Central Park contains meadows, lakes, forests, and iconic landmarks like Bethesda Fountain and Strawberry Fields.',
         duration: 60,
         tips: 'Rent a Citi Bike to cover more ground. Visit the Conservatory Garden in the northeast corner for a peaceful, less-visited gem.',
+        walkingTime: 5,
       },
       {
         id: '4-2',
@@ -247,6 +267,8 @@ const tours: Tour[] = [
           "One of the world's largest and most comprehensive art museums, the Met houses over two million works spanning 5,000 years of human history from every corner of the globe.",
         duration: 90,
         tips: 'The Egyptian Temple of Dendur and the rooftop sculpture garden are crowd favourites.',
+        walkingTime: 20,
+        price: '$30',
       },
       {
         id: '4-3',
@@ -258,6 +280,7 @@ const tours: Tour[] = [
           "The commercial and entertainment hub of Manhattan, Times Square is famous for its towering LED billboards, Broadway theatres, and its role as the site of the New Year's Eve ball drop.",
         duration: 30,
         tips: 'Visit at night for the full neon spectacle. Browse the TKTS booth for same-day discounted Broadway tickets.',
+        walkingTime: 15,
       },
       {
         id: '4-4',
@@ -269,6 +292,7 @@ const tours: Tour[] = [
           'An elevated linear park built on a former New York Central Railroad spur. The 1.45-mile greenway offers unique views of the city, contemporary art installations, and beautiful plantings.',
         duration: 45,
         tips: 'Enter at 14th Street and walk north or south. The park is free and open daily. Chelsea Market at the base is great for food.',
+        walkingTime: 15,
       },
       {
         id: '4-5',
@@ -304,6 +328,8 @@ const tours: Tour[] = [
           "Antoni Gaudí's unfinished masterpiece and the most visited monument in Spain. The basilica has been under construction since 1882 and blends Gothic and Art Nouveau styles in an extraordinary way.",
         duration: 60,
         tips: 'Book tickets online months in advance. Visit in the morning when sunlight streams through the stained glass windows on the eastern facade.',
+        walkingTime: 20,
+        price: '€26',
       },
       {
         id: '5-2',
@@ -315,6 +341,8 @@ const tours: Tour[] = [
           'A public park designed by Antoni Gaudí, featuring colourful mosaic terraces, gingerbread gatehouses, a forest of tilted stone columns, and sweeping views over the city and the Mediterranean.',
         duration: 60,
         tips: "The Monumental Zone requires a timed ticket — book online. The park's outer areas are free to explore.",
+        walkingTime: 20,
+        price: '€10',
       },
       {
         id: '5-3',
@@ -326,6 +354,7 @@ const tours: Tour[] = [
           'The historic centre of Barcelona with a labyrinth of medieval streets built over Roman ruins. Home to the Barcelona Cathedral, Plaça Reial, and countless tapas bars and artisan shops.',
         duration: 45,
         tips: "Look down: Roman walls are incorporated into medieval buildings throughout. Seek out the Temple d'August for Roman columns inside a Gothic courtyard.",
+        walkingTime: 5,
       },
       {
         id: '5-4',
@@ -337,6 +366,7 @@ const tours: Tour[] = [
           "Barcelona's most famous public market, overflowing with fresh produce, jamón, seafood, and fresh juice stalls. A sensory feast and a vital part of Catalan culinary culture.",
         duration: 30,
         tips: 'Head to the back of the market for better prices and more authentic produce stalls. Arrive before noon as many vendors close in the afternoon.',
+        walkingTime: 15,
       },
       {
         id: '5-5',
@@ -372,6 +402,8 @@ const tours: Tour[] = [
           'An 11th-century Moorish fortress overlooking the city, known for its gardens, arches, and panoramic views over Málaga’s port.',
         duration: 45,
         tips: 'Visit early in the morning for cooler temperatures and fewer crowds on the uphill walk.',
+        walkingTime: 8,
+        price: '€4',
       },
       {
         id: '6-2',
@@ -383,6 +415,8 @@ const tours: Tour[] = [
           'A major collection dedicated to Pablo Picasso in his birth city, showcasing works from different creative periods.',
         duration: 50,
         tips: 'Reserve a timed entry and pair it with a short walk to nearby Plaza de la Merced.',
+        walkingTime: 10,
+        price: '€12',
       },
       {
         id: '6-3',
@@ -394,6 +428,7 @@ const tours: Tour[] = [
           'A waterfront shopping and dining promenade with marina views, public art, and easy access to the seaside path.',
         duration: 40,
         tips: 'Sunset is the best time for the harbor views and a relaxed walk by the water.',
+        walkingTime: 8,
       },
       {
         id: '6-4',
@@ -429,6 +464,8 @@ const tours: Tour[] = [
           'A restored medieval fortress on a hill by the river mouth, offering broad views of the coastline and town.',
         duration: 40,
         tips: 'Wear comfortable shoes for the short climb and check event listings for concerts at the castle grounds.',
+        walkingTime: 15,
+        price: '€3',
       },
       {
         id: '7-2',
@@ -439,6 +476,7 @@ const tours: Tour[] = [
         description: 'A lively harbor area lined with cafés, boats, and seaside restaurants in the heart of town.',
         duration: 35,
         tips: 'Great spot for a midday break; seafood restaurants are busiest during lunch hours.',
+        walkingTime: 10,
       },
       {
         id: '7-3',
@@ -450,6 +488,8 @@ const tours: Tour[] = [
           'An immersive urban zoo and botanical environment designed around naturalistic habitats and conservation.',
         duration: 50,
         tips: 'Book tickets online and visit earlier in the day when many animals are most active.',
+        walkingTime: 10,
+        price: '€24',
       },
       {
         id: '7-4',
@@ -484,6 +524,7 @@ const tours: Tour[] = [
           'The historic and political heart of Buenos Aires, surrounded by landmarks such as the Casa Rosada and the Metropolitan Cathedral.',
         duration: 35,
         tips: 'Visit in the morning to see the square before heavy traffic and tour groups arrive.',
+        walkingTime: 15,
       },
       {
         id: '8-2',
@@ -494,6 +535,7 @@ const tours: Tour[] = [
         description: 'A historic neighborhood known for colonial architecture, tango culture, and antique markets.',
         duration: 50,
         tips: 'Sunday is ideal for the famous street market and spontaneous tango performances.',
+        walkingTime: 15,
       },
       {
         id: '8-3',
@@ -505,6 +547,7 @@ const tours: Tour[] = [
           'One of the city’s most iconic areas, featuring colorful houses, street art, and strong immigrant heritage.',
         duration: 45,
         tips: 'Stay on the main pedestrian routes and keep valuables secure in busy areas.',
+        walkingTime: 20,
       },
       {
         id: '8-4',
@@ -539,6 +582,7 @@ const tours: Tour[] = [
           'A world-famous beach known for its sweeping bay, lively promenade, and iconic black-and-white wave mosaic.',
         duration: 45,
         tips: 'Morning walks are cooler and offer a calmer atmosphere than midday.',
+        walkingTime: 10,
       },
       {
         id: '9-2',
@@ -550,6 +594,7 @@ const tours: Tour[] = [
           'A stylish beachside district with boutiques, cafés, and one of Rio’s most beautiful sunset spots.',
         duration: 40,
         tips: 'Head toward Arpoador in late afternoon for classic sunset views.',
+        walkingTime: 15,
       },
       {
         id: '9-3',
@@ -560,6 +605,7 @@ const tours: Tour[] = [
         description: 'A vibrant tiled staircase created by artist Jorge Selarón, connecting Lapa and Santa Teresa.',
         duration: 35,
         tips: 'Go during daylight and combine this stop with a walk around the Lapa arches.',
+        walkingTime: 15,
       },
       {
         id: '9-4',
@@ -571,6 +617,7 @@ const tours: Tour[] = [
           'Start point for one of Rio’s classic viewpoints, with panoramic scenes of the city, bay, and beaches.',
         duration: 60,
         tips: 'Book cable car tickets online to reduce queue time, especially on weekends.',
+        price: 'R$130',
       },
     ],
   },
@@ -593,6 +640,7 @@ const tours: Tour[] = [
         description: 'A central square and symbolic kilometer zero point for Spain’s national road network.',
         duration: 25,
         tips: 'Early morning is best to enjoy the square without dense foot traffic.',
+        walkingTime: 5,
       },
       {
         id: '10-2',
@@ -604,6 +652,7 @@ const tours: Tour[] = [
           'A historic arcaded square that has hosted markets, celebrations, and major city events for centuries.',
         duration: 30,
         tips: 'Try a traditional bocadillo de calamares at one of the surrounding bars.',
+        walkingTime: 10,
       },
       {
         id: '10-3',
@@ -614,6 +663,8 @@ const tours: Tour[] = [
         description: 'The largest royal palace in Western Europe, used for state ceremonies and open to visitors.',
         duration: 50,
         tips: 'Check official visiting hours in advance because ceremonial events may alter access.',
+        walkingTime: 15,
+        price: '€16',
       },
       {
         id: '10-4',
@@ -624,6 +675,7 @@ const tours: Tour[] = [
         description: 'One of Europe’s premier art museums, featuring masterpieces by Velázquez, Goya, and El Greco.',
         duration: 60,
         tips: 'Focus on a few key galleries to avoid museum fatigue during shorter visits.',
+        price: '€15',
       },
     ],
   },
@@ -648,6 +700,7 @@ const tours: Tour[] = [
           'A monumental riverside square rebuilt after the 1755 earthquake and one of Lisbon’s most iconic spaces.',
         duration: 30,
         tips: 'Walk to the river steps for wide views over the Tagus estuary.',
+        walkingTime: 10,
       },
       {
         id: '11-2',
@@ -659,6 +712,7 @@ const tours: Tour[] = [
           'Lisbon’s oldest district, with narrow lanes, tiled facades, and viewpoints above the city rooftops.',
         duration: 55,
         tips: 'Wear comfortable shoes — the hills and cobblestones are steep in places.',
+        walkingTime: 8,
       },
       {
         id: '11-3',
@@ -669,6 +723,8 @@ const tours: Tour[] = [
         description: 'A hilltop castle with centuries of history and sweeping panoramic views across Lisbon.',
         duration: 55,
         tips: 'Arrive earlier in the day to avoid queues and stronger afternoon sun.',
+        walkingTime: 15,
+        price: '€15',
       },
       {
         id: '11-4',
@@ -703,6 +759,7 @@ const tours: Tour[] = [
         description: 'An 18th-century neoclassical monument and one of Berlin’s most recognized symbols of unity.',
         duration: 30,
         tips: 'Visit at golden hour for softer light and fewer daytime tour crowds.',
+        walkingTime: 8,
       },
       {
         id: '12-2',
@@ -713,6 +770,7 @@ const tours: Tour[] = [
         description: 'Seat of the German parliament, famous for its modern glass dome and city views.',
         duration: 45,
         tips: 'Pre-register for dome visits online; ID is required for entry.',
+        walkingTime: 15,
       },
       {
         id: '12-3',
@@ -723,6 +781,8 @@ const tours: Tour[] = [
         description: 'A UNESCO-listed ensemble of world-class museums spanning archaeology, antiquity, and fine arts.',
         duration: 70,
         tips: 'Choose one or two museums for a focused visit unless you plan a full day.',
+        walkingTime: 10,
+        price: '€19',
       },
       {
         id: '12-4',
@@ -756,6 +816,7 @@ const tours: Tour[] = [
         description: 'One of the largest public squares in the world and the ceremonial center of Mexico City.',
         duration: 35,
         tips: 'Check for temporary exhibitions and cultural events often held in the square.',
+        walkingTime: 8,
       },
       {
         id: '13-2',
@@ -767,6 +828,8 @@ const tours: Tour[] = [
           'A cultural icon blending Art Nouveau and Art Deco architecture, home to murals and major performances.',
         duration: 45,
         tips: 'Visit both interior halls and nearby Alameda Central for a complete stop.',
+        walkingTime: 15,
+        price: 'MX$80',
       },
       {
         id: '13-3',
@@ -777,6 +840,7 @@ const tours: Tour[] = [
         description: 'A huge urban park with lakes, monuments, and museums, often called the lungs of the city.',
         duration: 70,
         tips: 'Weekend mornings are active but pleasant; weekdays are usually less crowded.',
+        walkingTime: 5,
       },
       {
         id: '13-4',
@@ -788,6 +852,7 @@ const tours: Tour[] = [
           'Mexico’s flagship anthropology museum, with exceptional collections from pre-Columbian civilizations.',
         duration: 70,
         tips: 'Prioritize key galleries such as Mexica and Maya if your time is limited.',
+        price: 'MX$90',
       },
     ],
   },
@@ -811,6 +876,7 @@ const tours: Tour[] = [
         description: 'Historic riverside gardens featuring native plants, seasonal blooms, and tranquil walking paths.',
         duration: 45,
         tips: 'Start in the morning for calmer paths and cooler temperatures.',
+        walkingTime: 5,
       },
       {
         id: '14-2',
@@ -822,6 +888,7 @@ const tours: Tour[] = [
           'A key cultural institution area near the Arts Centre, showcasing Christchurch’s heritage district.',
         duration: 35,
         tips: 'Pair this stop with nearby heritage courtyards and public art lanes.',
+        walkingTime: 10,
       },
       {
         id: '14-3',
@@ -832,6 +899,7 @@ const tours: Tour[] = [
         description: 'A colorful pedestrian street with boutique shops, cafés, and iconic Spanish Mission facades.',
         duration: 35,
         tips: 'Great place for a coffee break and street photos.',
+        walkingTime: 10,
       },
       {
         id: '14-4',
@@ -864,6 +932,7 @@ const tours: Tour[] = [
         description: 'A central square tied to modern Egyptian history and surrounded by key institutions.',
         duration: 25,
         tips: 'Best visited outside peak traffic times.',
+        walkingTime: 5,
       },
       {
         id: '15-2',
@@ -874,6 +943,8 @@ const tours: Tour[] = [
         description: 'A landmark museum district known for major ancient Egyptian collections.',
         duration: 60,
         tips: 'Prioritize key halls if your visit window is short.',
+        walkingTime: 15,
+        price: 'E£300',
       },
       {
         id: '15-3',
@@ -884,6 +955,7 @@ const tours: Tour[] = [
         description: 'A historic bazaar with narrow lanes, craft shops, and centuries-old trading culture.',
         duration: 50,
         tips: 'Keep cash handy and expect lively bargaining.',
+        walkingTime: 12,
       },
       {
         id: '15-4',
@@ -894,6 +966,7 @@ const tours: Tour[] = [
         description: 'An elevated green space with broad panoramas over historic Cairo.',
         duration: 45,
         tips: 'Late afternoon gives the best light over the old city skyline.',
+        price: 'E£20',
       },
     ],
   },
@@ -916,6 +989,8 @@ const tours: Tour[] = [
         description: 'A grand Joseon-era palace complex and one of Seoul’s signature heritage landmarks.',
         duration: 60,
         tips: 'Check guard-changing times for a more complete visit.',
+        walkingTime: 10,
+        price: '₩3,000',
       },
       {
         id: '16-2',
@@ -926,6 +1001,7 @@ const tours: Tour[] = [
         description: 'A preserved hillside quarter of traditional hanok houses and narrow lanes.',
         duration: 45,
         tips: 'Keep noise low in residential alleys and follow local signage.',
+        walkingTime: 10,
       },
       {
         id: '16-3',
@@ -936,6 +1012,7 @@ const tours: Tour[] = [
         description: 'An urban stream corridor that cuts through downtown with walkways and public art.',
         duration: 45,
         tips: 'Evening walks are popular and cooler in warmer months.',
+        walkingTime: 12,
       },
       {
         id: '16-4',
@@ -968,6 +1045,7 @@ const tours: Tour[] = [
         description: 'A world-famous performing arts landmark with panoramic harbor views.',
         duration: 35,
         tips: 'Arrive early for clear photos before heavy visitor flow.',
+        walkingTime: 10,
       },
       {
         id: '17-2',
@@ -978,6 +1056,7 @@ const tours: Tour[] = [
         description: 'Sydney’s historic district of sandstone lanes, markets, and harborfront pubs.',
         duration: 45,
         tips: 'Weekends often include craft markets and live street performances.',
+        walkingTime: 12,
       },
       {
         id: '17-3',
@@ -988,6 +1067,7 @@ const tours: Tour[] = [
         description: 'A large harborside garden network with open lawns and native plant collections.',
         duration: 55,
         tips: 'Follow the waterfront path toward Mrs Macquarie’s Point for classic views.',
+        walkingTime: 15,
       },
       {
         id: '17-4',
@@ -1020,6 +1100,7 @@ const tours: Tour[] = [
         description: 'A major public park in central Nairobi used for recreation and national gatherings.',
         duration: 35,
         tips: 'Morning visits are usually cooler and less busy.',
+        walkingTime: 8,
       },
       {
         id: '18-2',
@@ -1030,6 +1111,8 @@ const tours: Tour[] = [
         description: 'A recognizable city landmark in the business district with panoramic rooftop views nearby.',
         duration: 40,
         tips: 'Carry ID in case access requirements apply to specific sections.',
+        walkingTime: 10,
+        price: 'KSh500',
       },
       {
         id: '18-3',
@@ -1040,6 +1123,7 @@ const tours: Tour[] = [
         description: 'A popular craft market known for beadwork, textiles, and local artisan products.',
         duration: 50,
         tips: 'Check the day’s location in advance, as venues vary by weekday.',
+        walkingTime: 10,
       },
       {
         id: '18-4',
@@ -1073,6 +1157,8 @@ const tours: Tour[] = [
         description: 'A historic masterpiece that has served as cathedral, mosque, and museum across centuries.',
         duration: 50,
         tips: 'Dress respectfully and verify visiting windows before arrival.',
+        walkingTime: 5,
+        price: '₺750',
       },
       {
         id: '19-2',
@@ -1083,6 +1169,7 @@ const tours: Tour[] = [
         description: 'A monumental square linking key Byzantine and Ottoman-era landmarks.',
         duration: 30,
         tips: 'This area is very walkable; allow extra time for photo stops.',
+        walkingTime: 10,
       },
       {
         id: '19-3',
@@ -1093,6 +1180,7 @@ const tours: Tour[] = [
         description: 'One of the world’s oldest covered markets with thousands of shops and intricate passageways.',
         duration: 55,
         tips: 'Keep navigation simple by noting your entry gate before exploring deep inside.',
+        walkingTime: 12,
       },
       {
         id: '19-4',
@@ -1125,6 +1213,7 @@ const tours: Tour[] = [
         description: 'A signature harborfront location with mountain and seaplane views.',
         duration: 30,
         tips: 'Clear mornings often provide the best mountain visibility.',
+        walkingTime: 8,
       },
       {
         id: '20-2',
@@ -1135,6 +1224,7 @@ const tours: Tour[] = [
         description: 'A historic district with brick streets, design shops, and the famous steam clock area.',
         duration: 40,
         tips: 'Walk side streets for quieter photo spots.',
+        walkingTime: 15,
       },
       {
         id: '20-3',
@@ -1145,6 +1235,7 @@ const tours: Tour[] = [
         description: 'A world-renowned urban park loop with forest, shoreline, and city panoramas.',
         duration: 70,
         tips: 'Follow marked pedestrian paths and bring a light layer for coastal wind.',
+        walkingTime: 10,
       },
       {
         id: '20-4',
@@ -1177,6 +1268,8 @@ const tours: Tour[] = [
         description: 'A ceremonial complex and one of Bangkok’s most important historic attractions.',
         duration: 55,
         tips: 'Strict dress codes apply; plan attire before arriving.',
+        walkingTime: 8,
+        price: '฿500',
       },
       {
         id: '21-2',
@@ -1187,6 +1280,8 @@ const tours: Tour[] = [
         description: 'A major temple complex famous for the reclining Buddha and traditional architecture.',
         duration: 45,
         tips: 'Hydrate often and carry small cash for entrance and local purchases.',
+        walkingTime: 10,
+        price: '฿300',
       },
       {
         id: '21-3',
@@ -1197,6 +1292,7 @@ const tours: Tour[] = [
         description: 'A large flower and produce market with colorful stalls and nonstop activity.',
         duration: 45,
         tips: 'Early morning and evening are both lively times to visit.',
+        walkingTime: 8,
       },
       {
         id: '21-4',
@@ -1229,6 +1325,8 @@ const tours: Tour[] = [
         description: 'A striking church and city symbol with a tower viewpoint over Reykjavík.',
         duration: 35,
         tips: 'Wind can be strong — bring an extra layer year-round.',
+        walkingTime: 8,
+        price: '1,200 kr',
       },
       {
         id: '22-2',
@@ -1239,6 +1337,7 @@ const tours: Tour[] = [
         description: 'The main shopping and café street filled with local design stores and eateries.',
         duration: 40,
         tips: 'Check side streets for independent shops and murals.',
+        walkingTime: 10,
       },
       {
         id: '22-3',
@@ -1249,6 +1348,7 @@ const tours: Tour[] = [
         description: 'A modern glass waterfront venue known for its geometric facade and harbor setting.',
         duration: 35,
         tips: 'Visit around dusk for dramatic light on the glass panels.',
+        walkingTime: 5,
       },
       {
         id: '22-4',
@@ -1281,6 +1381,7 @@ const tours: Tour[] = [
         description: 'The city’s bustling main square known for performers, stalls, and evening energy.',
         duration: 45,
         tips: 'Return at night if possible to see the square’s full food-stall atmosphere.',
+        walkingTime: 8,
       },
       {
         id: '23-2',
@@ -1291,6 +1392,7 @@ const tours: Tour[] = [
         description: 'A landmark mosque precinct with open gardens and one of Marrakech’s defining skylines.',
         duration: 35,
         tips: 'Observe local access rules for religious areas and visiting boundaries.',
+        walkingTime: 10,
       },
       {
         id: '23-3',
@@ -1301,6 +1403,8 @@ const tours: Tour[] = [
         description: 'A 19th-century palace complex noted for courtyards, zellige tilework, and carved cedar.',
         duration: 50,
         tips: 'Arrive earlier in the day to avoid larger guided groups.',
+        walkingTime: 12,
+        price: '70 MAD',
       },
       {
         id: '23-4',

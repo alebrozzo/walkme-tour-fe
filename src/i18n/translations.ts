@@ -40,6 +40,8 @@ export interface Translations {
     recommendedStops: string;
     noRecommendedStops: string;
     adjustPreferences: string;
+    walkingMinutes: (n: number) => string;
+    free: string;
   };
   stop: {
     address: string;
@@ -48,6 +50,7 @@ export interface Translations {
     stopOnTour: (n: number) => string;
     about: string;
     visitorTips: string;
+    price: string;
   };
   stopTypes: Record<StopType, string>;
   language: string;
@@ -84,6 +87,8 @@ const en: Translations = {
     recommendedStops: 'Recommended Stops',
     noRecommendedStops: 'No stops fit your available time. Try adjusting your preferences.',
     adjustPreferences: 'Adjust Preferences',
+    walkingMinutes: (n) => `${n} min walk`,
+    free: 'Free',
   },
   stop: {
     address: 'Address',
@@ -92,6 +97,7 @@ const en: Translations = {
     stopOnTour: (n) => `Stop ${n} on the tour`,
     about: 'About',
     visitorTips: 'Visitor Tips',
+    price: 'Price',
   },
   stopTypes: {
     landmark: 'Landmark',
@@ -138,6 +144,8 @@ const ar: Translations = {
     recommendedStops: 'المحطات المقترحة',
     noRecommendedStops: 'لا توجد محطات تناسب وقتك المتاح. حاول تعديل تفضيلاتك.',
     adjustPreferences: 'تعديل التفضيلات',
+    walkingMinutes: (n) => `${n} دقائق مشي`,
+    free: 'مجاني',
   },
   stop: {
     address: 'العنوان',
@@ -146,6 +154,7 @@ const ar: Translations = {
     stopOnTour: (n) => `المحطة ${n} في الجولة`,
     about: 'حول',
     visitorTips: 'نصائح للزوار',
+    price: 'السعر',
   },
   stopTypes: {
     landmark: 'معلم',
@@ -192,6 +201,8 @@ const he: Translations = {
     recommendedStops: 'עצירות מומלצות',
     noRecommendedStops: 'אין עצירות שמתאימות לזמן שלך. נסה לשנות את ההעדפות.',
     adjustPreferences: 'שנה העדפות',
+    walkingMinutes: (n) => `${n} דקות הליכה`,
+    free: 'חינם',
   },
   stop: {
     address: 'כתובת',
@@ -200,6 +211,7 @@ const he: Translations = {
     stopOnTour: (n) => `עצירה ${n} בסיור`,
     about: 'אודות',
     visitorTips: 'טיפים למבקרים',
+    price: 'מחיר',
   },
   stopTypes: {
     landmark: 'אתר',
@@ -246,6 +258,8 @@ const es: Translations = {
     recommendedStops: 'Paradas recomendadas',
     noRecommendedStops: 'No hay paradas que se ajusten a tu tiempo disponible. Intenta ajustar tus preferencias.',
     adjustPreferences: 'Ajustar preferencias',
+    walkingMinutes: (n) => `${n} min caminando`,
+    free: 'Gratis',
   },
   stop: {
     address: 'Dirección',
@@ -254,6 +268,7 @@ const es: Translations = {
     stopOnTour: (n) => `Parada ${n} del tour`,
     about: 'Acerca de',
     visitorTips: 'Consejos para visitantes',
+    price: 'Precio',
   },
   stopTypes: {
     landmark: 'Monumento',
@@ -298,8 +313,10 @@ const fr: Translations = {
     generateStops: 'Obtenir les arrêts recommandés',
     generating: 'Génération de votre itinéraire…',
     recommendedStops: 'Arrêts recommandés',
-    noRecommendedStops: 'Aucun arrêt ne correspond à votre temps disponible. Essayez d\'ajuster vos préférences.',
+    noRecommendedStops: "Aucun arrêt ne correspond à votre temps disponible. Essayez d'ajuster vos préférences.",
     adjustPreferences: 'Ajuster les préférences',
+    walkingMinutes: (n) => `${n} min à pied`,
+    free: 'Gratuit',
   },
   stop: {
     address: 'Adresse',
@@ -308,6 +325,7 @@ const fr: Translations = {
     stopOnTour: (n) => `Arrêt ${n} du tour`,
     about: 'À propos',
     visitorTips: 'Conseils aux visiteurs',
+    price: 'Prix',
   },
   stopTypes: {
     landmark: 'Monument',

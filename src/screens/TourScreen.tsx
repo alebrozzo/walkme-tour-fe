@@ -40,9 +40,12 @@ function StopRow({ stop, tourColor, onPress }: StopRowProps) {
         <Text style={styles.stopAddress} numberOfLines={1}>
           {stop.address}
         </Text>
-        <Text style={styles.stopDuration}>
-          ⏱ {stop.duration} {t.units.min}
-        </Text>
+        <View style={styles.stopMeta}>
+          <Text style={styles.stopDuration}>
+            ⏱ {stop.duration} {t.units.min}
+          </Text>
+          {stop.price ? <Text style={styles.stopPrice}>💰 {stop.price}</Text> : null}
+        </View>
       </View>
       <Text style={styles.chevron}>{language.isRTL ? '‹' : '›'}</Text>
     </TouchableOpacity>
@@ -52,6 +55,25 @@ function StopRow({ stop, tourColor, onPress }: StopRowProps) {
 interface PreferencesFormProps {
   tour: Props['route']['params']['tour'];
   onGenerate: (prefs: TripPreferences) => void;
+}
+
+interface WalkingConnectorProps {
+  walkingTime: number;
+  tourColor: string;
+}
+
+function WalkingConnector({ walkingTime, tourColor }: WalkingConnectorProps) {
+  const { t } = useLanguage();
+  return (
+    <View style={styles.walkingConnector}>
+      <View style={[styles.walkingLine, { backgroundColor: tourColor }]} />
+      <View style={styles.walkingBadge}>
+        <Text style={styles.walkingIcon}>🚶</Text>
+        <Text style={styles.walkingText}>{t.tour.walkingMinutes(walkingTime)}</Text>
+      </View>
+      <View style={[styles.walkingLine, { backgroundColor: tourColor }]} />
+    </View>
+  );
 }
 
 function PreferencesForm({ tour, onGenerate }: PreferencesFormProps) {
@@ -116,9 +138,7 @@ export default function TourScreen({ navigation, route }: Props) {
 
   const savedItinerary = getItinerary(tour.id);
 
-  const [generatedStops, setGeneratedStops] = useState<Stop[] | null>(
-    savedItinerary?.stops ?? null,
-  );
+  const [generatedStops, setGeneratedStops] = useState<Stop[] | null>(savedItinerary?.stops ?? null);
   const [loading, setLoading] = useState(false);
   const lastPrefsRef = useRef<TripPreferences | null>(savedItinerary?.preferences ?? null);
   const pinnedRef = useRef(pinned);
@@ -161,7 +181,9 @@ export default function TourScreen({ navigation, route }: Props) {
   const handleGenerate = useCallback(
     async (prefs: TripPreferences) => {
       let cancelled = false;
-      cancelRef.current = () => { cancelled = true; };
+      cancelRef.current = () => {
+        cancelled = true;
+      };
       setLoading(true);
       try {
         const stops = await generateRecommendedStops(tour.stops, prefs);
@@ -263,13 +285,20 @@ export default function TourScreen({ navigation, route }: Props) {
             <Text style={styles.sectionTitle}>{t.tour.recommendedStops}</Text>
           </View>
         }
-        renderItem={({ item }) => (
-          <StopRow
-            stop={item}
-            tourColor={tour.color}
-            onPress={() => navigation.navigate('Stop', { stop: item, tourColor: tour.color })}
-          />
-        )}
+        renderItem={({ item, index }) => {
+          const walkingTime = index > 0 ? stopsToShow[index - 1].walkingTime : undefined;
+
+          return (
+            <View>
+              {walkingTime != null ? <WalkingConnector walkingTime={walkingTime} tourColor={tour.color} /> : null}
+              <StopRow
+                stop={item}
+                tourColor={tour.color}
+                onPress={() => navigation.navigate('Stop', { stop: item, tourColor: tour.color })}
+              />
+            </View>
+          );
+        }}
       />
     </SafeAreaView>
   );
@@ -375,6 +404,43 @@ const styles = StyleSheet.create({
   stopDuration: {
     fontSize: 12,
     color: '#7F8C8D',
+    fontWeight: '500',
+  },
+  stopMeta: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 12,
+  },
+  stopPrice: {
+    fontSize: 12,
+    color: '#27AE60',
+    fontWeight: '600',
+  },
+  walkingConnector: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginHorizontal: 16,
+    marginVertical: 2,
+    paddingHorizontal: 8,
+  },
+  walkingLine: {
+    flex: 1,
+    height: 1,
+    opacity: 0.3,
+  },
+  walkingBadge: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingHorizontal: 10,
+    paddingVertical: 4,
+    gap: 4,
+  },
+  walkingIcon: {
+    fontSize: 14,
+  },
+  walkingText: {
+    fontSize: 11,
+    color: '#95A5A6',
     fontWeight: '500',
   },
   chevron: {
