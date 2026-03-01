@@ -429,7 +429,7 @@ const styles = StyleSheet.create({
     width: 24,
     height: 24,
     borderRadius: 6,
-    marginRight: 8,
+    marginEnd: 8,
   },
   stopName: {
     fontSize: 16,
