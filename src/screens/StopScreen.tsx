@@ -37,6 +37,8 @@ export default function StopScreen({ route }: Props) {
 
   const handleListen = useCallback(async () => {
     if (isSpeaking) {
+      cancelRef.current?.();
+      cancelRef.current = null;
       await Speech.stop();
       setIsSpeaking(false);
       return;
