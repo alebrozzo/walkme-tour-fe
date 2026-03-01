@@ -357,10 +357,17 @@ export default function TourScreen({ navigation, route }: Props) {
                 const url = buildGoogleMapsUrl(stopsToShow);
                 try {
                   const canOpen = await Linking.canOpenURL(url);
-                  if (!canOpen) return;
+                  if (!canOpen) {
+                    if (__DEV__) {
+                      console.warn('Cannot open maps URL', url);
+                    }
+                    return;
+                  }
                   await Linking.openURL(url);
-                } catch {
-                  // URL open failure — no user action needed
+                } catch (error) {
+                  if (__DEV__) {
+                    console.warn('Failed to open maps URL', url, error);
+                  }
                 }
               }}
               activeOpacity={0.85}
