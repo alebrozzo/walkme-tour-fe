@@ -43,6 +43,7 @@ export interface Translations {
     walkingMinutes: (n: number) => string;
     day: (n: number) => string;
     free: string;
+    viewOnMap: string;
   };
   stop: {
     address: string;
@@ -91,6 +92,7 @@ const en: Translations = {
     walkingMinutes: (n) => `${n} min walk`,
     day: (n) => `Day ${n}`,
     free: 'Free',
+    viewOnMap: 'View on Map',
   },
   stop: {
     address: 'Address',
@@ -149,6 +151,7 @@ const ar: Translations = {
     walkingMinutes: (n) => `${n} دقائق مشي`,
     day: (n) => `اليوم ${n}`,
     free: 'مجاني',
+    viewOnMap: 'عرض على الخريطة',
   },
   stop: {
     address: 'العنوان',
@@ -207,6 +210,7 @@ const he: Translations = {
     walkingMinutes: (n) => `${n} דקות הליכה`,
     day: (n) => `יום ${n}`,
     free: 'חינם',
+    viewOnMap: 'הצג במפה',
   },
   stop: {
     address: 'כתובת',
@@ -265,6 +269,7 @@ const es: Translations = {
     walkingMinutes: (n) => `${n} min caminando`,
     day: (n) => `Día ${n}`,
     free: 'Gratis',
+    viewOnMap: 'Ver en el mapa',
   },
   stop: {
     address: 'Dirección',
@@ -323,6 +328,7 @@ const fr: Translations = {
     walkingMinutes: (n) => `${n} min à pied`,
     day: (n) => `Jour ${n}`,
     free: 'Gratuit',
+    viewOnMap: 'Voir sur la carte',
   },
   stop: {
     address: 'Adresse',

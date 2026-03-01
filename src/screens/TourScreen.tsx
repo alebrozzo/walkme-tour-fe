@@ -3,6 +3,7 @@ import {
   ActivityIndicator,
   FlatList,
   Image,
+  Linking,
   ScrollView,
   StyleSheet,
   Text,
@@ -19,6 +20,19 @@ import { usePinned } from '../contexts/PinnedContext';
 import { generateRecommendedStops } from '../services/generateStops';
 
 type Props = NativeStackScreenProps<RootStackParamList, 'Tour'>;
+
+function buildGoogleMapsUrl(stops: Stop[]): string {
+  if (stops.length === 0) return '';
+  const encode = (s: string) => encodeURIComponent(s);
+  const origin = encode(stops[0].address);
+  const destination = encode(stops[stops.length - 1].address);
+  const waypoints = stops.slice(1, -1).map((s) => encode(s.address));
+  let url = `https://www.google.com/maps/dir/?api=1&origin=${origin}&destination=${destination}&travelmode=walking`;
+  if (waypoints.length > 0) {
+    url += `&waypoints=${waypoints.join('|')}`;
+  }
+  return url;
+}
 
 interface StopRowProps {
   stop: Stop;
@@ -337,6 +351,14 @@ export default function TourScreen({ navigation, route }: Props) {
               </View>
             </View>
             <Text style={styles.sectionTitle}>{t.tour.recommendedStops}</Text>
+            <TouchableOpacity
+              style={[styles.mapButton, { borderColor: tour.color }]}
+              onPress={() => Linking.openURL(buildGoogleMapsUrl(stopsToShow))}
+              activeOpacity={0.85}
+            >
+              <Text style={styles.mapButtonIcon}>🗺️</Text>
+              <Text style={[styles.mapButtonText, { color: tour.color }]}>{t.tour.viewOnMap}</Text>
+            </TouchableOpacity>
           </View>
         }
         renderItem={({ item, index }) => {
@@ -416,6 +438,25 @@ const styles = StyleSheet.create({
     marginTop: 20,
     marginBottom: 8,
     marginHorizontal: 16,
+  },
+  mapButton: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: 8,
+    marginHorizontal: 16,
+    marginBottom: 12,
+    paddingVertical: 12,
+    borderRadius: 12,
+    borderWidth: 1.5,
+    backgroundColor: '#FFFFFF',
+  },
+  mapButtonIcon: {
+    fontSize: 18,
+  },
+  mapButtonText: {
+    fontSize: 15,
+    fontWeight: '700',
   },
   stopRow: {
     backgroundColor: '#FFFFFF',
