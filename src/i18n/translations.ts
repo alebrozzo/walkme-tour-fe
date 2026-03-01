@@ -41,6 +41,7 @@ export interface Translations {
     noRecommendedStops: string;
     adjustPreferences: string;
     walkingMinutes: (n: number) => string;
+    day: (n: number) => string;
     free: string;
   };
   stop: {
@@ -88,6 +89,7 @@ const en: Translations = {
     noRecommendedStops: 'No stops fit your available time. Try adjusting your preferences.',
     adjustPreferences: 'Adjust Preferences',
     walkingMinutes: (n) => `${n} min walk`,
+    day: (n) => `Day ${n}`,
     free: 'Free',
   },
   stop: {
@@ -145,6 +147,7 @@ const ar: Translations = {
     noRecommendedStops: 'لا توجد محطات تناسب وقتك المتاح. حاول تعديل تفضيلاتك.',
     adjustPreferences: 'تعديل التفضيلات',
     walkingMinutes: (n) => `${n} دقائق مشي`,
+    day: (n) => `اليوم ${n}`,
     free: 'مجاني',
   },
   stop: {
@@ -202,6 +205,7 @@ const he: Translations = {
     noRecommendedStops: 'אין עצירות שמתאימות לזמן שלך. נסה לשנות את ההעדפות.',
     adjustPreferences: 'שנה העדפות',
     walkingMinutes: (n) => `${n} דקות הליכה`,
+    day: (n) => `יום ${n}`,
     free: 'חינם',
   },
   stop: {
@@ -259,6 +263,7 @@ const es: Translations = {
     noRecommendedStops: 'No hay paradas que se ajusten a tu tiempo disponible. Intenta ajustar tus preferencias.',
     adjustPreferences: 'Ajustar preferencias',
     walkingMinutes: (n) => `${n} min caminando`,
+    day: (n) => `Día ${n}`,
     free: 'Gratis',
   },
   stop: {
@@ -316,6 +321,7 @@ const fr: Translations = {
     noRecommendedStops: "Aucun arrêt ne correspond à votre temps disponible. Essayez d'ajuster vos préférences.",
     adjustPreferences: 'Ajuster les préférences',
     walkingMinutes: (n) => `${n} min à pied`,
+    day: (n) => `Jour ${n}`,
     free: 'Gratuit',
   },
   stop: {

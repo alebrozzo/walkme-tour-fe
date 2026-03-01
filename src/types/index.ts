@@ -24,6 +24,8 @@ export interface Stop {
   walkingTime?: number;
   /** Entry price as a display string (e.g. "€15"). Omitted when free. */
   price?: string;
+  /** Day number this stop belongs to in a multi-day itinerary (1-based). */
+  day?: number;
 }
 
 export interface Tour {

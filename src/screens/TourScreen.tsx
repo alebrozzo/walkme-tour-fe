@@ -76,6 +76,20 @@ function WalkingConnector({ walkingTime, tourColor }: WalkingConnectorProps) {
   );
 }
 
+interface DayHeaderProps {
+  day: number;
+  tourColor: string;
+}
+
+function DayHeader({ day, tourColor }: DayHeaderProps) {
+  const { t } = useLanguage();
+  return (
+    <View style={[styles.dayHeader, { borderLeftColor: tourColor }]}>
+      <Text style={[styles.dayHeaderText, { color: tourColor }]}>{t.tour.day(day)}</Text>
+    </View>
+  );
+}
+
 function PreferencesForm({ tour, onGenerate }: PreferencesFormProps) {
   const { t, language } = useLanguage();
   const [days, setDays] = useState('');
@@ -286,10 +300,14 @@ export default function TourScreen({ navigation, route }: Props) {
           </View>
         }
         renderItem={({ item, index }) => {
-          const walkingTime = index > 0 ? stopsToShow[index - 1].walkingTime : undefined;
+          const prevStop = index > 0 ? stopsToShow[index - 1] : undefined;
+          const isNewDay = index === 0 || item.day !== prevStop?.day;
+          // Only show walking connector within the same day
+          const walkingTime = !isNewDay && prevStop ? prevStop.walkingTime : undefined;
 
           return (
             <View>
+              {isNewDay && item.day !== null && item.day !== undefined ? <DayHeader day={item.day} tourColor={tour.color} /> : null}
               {walkingTime != null ? <WalkingConnector walkingTime={walkingTime} tourColor={tour.color} /> : null}
               <StopRow
                 stop={item}
@@ -422,6 +440,21 @@ const styles = StyleSheet.create({
     marginHorizontal: 16,
     marginVertical: 2,
     paddingHorizontal: 8,
+  },
+  dayHeader: {
+    marginHorizontal: 16,
+    marginTop: 16,
+    marginBottom: 8,
+    paddingHorizontal: 12,
+    paddingVertical: 6,
+    borderLeftWidth: 4,
+    borderRadius: 4,
+    backgroundColor: 'rgba(0,0,0,0.04)',
+  },
+  dayHeaderText: {
+    fontSize: 14,
+    fontWeight: '700',
+    letterSpacing: 0.5,
   },
   walkingLine: {
     flex: 1,
