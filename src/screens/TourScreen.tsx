@@ -13,7 +13,7 @@ import {
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
-import { RootStackParamList, Stop, TripPreferences } from '../types';
+import { Coordinate, RootStackParamList, Stop, TripPreferences } from '../types';
 import { TYPE_ICON } from '../constants/stopTypes';
 import { useLanguage } from '../contexts/LanguageContext';
 import { usePinned } from '../contexts/PinnedContext';
@@ -21,12 +21,20 @@ import { generateRecommendedStops } from '../services/generateStops';
 
 type Props = NativeStackScreenProps<RootStackParamList, 'Tour'>;
 
+function stopToLocation(s: Stop): string {
+  // Legacy stops hydrated from AsyncStorage may lack the coordinate field
+  const coord = s.coordinate as Coordinate | undefined;
+  if (coord) {
+    return `${coord.latitude},${coord.longitude}`;
+  }
+  return encodeURIComponent(s.address);
+}
+
 function buildGoogleMapsUrl(stops: Stop[]): string {
   if (stops.length === 0) return '';
-  const toLatLng = (s: Stop) => `${s.coordinate.latitude},${s.coordinate.longitude}`;
-  const origin = toLatLng(stops[0]);
-  const destination = toLatLng(stops[stops.length - 1]);
-  const waypoints = stops.slice(1, -1).map(toLatLng);
+  const origin = stopToLocation(stops[0]);
+  const destination = stopToLocation(stops[stops.length - 1]);
+  const waypoints = stops.slice(1, -1).map(stopToLocation);
   let url = `https://www.google.com/maps/dir/?api=1&origin=${origin}&destination=${destination}&travelmode=walking`;
   if (waypoints.length > 0) {
     url += `&waypoints=${waypoints.join('|')}`;
@@ -354,8 +362,8 @@ export default function TourScreen({ navigation, route }: Props) {
             <TouchableOpacity
               style={[styles.mapButton, { borderColor: tour.color }]}
               onPress={async () => {
-                const url = buildGoogleMapsUrl(stopsToShow);
                 try {
+                  const url = buildGoogleMapsUrl(stopsToShow);
                   const canOpen = await Linking.canOpenURL(url);
                   if (!canOpen) {
                     if (__DEV__) {
@@ -366,7 +374,7 @@ export default function TourScreen({ navigation, route }: Props) {
                   await Linking.openURL(url);
                 } catch (error) {
                   if (__DEV__) {
-                    console.warn('Failed to open maps URL', url, error);
+                    console.warn('Failed to open maps URL', error);
                   }
                 }
               }}
