@@ -45,6 +45,10 @@ function buildGoogleMapsUrl(stops: Stop[]): string {
 
 function buildAppleMapsUrl(stops: Stop[]): string {
   if (stops.length === 0) return '';
+  if (stops.length === 1) {
+    const location = stopToLocation(stops[0]);
+    return `https://maps.apple.com/?q=${encodeURIComponent(stops[0].name)}&ll=${location}`;
+  }
   const origin = stopToLocation(stops[0]);
   const destinations = stops.slice(1).map(stopToLocation);
   return `https://maps.apple.com/?saddr=${origin}&daddr=${destinations.join('+to:')}&dirflg=w`;
