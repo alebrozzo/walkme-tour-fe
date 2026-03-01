@@ -106,6 +106,28 @@ function DayHeader({ day, tourColor }: DayHeaderProps) {
   );
 }
 
+interface TourHeroImageProps {
+  imageUrl?: string;
+}
+
+function TourHeroImage({ imageUrl }: TourHeroImageProps) {
+  const [imageLoadError, setImageLoadError] = useState(false);
+
+  useEffect(() => {
+    setImageLoadError(false);
+  }, [imageUrl]);
+
+  if (!imageUrl || imageLoadError) return null;
+  return (
+    <Image
+      source={{ uri: imageUrl }}
+      style={styles.cityImage}
+      resizeMode="cover"
+      onError={() => setImageLoadError(true)}
+    />
+  );
+}
+
 function PreferencesForm({ tour, onGenerate }: PreferencesFormProps) {
   const { t, language } = useLanguage();
   const [days, setDays] = useState('');
@@ -118,6 +140,7 @@ function PreferencesForm({ tour, onGenerate }: PreferencesFormProps) {
   return (
     <ScrollView style={{ direction: language.isRTL ? 'rtl' : 'ltr' }} keyboardShouldPersistTaps="handled">
       <View style={[styles.heroBanner, { backgroundColor: tour.color }]}>
+        <TourHeroImage imageUrl={tour.imageUrl} />
         <Text style={styles.heroCity}>{tour.city}</Text>
         <Text style={styles.heroCountry}>{tour.country}</Text>
         <Text style={styles.heroDescription}>{tour.description}</Text>
@@ -270,6 +293,7 @@ export default function TourScreen({ navigation, route }: Props) {
       <SafeAreaView style={styles.safeArea} edges={['bottom']}>
         <View style={{ direction: language.isRTL ? 'rtl' : 'ltr' }}>
           <View style={[styles.heroBanner, { backgroundColor: tour.color }]}>
+            <TourHeroImage imageUrl={tour.imageUrl} />
             <Text style={styles.heroCity}>{tour.city}</Text>
             <Text style={styles.heroCountry}>{tour.country}</Text>
           </View>
@@ -298,6 +322,7 @@ export default function TourScreen({ navigation, route }: Props) {
         ListHeaderComponent={
           <View>
             <View style={[styles.heroBanner, { backgroundColor: tour.color }]}>
+              <TourHeroImage imageUrl={tour.imageUrl} />
               <Text style={styles.heroCity}>{tour.city}</Text>
               <Text style={styles.heroCountry}>{tour.country}</Text>
               <Text style={styles.heroDescription}>{tour.description}</Text>
@@ -351,6 +376,12 @@ const styles = StyleSheet.create({
     padding: 24,
     paddingTop: 32,
     paddingBottom: 32,
+  },
+  cityImage: {
+    alignSelf: 'stretch',
+    height: 160,
+    borderRadius: 12,
+    marginBottom: 16,
   },
   heroCity: {
     fontSize: 34,

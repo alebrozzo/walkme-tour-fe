@@ -11,6 +11,7 @@ const tours: Tour[] = [
     distance: 6.5,
     difficulty: 'moderate',
     color: '#2C3E8C',
+    imageUrl: 'https://images.unsplash.com/photo-1502602898657-3e91760cbb34?w=800&h=400&fit=crop&q=80',
     stops: [
       {
         id: '1-1',
@@ -88,6 +89,7 @@ const tours: Tour[] = [
     distance: 7.2,
     difficulty: 'easy',
     color: '#C0392B',
+    imageUrl: 'https://images.unsplash.com/photo-1515542622282-90f2a54f9ecb?w=800&h=400&fit=crop&q=80',
     stops: [
       {
         id: '2-1',
@@ -178,6 +180,7 @@ const tours: Tour[] = [
     distance: 8.0,
     difficulty: 'easy',
     color: '#1ABC9C',
+    imageUrl: 'https://images.unsplash.com/photo-1540959733332-eab4deabeeaf?w=800&h=400&fit=crop&q=80',
     stops: [
       {
         id: '3-1',
@@ -250,6 +253,7 @@ const tours: Tour[] = [
     distance: 5.8,
     difficulty: 'easy',
     color: '#8E44AD',
+    imageUrl: 'https://images.unsplash.com/photo-1496442226666-8d4d0e62e6e9?w=800&h=400&fit=crop&q=80',
     stops: [
       {
         id: '4-1',
@@ -323,6 +327,7 @@ const tours: Tour[] = [
     distance: 7.0,
     difficulty: 'moderate',
     color: '#E67E22',
+    imageUrl: 'https://images.unsplash.com/photo-1539037116277-4db20889f2d4?w=800&h=400&fit=crop&q=80',
     stops: [
       {
         id: '5-1',
@@ -397,6 +402,7 @@ const tours: Tour[] = [
     distance: 6.1,
     difficulty: 'easy',
     color: '#16A085',
+    imageUrl: 'https://images.unsplash.com/photo-1564221710304-0b3be7f01f69?w=800&h=400&fit=crop&q=80',
     stops: [
       {
         id: '6-1',
@@ -459,6 +465,7 @@ const tours: Tour[] = [
     distance: 5.4,
     difficulty: 'easy',
     color: '#3498DB',
+    imageUrl: 'https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=800&h=400&fit=crop&q=80',
     stops: [
       {
         id: '7-1',
@@ -519,6 +526,7 @@ const tours: Tour[] = [
     distance: 6.8,
     difficulty: 'moderate',
     color: '#9B59B6',
+    imageUrl: 'https://images.unsplash.com/photo-1612294037480-cb85a3443d16?w=800&h=400&fit=crop&q=80',
     stops: [
       {
         id: '8-1',
@@ -577,6 +585,7 @@ const tours: Tour[] = [
     distance: 7.4,
     difficulty: 'moderate',
     color: '#F39C12',
+    imageUrl: 'https://images.unsplash.com/photo-1483729558449-99ef09a8c325?w=800&h=400&fit=crop&q=80',
     stops: [
       {
         id: '9-1',
@@ -636,6 +645,7 @@ const tours: Tour[] = [
     distance: 6.3,
     difficulty: 'easy',
     color: '#C0392B',
+    imageUrl: 'https://images.unsplash.com/photo-1543785734-4b6e564642f8?w=800&h=400&fit=crop&q=80',
     stops: [
       {
         id: '10-1',
@@ -695,6 +705,7 @@ const tours: Tour[] = [
     distance: 6.0,
     difficulty: 'moderate',
     color: '#E74C3C',
+    imageUrl: 'https://images.unsplash.com/photo-1558618047-3c8c76ca7d13?w=800&h=400&fit=crop&q=80',
     stops: [
       {
         id: '11-1',
@@ -755,6 +766,7 @@ const tours: Tour[] = [
     distance: 6.6,
     difficulty: 'easy',
     color: '#2C3E50',
+    imageUrl: 'https://images.unsplash.com/photo-1560969184-10fe8719e047?w=800&h=400&fit=crop&q=80',
     stops: [
       {
         id: '12-1',
@@ -812,6 +824,7 @@ const tours: Tour[] = [
     distance: 7.1,
     difficulty: 'moderate',
     color: '#27AE60',
+    imageUrl: 'https://images.unsplash.com/photo-1518638150340-f706e86654de?w=800&h=400&fit=crop&q=80',
     stops: [
       {
         id: '13-1',
@@ -872,6 +885,7 @@ const tours: Tour[] = [
     distance: 5.9,
     difficulty: 'easy',
     color: '#1F8A70',
+    imageUrl: 'https://images.unsplash.com/photo-1589470288374-d78fd4d44ee0?w=800&h=400&fit=crop&q=80',
     stops: [
       {
         id: '14-1',
@@ -928,6 +942,7 @@ const tours: Tour[] = [
     distance: 6.4,
     difficulty: 'moderate',
     color: '#D35400',
+    imageUrl: 'https://images.unsplash.com/photo-1539650116574-75c0c6d73f6e?w=800&h=400&fit=crop&q=80',
     stops: [
       {
         id: '15-1',
@@ -985,6 +1000,7 @@ const tours: Tour[] = [
     distance: 7.0,
     difficulty: 'easy',
     color: '#34495E',
+    imageUrl: 'https://images.unsplash.com/photo-1549693870-5f58e5c12f44?w=800&h=400&fit=crop&q=80',
     stops: [
       {
         id: '16-1',
@@ -1041,6 +1057,7 @@ const tours: Tour[] = [
     distance: 6.7,
     difficulty: 'easy',
     color: '#2980B9',
+    imageUrl: 'https://images.unsplash.com/photo-1506374322094-6021fc3926f1?w=800&h=400&fit=crop&q=80',
     stops: [
       {
         id: '17-1',
@@ -1096,6 +1113,7 @@ const tours: Tour[] = [
     distance: 6.1,
     difficulty: 'easy',
     color: '#27AE60',
+    imageUrl: 'https://images.unsplash.com/photo-1516026672322-bc52d61a55d5?w=800&h=400&fit=crop&q=80',
     stops: [
       {
         id: '18-1',
@@ -1153,6 +1171,7 @@ const tours: Tour[] = [
     distance: 7.2,
     difficulty: 'moderate',
     color: '#8E44AD',
+    imageUrl: 'https://images.unsplash.com/photo-1541432901042-2d8bd64b4a9b?w=800&h=400&fit=crop&q=80',
     stops: [
       {
         id: '19-1',
@@ -1209,6 +1228,7 @@ const tours: Tour[] = [
     distance: 6.5,
     difficulty: 'easy',
     color: '#16A085',
+    imageUrl: 'https://images.unsplash.com/photo-1559511260-1379a5010be5?w=800&h=400&fit=crop&q=80',
     stops: [
       {
         id: '20-1',
@@ -1264,6 +1284,7 @@ const tours: Tour[] = [
     distance: 6.9,
     difficulty: 'moderate',
     color: '#E67E22',
+    imageUrl: 'https://images.unsplash.com/photo-1508009603885-50cf7c579365?w=800&h=400&fit=crop&q=80',
     stops: [
       {
         id: '21-1',
@@ -1321,6 +1342,7 @@ const tours: Tour[] = [
     distance: 5.3,
     difficulty: 'easy',
     color: '#5DADE2',
+    imageUrl: 'https://images.unsplash.com/photo-1529963183134-61a90db47eaf?w=800&h=400&fit=crop&q=80',
     stops: [
       {
         id: '22-1',
@@ -1377,6 +1399,7 @@ const tours: Tour[] = [
     distance: 6.2,
     difficulty: 'moderate',
     color: '#C0392B',
+    imageUrl: 'https://images.unsplash.com/photo-1553284965-83fd3e82e667?w=800&h=400&fit=crop&q=80',
     stops: [
       {
         id: '23-1',
