@@ -52,6 +52,8 @@ export interface Translations {
     price: string;
     listenAbout: string;
     stopListening: string;
+    viewFullScreen: string;
+    closeImage: string;
   };
   stopTypes: Record<StopType, string>;
   language: string;
@@ -100,6 +102,8 @@ const en: Translations = {
     price: 'Price',
     listenAbout: 'Listen',
     stopListening: 'Stop',
+    viewFullScreen: 'View full screen',
+    closeImage: 'Close image',
   },
   stopTypes: {
     landmark: 'Landmark',
@@ -158,6 +162,8 @@ const ar: Translations = {
     price: 'السعر',
     listenAbout: 'استمع',
     stopListening: 'إيقاف',
+    viewFullScreen: 'عرض بحجم كامل',
+    closeImage: 'إغلاق الصورة',
   },
   stopTypes: {
     landmark: 'معلم',
@@ -216,6 +222,8 @@ const he: Translations = {
     price: 'מחיר',
     listenAbout: 'האזן',
     stopListening: 'עצור',
+    viewFullScreen: 'הצג במסך מלא',
+    closeImage: 'סגור תמונה',
   },
   stopTypes: {
     landmark: 'אתר',
@@ -274,6 +282,8 @@ const es: Translations = {
     price: 'Precio',
     listenAbout: 'Escuchar',
     stopListening: 'Detener',
+    viewFullScreen: 'Ver pantalla completa',
+    closeImage: 'Cerrar imagen',
   },
   stopTypes: {
     landmark: 'Monumento',
@@ -332,6 +342,8 @@ const fr: Translations = {
     price: 'Prix',
     listenAbout: 'Écouter',
     stopListening: 'Arrêter',
+    viewFullScreen: 'Voir en plein écran',
+    closeImage: "Fermer l'image",
   },
   stopTypes: {
     landmark: 'Monument',
