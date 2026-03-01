@@ -1,4 +1,4 @@
-import React, { useLayoutEffect, useMemo, useState } from 'react';
+import React, { useEffect, useLayoutEffect, useMemo, useState } from 'react';
 import {
   Image,
   Modal,
@@ -28,6 +28,11 @@ interface CityResultProps {
 function CityResult({ tour, onPress }: CityResultProps) {
   const { language } = useLanguage();
   const [imageLoadError, setImageLoadError] = useState(false);
+
+  useEffect(() => {
+    setImageLoadError(false);
+  }, [tour.imageUrl]);
+
   return (
     <TouchableOpacity
       style={[styles.resultRow, { direction: language.isRTL ? 'rtl' : 'ltr' }]}
@@ -62,6 +67,11 @@ interface PinnedCardProps {
 function PinnedCard({ tour, onPress, onUnpin }: PinnedCardProps) {
   const { t, language } = useLanguage();
   const [imageLoadError, setImageLoadError] = useState(false);
+
+  useEffect(() => {
+    setImageLoadError(false);
+  }, [tour.imageUrl]);
+
   return (
     <View style={[styles.pinnedCard, { backgroundColor: tour.color, direction: language.isRTL ? 'rtl' : 'ltr' }]}>
       {tour.imageUrl && !imageLoadError ? (
