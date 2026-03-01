@@ -353,7 +353,9 @@ export default function TourScreen({ navigation, route }: Props) {
             <Text style={styles.sectionTitle}>{t.tour.recommendedStops}</Text>
             <TouchableOpacity
               style={[styles.mapButton, { borderColor: tour.color }]}
-              onPress={() => Linking.openURL(buildGoogleMapsUrl(stopsToShow))}
+              onPress={() => {
+                Linking.openURL(buildGoogleMapsUrl(stopsToShow)).catch(() => {});
+              }}
               activeOpacity={0.85}
             >
               <Text style={styles.mapButtonIcon}>🗺️</Text>
