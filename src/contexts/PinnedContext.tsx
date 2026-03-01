@@ -1,5 +1,6 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import React, { createContext, useCallback, useContext, useEffect, useMemo, useRef, useState } from 'react';
+import tours from '../data/tours';
 import { GeneratedItinerary, Tour } from '../types';
 
 const STORAGE_KEY_PINNED = '@walkme:pinnedTours';
@@ -30,30 +31,56 @@ export function PinnedProvider({ children }: { children: React.ReactNode }) {
 
   // Hydrate from storage on mount
   useEffect(() => {
+    let cancelled = false;
+    const toursById = new Map(tours.map((t) => [t.id, t]));
+
     (async () => {
       try {
         const [pinnedRaw, itinerariesRaw] = await AsyncStorage.multiGet([STORAGE_KEY_PINNED, STORAGE_KEY_ITINERARIES]);
-        if (pinnedRaw[1]) setPinnedTours(JSON.parse(pinnedRaw[1]));
+        if (cancelled) {
+          return;
+        }
+        if (pinnedRaw[1]) {
+          const ids: string[] = JSON.parse(pinnedRaw[1]);
+          const resolved = ids.map((id) => toursById.get(id)).filter((t): t is Tour => t !== undefined);
+          setPinnedTours(resolved);
+        }
+        if (cancelled) {
+          return;
+        }
         if (itinerariesRaw[1]) setItineraries(JSON.parse(itinerariesRaw[1]));
       } catch {
         // Storage read failure — start with empty state
       } finally {
-        hydrated.current = true;
+        if (!cancelled) {
+          hydrated.current = true;
+        }
       }
     })();
+
+    return () => {
+      cancelled = true;
+    };
   }, []);
 
-  // Persist pinned tours whenever they change (after hydration)
+  // Persist pinned tours and itineraries together (after hydration)
   useEffect(() => {
     if (!hydrated.current) return;
-    AsyncStorage.setItem(STORAGE_KEY_PINNED, JSON.stringify(pinnedTours)).catch(() => {});
-  }, [pinnedTours]);
 
-  // Persist itineraries whenever they change (after hydration)
-  useEffect(() => {
-    if (!hydrated.current) return;
-    AsyncStorage.setItem(STORAGE_KEY_ITINERARIES, JSON.stringify(itineraries)).catch(() => {});
-  }, [itineraries]);
+    // Only persist itineraries for currently pinned tours to avoid stale entries
+    const filteredItineraries: Record<string, GeneratedItinerary> = {};
+    for (const tour of pinnedTours) {
+      const itinerary = itineraries[tour.id];
+      if (itinerary) {
+        filteredItineraries[tour.id] = itinerary;
+      }
+    }
+
+    AsyncStorage.multiSet([
+      [STORAGE_KEY_PINNED, JSON.stringify(pinnedTours.map((t) => t.id))],
+      [STORAGE_KEY_ITINERARIES, JSON.stringify(filteredItineraries)],
+    ]).catch(() => {});
+  }, [pinnedTours, itineraries]);
 
   const pinnedIds = useMemo(() => new Set(pinnedTours.map((t) => t.id)), [pinnedTours]);
   const pinnedIdsRef = useRef(pinnedIds);
