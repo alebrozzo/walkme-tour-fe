@@ -285,21 +285,20 @@ export default function TourScreen({ navigation, route }: Props) {
             <Text style={styles.sectionTitle}>{t.tour.recommendedStops}</Text>
           </View>
         }
-        renderItem={({ item, index }) => (
-          <View>
-            {index > 0 && stopsToShow[index - 1].walkingTime ? (
-              <WalkingConnector
-                walkingTime={stopsToShow[index - 1].walkingTime as number}
+        renderItem={({ item, index }) => {
+          const walkingTime = index > 0 ? stopsToShow[index - 1].walkingTime : undefined;
+
+          return (
+            <View>
+              {walkingTime != null ? <WalkingConnector walkingTime={walkingTime} tourColor={tour.color} /> : null}
+              <StopRow
+                stop={item}
                 tourColor={tour.color}
+                onPress={() => navigation.navigate('Stop', { stop: item, tourColor: tour.color })}
               />
-            ) : null}
-            <StopRow
-              stop={item}
-              tourColor={tour.color}
-              onPress={() => navigation.navigate('Stop', { stop: item, tourColor: tour.color })}
-            />
-          </View>
-        )}
+            </View>
+          );
+        }}
       />
     </SafeAreaView>
   );

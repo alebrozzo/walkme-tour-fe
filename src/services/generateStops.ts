@@ -18,12 +18,12 @@ export async function generateRecommendedStops(allStops: Stop[], preferences: Tr
 
   for (const stop of allStops) {
     if (remaining <= 0) break;
-    // Account for walking time to next stop (if available) when budgeting
-    const walkTime = stop.walkingTime ?? 0;
-    const totalStopTime = stop.duration + walkTime;
-    if (stop.duration <= remaining) {
+    // Account for walking time from the previous stop to this one
+    const walkFromPrev = selected.length ? (selected[selected.length - 1].walkingTime ?? 0) : 0;
+    const needed = stop.duration + walkFromPrev;
+    if (needed <= remaining) {
       selected.push({ ...stop, order: selected.length + 1 });
-      remaining -= totalStopTime;
+      remaining -= needed;
     }
   }
 
