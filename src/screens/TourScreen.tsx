@@ -4,6 +4,7 @@ import {
   FlatList,
   Image,
   Linking,
+  Platform,
   ScrollView,
   StyleSheet,
   Text,
@@ -40,6 +41,35 @@ function buildGoogleMapsUrl(stops: Stop[]): string {
     url += `&waypoints=${waypoints.join('|')}`;
   }
   return url;
+}
+
+function buildAppleMapsUrl(stops: Stop[]): string {
+  if (stops.length === 0) return '';
+  if (stops.length === 1) {
+    const location = stopToLocation(stops[0]);
+    return `https://maps.apple.com/?q=${encodeURIComponent(stops[0].name)}&ll=${location}`;
+  }
+  const origin = stopToLocation(stops[0]);
+  const destinations = stops.slice(1).map(stopToLocation);
+  return `https://maps.apple.com/?saddr=${origin}&daddr=${destinations.join('+to:')}&dirflg=w`;
+}
+
+async function openDirections(stops: Stop[]): Promise<void> {
+  if (stops.length === 0) return;
+  if (Platform.OS === 'ios') {
+    const appleUrl = buildAppleMapsUrl(stops);
+    try {
+      await Linking.openURL(appleUrl);
+      return;
+    } catch (error) {
+      if (__DEV__) {
+        console.warn('Failed to open Apple Maps URL, falling back to Google Maps', error);
+      }
+      // Fall through to Google Maps web URL
+    }
+  }
+  const googleUrl = buildGoogleMapsUrl(stops);
+  await Linking.openURL(googleUrl);
 }
 
 interface StopRowProps {
@@ -363,15 +393,7 @@ export default function TourScreen({ navigation, route }: Props) {
               style={[styles.mapButton, { borderColor: tour.color }]}
               onPress={async () => {
                 try {
-                  const url = buildGoogleMapsUrl(stopsToShow);
-                  const canOpen = await Linking.canOpenURL(url);
-                  if (!canOpen) {
-                    if (__DEV__) {
-                      console.warn('Cannot open maps URL', url);
-                    }
-                    return;
-                  }
-                  await Linking.openURL(url);
+                  await openDirections(stopsToShow);
                 } catch (error) {
                   if (__DEV__) {
                     console.warn('Failed to open maps URL', error);
