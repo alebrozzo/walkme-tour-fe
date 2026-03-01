@@ -23,10 +23,10 @@ type Props = NativeStackScreenProps<RootStackParamList, 'Tour'>;
 
 function buildGoogleMapsUrl(stops: Stop[]): string {
   if (stops.length === 0) return '';
-  const encode = (s: string) => encodeURIComponent(s);
-  const origin = encode(stops[0].address);
-  const destination = encode(stops[stops.length - 1].address);
-  const waypoints = stops.slice(1, -1).map((s) => encode(s.address));
+  const toLatLng = (s: Stop) => `${s.coordinate.latitude},${s.coordinate.longitude}`;
+  const origin = toLatLng(stops[0]);
+  const destination = toLatLng(stops[stops.length - 1]);
+  const waypoints = stops.slice(1, -1).map(toLatLng);
   let url = `https://www.google.com/maps/dir/?api=1&origin=${origin}&destination=${destination}&travelmode=walking`;
   if (waypoints.length > 0) {
     url += `&waypoints=${waypoints.join('|')}`;

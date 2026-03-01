@@ -11,11 +11,17 @@ export type StopType =
 
 export type Difficulty = 'easy' | 'moderate' | 'hard';
 
+export interface Coordinate {
+  latitude: number;
+  longitude: number;
+}
+
 export interface Stop {
   id: string;
   order: number;
   name: string;
   address: string;
+  coordinate: Coordinate;
   type: StopType;
   /** Optional remote image URL shown in stop cards/details when available. */
   imageUrl?: string;
