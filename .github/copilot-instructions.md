@@ -82,6 +82,7 @@ Always run `npm run lint` and `npm run format` before considering code complete.
 
 - Do **not** nest `setState` calls inside another `setState` updater callback.
 - When you need to read the current value of state inside a `useCallback` or a `setState` updater that runs asynchronously, store the current value in a `ref` (`pinnedIdsRef` pattern in `PinnedContext`).
+- Do not use packages from shuriken, just npm.
 
 ### Types
 
