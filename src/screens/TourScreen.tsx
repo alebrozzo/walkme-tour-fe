@@ -353,12 +353,23 @@ export default function TourScreen({ navigation, route }: Props) {
             <Text style={styles.sectionTitle}>{t.tour.recommendedStops}</Text>
             <TouchableOpacity
               style={[styles.mapButton, { borderColor: tour.color }]}
-              onPress={() => {
-                Linking.openURL(buildGoogleMapsUrl(stopsToShow)).catch(() => {});
+              onPress={async () => {
+                const url = buildGoogleMapsUrl(stopsToShow);
+                try {
+                  const canOpen = await Linking.canOpenURL(url);
+                  if (!canOpen) return;
+                  await Linking.openURL(url);
+                } catch {
+                  // URL open failure — no user action needed
+                }
               }}
               activeOpacity={0.85}
+              accessibilityRole="button"
+              accessibilityLabel={t.tour.viewOnMap}
             >
-              <Text style={styles.mapButtonIcon}>🗺️</Text>
+              <Text style={styles.mapButtonIcon} accessible={false}>
+                🗺️
+              </Text>
               <Text style={[styles.mapButtonText, { color: tour.color }]}>{t.tour.viewOnMap}</Text>
             </TouchableOpacity>
           </View>
