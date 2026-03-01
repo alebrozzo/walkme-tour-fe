@@ -18,6 +18,7 @@ const tours: Tour[] = [
         name: 'Eiffel Tower',
         address: 'Champ de Mars, 5 Av. Anatole France, 75007 Paris',
         type: 'landmark',
+        imageUrl: 'https://images.unsplash.com/photo-1543349689-9a4d426bee8e?w=300&h=300&fit=crop&q=80',
         description:
           "The iconic iron lattice tower built by Gustave Eiffel for the 1889 World's Fair. At 330 metres tall, it was the world's tallest structure for over 40 years.",
         duration: 45,
@@ -31,6 +32,7 @@ const tours: Tour[] = [
         name: "Musée d'Orsay",
         address: "1 Rue de la Légion d'Honneur, 75007 Paris",
         type: 'museum',
+        imageUrl: 'https://images.unsplash.com/photo-1460978812857-470ed1c77af0?w=300&h=300&fit=crop&q=80',
         description:
           "Housed in a former railway station, the Musée d'Orsay holds the world's largest collection of Impressionist and Post-Impressionist masterpieces, including works by Monet, Renoir, and Van Gogh.",
         duration: 60,
@@ -44,6 +46,7 @@ const tours: Tour[] = [
         name: 'Notre-Dame Cathedral',
         address: 'Parvis Notre-Dame - Pl. Jean-Paul II, 75004 Paris',
         type: 'landmark',
+        imageUrl: 'https://images.unsplash.com/photo-1478391679764-b2d8b3cd1e94?w=300&h=300&fit=crop&q=80',
         description:
           'A masterpiece of French Gothic architecture dating from the 12th century. The cathedral is undergoing restoration following the 2019 fire.',
         duration: 30,
@@ -92,6 +95,7 @@ const tours: Tour[] = [
         name: 'Colosseum',
         address: 'Piazza del Colosseo, 1, 00184 Roma',
         type: 'landmark',
+        imageUrl: 'https://images.unsplash.com/photo-1552832230-c0197dd311b5?w=300&h=300&fit=crop&q=80',
         description:
           "The world's largest amphitheatre, completed in 80 AD. It could hold up to 80,000 spectators who gathered to watch gladiatorial contests, animal hunts, and public spectacles.",
         duration: 60,
@@ -117,6 +121,7 @@ const tours: Tour[] = [
         name: 'Trevi Fountain',
         address: 'Piazza di Trevi, 00187 Roma',
         type: 'landmark',
+        imageUrl: 'https://images.unsplash.com/photo-1529260830199-42c24126f198?w=300&h=300&fit=crop&q=80',
         description:
           'The largest Baroque fountain in Rome and one of the most famous fountains in the world. The tradition of throwing a coin over your left shoulder with your right hand ensures a return to Rome.',
         duration: 20,
@@ -129,6 +134,7 @@ const tours: Tour[] = [
         name: 'Pantheon',
         address: 'Piazza della Rotonda, 00186 Roma',
         type: 'landmark',
+        imageUrl: 'https://images.unsplash.com/photo-1555992336-03a23f0928a7?w=300&h=300&fit=crop&q=80',
         description:
           'Built around 125 AD, the Pantheon is the best-preserved ancient Roman building. Its magnificent dome with the open oculus is a marvel of engineering that influenced architecture for centuries.',
         duration: 30,

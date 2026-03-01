@@ -17,6 +17,8 @@ export interface Stop {
   name: string;
   address: string;
   type: StopType;
+  /** Optional remote image URL shown in stop cards/details when available. */
+  imageUrl?: string;
   description: string;
   duration: number;
   tips?: string;
