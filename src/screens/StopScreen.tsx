@@ -1,6 +1,6 @@
 import React, { useCallback, useEffect, useRef, useState } from 'react';
-import { Image, Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
+import { Image, Modal, Pressable, ScrollView, StatusBar, StyleSheet, Text, View } from 'react-native';
+import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import * as Speech from 'expo-speech';
 import { RootStackParamList } from '../types';
@@ -30,8 +30,10 @@ function InfoRow({ icon, label, value }: InfoRowProps) {
 export default function StopScreen({ route }: Props) {
   const { stop, tourColor } = route.params;
   const { t, language } = useLanguage();
+  const insets = useSafeAreaInsets();
   const [isSpeaking, setIsSpeaking] = useState(false);
   const [imageLoadError, setImageLoadError] = useState(false);
+  const [imageModalVisible, setImageModalVisible] = useState(false);
   const cancelRef = useRef<(() => void) | null>(null);
 
   const stopTypeLabel = t.stopTypes[stop.type] ?? stop.type.charAt(0).toUpperCase() + stop.type.slice(1);
@@ -79,6 +81,7 @@ export default function StopScreen({ route }: Props) {
 
   useEffect(() => {
     setImageLoadError(false);
+    setImageModalVisible(false);
   }, [stop.imageUrl]);
 
   return (
@@ -87,18 +90,55 @@ export default function StopScreen({ route }: Props) {
         {/* Header */}
         <View style={[styles.header, { backgroundColor: tourColor }]}>
           {stop.imageUrl && !imageLoadError ? (
-            <Image
-              source={{ uri: stop.imageUrl }}
-              style={styles.stopImage}
-              resizeMode="cover"
-              onError={() => setImageLoadError(true)}
-            />
+            <Pressable
+              onPress={() => setImageModalVisible(true)}
+              accessibilityRole="button"
+              accessibilityLabel={t.stop.viewFullScreen}
+            >
+              <Image
+                source={{ uri: stop.imageUrl }}
+                style={styles.stopImage}
+                resizeMode="cover"
+                onError={() => {
+                  setImageLoadError(true);
+                  setImageModalVisible(false);
+                }}
+              />
+            </Pressable>
           ) : (
             <Text style={styles.typeIcon}>{TYPE_ICON[stop.type] ?? '📌'}</Text>
           )}
           <Text style={styles.stopName}>{stop.name}</Text>
           <Text style={styles.stopType}>{stopTypeLabel}</Text>
         </View>
+
+        {/* Full-screen image modal */}
+        {stop.imageUrl && !imageLoadError && (
+          <Modal
+            visible={imageModalVisible}
+            transparent
+            animationType="fade"
+            onRequestClose={() => setImageModalVisible(false)}
+            statusBarTranslucent
+          >
+            <StatusBar backgroundColor="rgba(0,0,0,0.95)" barStyle="light-content" />
+            <View style={styles.modalBackdrop}>
+              <Image source={{ uri: stop.imageUrl }} style={styles.modalImage} resizeMode="contain" />
+              <Pressable
+                style={[
+                  styles.modalCloseButton,
+                  { top: insets.top + 16 },
+                  language.isRTL ? styles.modalCloseButtonRTL : styles.modalCloseButtonLTR,
+                ]}
+                onPress={() => setImageModalVisible(false)}
+                accessibilityRole="button"
+                accessibilityLabel={t.stop.closeImage}
+              >
+                <Text style={styles.modalCloseText}>✕</Text>
+              </Pressable>
+            </View>
+          </Modal>
+        )}
 
         <View style={styles.body}>
           {/* Info cards */}
@@ -301,5 +341,35 @@ const styles = StyleSheet.create({
     fontSize: 14,
     color: '#5D4037',
     lineHeight: 22,
+  },
+  modalBackdrop: {
+    flex: 1,
+    backgroundColor: 'rgba(0,0,0,0.95)',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  modalImage: {
+    width: '100%',
+    height: '100%',
+  },
+  modalCloseButton: {
+    position: 'absolute',
+    width: 40,
+    height: 40,
+    borderRadius: 20,
+    backgroundColor: 'rgba(255,255,255,0.2)',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  modalCloseButtonLTR: {
+    right: 20,
+  },
+  modalCloseButtonRTL: {
+    left: 20,
+  },
+  modalCloseText: {
+    color: '#FFFFFF',
+    fontSize: 18,
+    fontWeight: '700',
   },
 });
