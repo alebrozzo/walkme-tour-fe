@@ -130,8 +130,8 @@ function TourHeroImage({ imageUrl }: TourHeroImageProps) {
 
 function PreferencesForm({ tour, onGenerate }: PreferencesFormProps) {
   const { t, language } = useLanguage();
-  const [days, setDays] = useState('');
-  const [hoursPerDay, setHoursPerDay] = useState('');
+  const [days, setDays] = useState('2');
+  const [hoursPerDay, setHoursPerDay] = useState('4');
 
   const daysNum = parseInt(days, 10);
   const hoursNum = parseFloat(hoursPerDay);
