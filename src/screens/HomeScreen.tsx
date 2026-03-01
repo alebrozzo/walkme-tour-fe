@@ -1,5 +1,6 @@
 import React, { useLayoutEffect, useMemo, useState } from 'react';
 import {
+  Image,
   Modal,
   Pressable,
   ScrollView,
@@ -26,13 +27,23 @@ interface CityResultProps {
 
 function CityResult({ tour, onPress }: CityResultProps) {
   const { language } = useLanguage();
+  const [imageLoadError, setImageLoadError] = useState(false);
   return (
     <TouchableOpacity
       style={[styles.resultRow, { direction: language.isRTL ? 'rtl' : 'ltr' }]}
       onPress={onPress}
       activeOpacity={0.8}
     >
-      <View style={[styles.resultColorDot, { backgroundColor: tour.color }]} />
+      {tour.imageUrl && !imageLoadError ? (
+        <Image
+          source={{ uri: tour.imageUrl }}
+          style={styles.resultThumb}
+          resizeMode="cover"
+          onError={() => setImageLoadError(true)}
+        />
+      ) : (
+        <View style={[styles.resultColorDot, { backgroundColor: tour.color }]} />
+      )}
       <View style={styles.resultTextContainer}>
         <Text style={styles.resultCity}>{tour.city}</Text>
         <Text style={styles.resultCountry}>{tour.country}</Text>
@@ -50,8 +61,17 @@ interface PinnedCardProps {
 
 function PinnedCard({ tour, onPress, onUnpin }: PinnedCardProps) {
   const { t, language } = useLanguage();
+  const [imageLoadError, setImageLoadError] = useState(false);
   return (
     <View style={[styles.pinnedCard, { backgroundColor: tour.color, direction: language.isRTL ? 'rtl' : 'ltr' }]}>
+      {tour.imageUrl && !imageLoadError ? (
+        <Image
+          source={{ uri: tour.imageUrl }}
+          style={styles.pinnedCardThumb}
+          resizeMode="cover"
+          onError={() => setImageLoadError(true)}
+        />
+      ) : null}
       <Pressable
         style={styles.pinnedCardContent}
         onPress={onPress}
@@ -264,6 +284,12 @@ const styles = StyleSheet.create({
     borderRadius: 7,
     marginEnd: 12,
   },
+  resultThumb: {
+    width: 44,
+    height: 44,
+    borderRadius: 8,
+    marginEnd: 12,
+  },
   resultTextContainer: {
     flex: 1,
   },
@@ -304,6 +330,14 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.1,
     shadowRadius: 6,
     elevation: 3,
+  },
+  pinnedCardThumb: {
+    width: 48,
+    height: 48,
+    borderRadius: 8,
+    marginEnd: 12,
+    borderWidth: 2,
+    borderColor: 'rgba(255,255,255,0.45)',
   },
   pinnedCardContent: {
     flex: 1,

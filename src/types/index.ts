@@ -39,6 +39,8 @@ export interface Tour {
   distance: number;
   difficulty: Difficulty;
   color: string;
+  /** Optional remote image URL shown in city cards/hero banners when available. */
+  imageUrl?: string;
   stops: Stop[];
 }
 
