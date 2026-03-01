@@ -31,9 +31,7 @@ export function PinnedProvider({ children }: { children: React.ReactNode }) {
 
   const togglePin = useCallback((tour: Tour) => {
     const wasPinned = pinnedIdsRef.current.has(tour.id);
-    setPinnedTours((prev) =>
-      wasPinned ? prev.filter((t) => t.id !== tour.id) : [...prev, tour],
-    );
+    setPinnedTours((prev) => (wasPinned ? prev.filter((t) => t.id !== tour.id) : [...prev, tour]));
     if (wasPinned) {
       setItineraries((curr) => {
         if (!(tour.id in curr)) return curr;
@@ -44,10 +42,7 @@ export function PinnedProvider({ children }: { children: React.ReactNode }) {
     }
   }, []);
 
-  const getItinerary = useCallback(
-    (tourId: string) => itineraries[tourId],
-    [itineraries],
-  );
+  const getItinerary = useCallback((tourId: string) => itineraries[tourId], [itineraries]);
 
   const saveItinerary = useCallback((itinerary: GeneratedItinerary) => {
     setItineraries((prev) => ({ ...prev, [itinerary.tourId]: itinerary }));
@@ -62,9 +57,7 @@ export function PinnedProvider({ children }: { children: React.ReactNode }) {
   }, []);
 
   return (
-    <PinnedContext.Provider
-      value={{ pinnedTours, isPinned, togglePin, getItinerary, saveItinerary, removeItinerary }}
-    >
+    <PinnedContext.Provider value={{ pinnedTours, isPinned, togglePin, getItinerary, saveItinerary, removeItinerary }}>
       {children}
     </PinnedContext.Provider>
   );

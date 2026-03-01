@@ -307,7 +307,9 @@ export default function TourScreen({ navigation, route }: Props) {
 
           return (
             <View>
-              {isNewDay && item.day !== null && item.day !== undefined ? <DayHeader day={item.day} tourColor={tour.color} /> : null}
+              {isNewDay && item.day !== null && item.day !== undefined ? (
+                <DayHeader day={item.day} tourColor={tour.color} />
+              ) : null}
               {walkingTime != null ? <WalkingConnector walkingTime={walkingTime} tourColor={tour.color} /> : null}
               <StopRow
                 stop={item}

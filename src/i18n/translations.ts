@@ -47,11 +47,11 @@ export interface Translations {
   stop: {
     address: string;
     timeAtStop: string;
-    stopNumber: string;
-    stopOnTour: (n: number) => string;
     about: string;
     visitorTips: string;
     price: string;
+    listenAbout: string;
+    stopListening: string;
   };
   stopTypes: Record<StopType, string>;
   language: string;
@@ -95,11 +95,11 @@ const en: Translations = {
   stop: {
     address: 'Address',
     timeAtStop: 'Time at stop',
-    stopNumber: 'Stop number',
-    stopOnTour: (n) => `Stop ${n} on the tour`,
     about: 'About',
     visitorTips: 'Visitor Tips',
     price: 'Price',
+    listenAbout: 'Listen',
+    stopListening: 'Stop',
   },
   stopTypes: {
     landmark: 'Landmark',
@@ -153,11 +153,11 @@ const ar: Translations = {
   stop: {
     address: 'العنوان',
     timeAtStop: 'الوقت عند المحطة',
-    stopNumber: 'رقم المحطة',
-    stopOnTour: (n) => `المحطة ${n} في الجولة`,
     about: 'حول',
     visitorTips: 'نصائح للزوار',
     price: 'السعر',
+    listenAbout: 'استمع',
+    stopListening: 'إيقاف',
   },
   stopTypes: {
     landmark: 'معلم',
@@ -211,11 +211,11 @@ const he: Translations = {
   stop: {
     address: 'כתובת',
     timeAtStop: 'זמן בעצירה',
-    stopNumber: 'מספר עצירה',
-    stopOnTour: (n) => `עצירה ${n} בסיור`,
     about: 'אודות',
     visitorTips: 'טיפים למבקרים',
     price: 'מחיר',
+    listenAbout: 'האזן',
+    stopListening: 'עצור',
   },
   stopTypes: {
     landmark: 'אתר',
@@ -269,11 +269,11 @@ const es: Translations = {
   stop: {
     address: 'Dirección',
     timeAtStop: 'Tiempo en parada',
-    stopNumber: 'Número de parada',
-    stopOnTour: (n) => `Parada ${n} del tour`,
     about: 'Acerca de',
     visitorTips: 'Consejos para visitantes',
     price: 'Precio',
+    listenAbout: 'Escuchar',
+    stopListening: 'Detener',
   },
   stopTypes: {
     landmark: 'Monumento',
@@ -327,11 +327,11 @@ const fr: Translations = {
   stop: {
     address: 'Adresse',
     timeAtStop: "Temps à l'arrêt",
-    stopNumber: "Numéro d'arrêt",
-    stopOnTour: (n) => `Arrêt ${n} du tour`,
     about: 'À propos',
     visitorTips: 'Conseils aux visiteurs',
     price: 'Prix',
+    listenAbout: 'Écouter',
+    stopListening: 'Arrêter',
   },
   stopTypes: {
     landmark: 'Monument',
