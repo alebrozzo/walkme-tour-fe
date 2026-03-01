@@ -1,6 +1,6 @@
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { Image, Modal, Pressable, ScrollView, StatusBar, StyleSheet, Text, View } from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
+import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import * as Speech from 'expo-speech';
 import { RootStackParamList } from '../types';
@@ -30,6 +30,7 @@ function InfoRow({ icon, label, value }: InfoRowProps) {
 export default function StopScreen({ route }: Props) {
   const { stop, tourColor } = route.params;
   const { t, language } = useLanguage();
+  const insets = useSafeAreaInsets();
   const [isSpeaking, setIsSpeaking] = useState(false);
   const [imageLoadError, setImageLoadError] = useState(false);
   const [imageModalVisible, setImageModalVisible] = useState(false);
@@ -80,6 +81,7 @@ export default function StopScreen({ route }: Props) {
 
   useEffect(() => {
     setImageLoadError(false);
+    setImageModalVisible(false);
   }, [stop.imageUrl]);
 
   return (
@@ -97,7 +99,10 @@ export default function StopScreen({ route }: Props) {
                 source={{ uri: stop.imageUrl }}
                 style={styles.stopImage}
                 resizeMode="cover"
-                onError={() => setImageLoadError(true)}
+                onError={() => {
+                  setImageLoadError(true);
+                  setImageModalVisible(false);
+                }}
               />
             </Pressable>
           ) : (
@@ -122,6 +127,7 @@ export default function StopScreen({ route }: Props) {
               <Pressable
                 style={[
                   styles.modalCloseButton,
+                  { top: insets.top + 16 },
                   language.isRTL ? styles.modalCloseButtonRTL : styles.modalCloseButtonLTR,
                 ]}
                 onPress={() => setImageModalVisible(false)}
@@ -348,7 +354,6 @@ const styles = StyleSheet.create({
   },
   modalCloseButton: {
     position: 'absolute',
-    top: 48,
     width: 40,
     height: 40,
     borderRadius: 20,
