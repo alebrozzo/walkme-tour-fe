@@ -2,6 +2,7 @@ import React, { useCallback, useEffect, useLayoutEffect, useRef, useState } from
 import {
   ActivityIndicator,
   FlatList,
+  Image,
   ScrollView,
   StyleSheet,
   Text,
@@ -27,6 +28,12 @@ interface StopRowProps {
 
 function StopRow({ stop, tourColor, onPress }: StopRowProps) {
   const { t, language } = useLanguage();
+  const [imageLoadError, setImageLoadError] = useState(false);
+
+  useEffect(() => {
+    setImageLoadError(false);
+  }, [stop.imageUrl]);
+
   return (
     <TouchableOpacity style={styles.stopRow} onPress={onPress} activeOpacity={0.85}>
       <View style={[styles.orderBubble, { backgroundColor: tourColor }]}>
@@ -34,7 +41,16 @@ function StopRow({ stop, tourColor, onPress }: StopRowProps) {
       </View>
       <View style={styles.stopInfo}>
         <View style={styles.stopNameRow}>
-          <Text style={styles.stopIcon}>{TYPE_ICON[stop.type] ?? '📌'}</Text>
+          {stop.imageUrl && !imageLoadError ? (
+            <Image
+              source={{ uri: stop.imageUrl }}
+              style={styles.stopThumb}
+              resizeMode="cover"
+              onError={() => setImageLoadError(true)}
+            />
+          ) : (
+            <Text style={styles.stopIcon}>{TYPE_ICON[stop.type] ?? '📌'}</Text>
+          )}
           <Text style={styles.stopName}>{stop.name}</Text>
         </View>
         <Text style={styles.stopAddress} numberOfLines={1}>
@@ -174,7 +190,7 @@ export default function TourScreen({ navigation, route }: Props) {
         removeItinerary(tour.id);
       }
     };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    
   }, []);
 
   useLayoutEffect(() => {
@@ -409,6 +425,12 @@ const styles = StyleSheet.create({
   },
   stopIcon: {
     fontSize: 15,
+  },
+  stopThumb: {
+    width: 24,
+    height: 24,
+    borderRadius: 6,
+    marginRight: 8,
   },
   stopName: {
     fontSize: 16,

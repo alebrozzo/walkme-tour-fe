@@ -1,5 +1,5 @@
 import React, { useCallback, useEffect, useRef, useState } from 'react';
-import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
+import { Image, Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import * as Speech from 'expo-speech';
@@ -31,6 +31,7 @@ export default function StopScreen({ route }: Props) {
   const { stop, tourColor } = route.params;
   const { t, language } = useLanguage();
   const [isSpeaking, setIsSpeaking] = useState(false);
+  const [imageLoadError, setImageLoadError] = useState(false);
   const cancelRef = useRef<(() => void) | null>(null);
 
   const stopTypeLabel = t.stopTypes[stop.type] ?? stop.type.charAt(0).toUpperCase() + stop.type.slice(1);
@@ -76,12 +77,25 @@ export default function StopScreen({ route }: Props) {
     [],
   );
 
+  useEffect(() => {
+    setImageLoadError(false);
+  }, [stop.imageUrl]);
+
   return (
     <SafeAreaView style={styles.safeArea} edges={['bottom']}>
       <ScrollView style={{ direction: language.isRTL ? 'rtl' : 'ltr' }} contentContainerStyle={styles.scroll}>
         {/* Header */}
         <View style={[styles.header, { backgroundColor: tourColor }]}>
-          <Text style={styles.typeIcon}>{TYPE_ICON[stop.type] ?? '📌'}</Text>
+          {stop.imageUrl && !imageLoadError ? (
+            <Image
+              source={{ uri: stop.imageUrl }}
+              style={styles.stopImage}
+              resizeMode="cover"
+              onError={() => setImageLoadError(true)}
+            />
+          ) : (
+            <Text style={styles.typeIcon}>{TYPE_ICON[stop.type] ?? '📌'}</Text>
+          )}
           <Text style={styles.stopName}>{stop.name}</Text>
           <Text style={styles.stopType}>{stopTypeLabel}</Text>
         </View>
@@ -152,6 +166,14 @@ const styles = StyleSheet.create({
   typeIcon: {
     fontSize: 48,
     marginBottom: 12,
+  },
+  stopImage: {
+    width: 92,
+    height: 92,
+    borderRadius: 16,
+    marginBottom: 12,
+    borderWidth: 2,
+    borderColor: 'rgba(255,255,255,0.45)',
   },
   stopName: {
     fontSize: 26,
