@@ -288,7 +288,10 @@ export default function TourScreen({ navigation, route }: Props) {
         renderItem={({ item, index }) => (
           <View>
             {index > 0 && stopsToShow[index - 1].walkingTime ? (
-              <WalkingConnector walkingTime={stopsToShow[index - 1].walkingTime!} tourColor={tour.color} />
+              <WalkingConnector
+                walkingTime={stopsToShow[index - 1].walkingTime as number}
+                tourColor={tour.color}
+              />
             ) : null}
             <StopRow
               stop={item}
