@@ -190,7 +190,6 @@ export default function TourScreen({ navigation, route }: Props) {
         removeItinerary(tour.id);
       }
     };
-    
   }, []);
 
   useLayoutEffect(() => {
