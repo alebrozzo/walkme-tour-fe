@@ -403,24 +403,28 @@ export default function TourScreen({ navigation, route }: Props) {
   const handleRemoveStop = useCallback(
     (index: number) => {
       if (!generatedStops) return;
+      const stopId = generatedStops[index]?.id;
+      if (!stopId) return;
       Alert.alert(t.tour.removeStopTitle, t.tour.removeStopMessage, [
         { text: t.tour.cancelRemove, style: 'cancel' },
         {
           text: t.tour.confirmRemove,
           style: 'destructive',
           onPress: () => {
-            const next = generatedStops.filter((_, i) => i !== index);
-            const updated = recalculateStops(next);
-            setGeneratedStops(updated);
-            const prefs = lastPrefsRef.current;
-            if (pinnedRef.current && prefs) {
-              saveItinerary({ tourId: tour.id, preferences: prefs, stops: updated });
-            }
+            setGeneratedStops((prev) => {
+              const next = prev.filter((stop) => stop.id !== stopId);
+              const updated = recalculateStops(next);
+              const prefs = lastPrefsRef.current;
+              if (pinnedRef.current && prefs) {
+                saveItinerary({ tourId: tour.id, preferences: prefs, stops: updated });
+              }
+              return updated;
+            });
           },
         },
       ]);
     },
-    [generatedStops, tour.id, saveItinerary, t],
+    [tour.id, saveItinerary, t],
   );
 
   // Use the currently generated stops (kept in sync with any saved itinerary)
