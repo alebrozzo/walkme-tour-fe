@@ -374,10 +374,12 @@ export default function TourScreen({ navigation, route }: Props) {
 
       // Normal swap
       const next = [...generatedStops];
-      const targetDay = next[toIndex].day;
+      const fromDay = next[fromIndex].day;
+      const toDay = next[toIndex].day;
       [next[fromIndex], next[toIndex]] = [next[toIndex], next[fromIndex]];
-      // The moved stop takes the day of the target position; the displaced stop keeps its own day
-      next[toIndex] = { ...next[toIndex], day: targetDay };
+      // Days stay at positions, stops move between them
+      next[fromIndex] = { ...next[fromIndex], day: fromDay };
+      next[toIndex] = { ...next[toIndex], day: toDay };
       const updated = recalculateStops(next);
       setGeneratedStops(updated);
       // Persist if pinned
