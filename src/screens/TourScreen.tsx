@@ -345,12 +345,10 @@ export default function TourScreen({ navigation, route }: Props) {
       const toIndex = fromIndex + direction;
       if (toIndex < 0 || toIndex >= generatedStops.length) return;
       const next = [...generatedStops];
-      const daysByPosition = next.map((s) => s.day);
+      const targetDay = next[toIndex].day;
       [next[fromIndex], next[toIndex]] = [next[toIndex], next[fromIndex]];
-      // Restore day assignments to positions (days stay, stops move)
-      for (let i = 0; i < next.length; i++) {
-        next[i] = { ...next[i], day: daysByPosition[i] };
-      }
+      // The moved stop takes the day of the target position; the displaced stop keeps its own day
+      next[toIndex] = { ...next[toIndex], day: targetDay };
       const updated = recalculateStops(next);
       setGeneratedStops(updated);
       // Persist if pinned
