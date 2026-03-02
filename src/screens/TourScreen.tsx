@@ -338,7 +338,41 @@ export default function TourScreen({ navigation, route }: Props) {
     (fromIndex: number, direction: -1 | 1) => {
       if (!generatedStops) return;
       const toIndex = fromIndex + direction;
-      if (toIndex < 0 || toIndex >= generatedStops.length) return;
+      const totalDays = lastPrefsRef.current?.days ?? 1;
+
+      // Boundary: first stop moving up → move to previous day without swapping
+      if (toIndex < 0) {
+        const stop = generatedStops[fromIndex];
+        if (stop.day != null && stop.day > 1) {
+          const next = [...generatedStops];
+          next[fromIndex] = { ...stop, day: stop.day - 1 };
+          const updated = recalculateStops(next);
+          setGeneratedStops(updated);
+          const prefs = lastPrefsRef.current;
+          if (pinnedRef.current && prefs) {
+            saveItinerary({ tourId: tour.id, preferences: prefs, stops: updated });
+          }
+        }
+        return;
+      }
+
+      // Boundary: last stop moving down → move to next day without swapping
+      if (toIndex >= generatedStops.length) {
+        const stop = generatedStops[fromIndex];
+        if (stop.day != null && stop.day < totalDays) {
+          const next = [...generatedStops];
+          next[fromIndex] = { ...stop, day: stop.day + 1 };
+          const updated = recalculateStops(next);
+          setGeneratedStops(updated);
+          const prefs = lastPrefsRef.current;
+          if (pinnedRef.current && prefs) {
+            saveItinerary({ tourId: tour.id, preferences: prefs, stops: updated });
+          }
+        }
+        return;
+      }
+
+      // Normal swap
       const next = [...generatedStops];
       const targetDay = next[toIndex].day;
       [next[fromIndex], next[toIndex]] = [next[toIndex], next[fromIndex]];
@@ -453,11 +487,24 @@ export default function TourScreen({ navigation, route }: Props) {
           const isNewDay = index === 0 || item.day !== prevStop?.day;
           // Only show walking connector within the same day
           const walkingTime = !isNewDay && prevStop ? prevStop.walkingTime : undefined;
-          const isFirst = index === 0;
-          const isLast = index === stopsToShow.length - 1;
+          const totalDays = lastPrefsRef.current?.days ?? 1;
+          const canMoveUp = index > 0 || (item.day != null && item.day > 1);
+          const canMoveDown = index < stopsToShow.length - 1 || (item.day != null && item.day < totalDays);
+
+          // Show headers for empty days that precede this stop's day
+          const emptyDayHeaders: number[] = [];
+          if (isNewDay && item.day != null) {
+            const startDay = prevStop?.day != null ? prevStop.day + 1 : 1;
+            for (let d = startDay; d < item.day; d++) {
+              emptyDayHeaders.push(d);
+            }
+          }
 
           return (
             <View>
+              {emptyDayHeaders.map((d) => (
+                <DayHeader key={`empty-day-${d}`} day={d} tourColor={tour.color} />
+              ))}
               {isNewDay && item.day !== null && item.day !== undefined ? (
                 <DayHeader day={item.day} tourColor={tour.color} />
               ) : null}
@@ -473,28 +520,36 @@ export default function TourScreen({ navigation, route }: Props) {
                 <View style={styles.moveButtons}>
                   <TouchableOpacity
                     onPress={() => handleMoveStop(index, -1)}
-                    disabled={isFirst}
-                    style={[styles.moveButton, isFirst && styles.moveButtonDisabled]}
+                    disabled={!canMoveUp}
+                    style={[styles.moveButton, !canMoveUp && styles.moveButtonDisabled]}
                     hitSlop={{ top: 4, bottom: 4, left: 4, right: 4 }}
                     accessibilityRole="button"
                     accessibilityLabel={t.tour.moveUp}
                   >
                     <Text
-                      style={[styles.moveButtonText, { color: tour.color }, isFirst && styles.moveButtonTextDisabled]}
+                      style={[
+                        styles.moveButtonText,
+                        { color: tour.color },
+                        !canMoveUp && styles.moveButtonTextDisabled,
+                      ]}
                     >
                       ▲
                     </Text>
                   </TouchableOpacity>
                   <TouchableOpacity
                     onPress={() => handleMoveStop(index, 1)}
-                    disabled={isLast}
-                    style={[styles.moveButton, isLast && styles.moveButtonDisabled]}
+                    disabled={!canMoveDown}
+                    style={[styles.moveButton, !canMoveDown && styles.moveButtonDisabled]}
                     hitSlop={{ top: 4, bottom: 4, left: 4, right: 4 }}
                     accessibilityRole="button"
                     accessibilityLabel={t.tour.moveDown}
                   >
                     <Text
-                      style={[styles.moveButtonText, { color: tour.color }, isLast && styles.moveButtonTextDisabled]}
+                      style={[
+                        styles.moveButtonText,
+                        { color: tour.color },
+                        !canMoveDown && styles.moveButtonTextDisabled,
+                      ]}
                     >
                       ▼
                     </Text>
@@ -504,6 +559,26 @@ export default function TourScreen({ navigation, route }: Props) {
             </View>
           );
         }}
+        ListFooterComponent={
+          lastPrefsRef.current && stopsToShow.length > 0
+            ? () => {
+                const totalDays = lastPrefsRef.current?.days ?? 1;
+                const lastDay = stopsToShow[stopsToShow.length - 1].day ?? totalDays;
+                const trailing: number[] = [];
+                for (let d = lastDay + 1; d <= totalDays; d++) {
+                  trailing.push(d);
+                }
+                if (trailing.length === 0) return null;
+                return (
+                  <View>
+                    {trailing.map((d) => (
+                      <DayHeader key={`trailing-day-${d}`} day={d} tourColor={tour.color} />
+                    ))}
+                  </View>
+                );
+              }
+            : undefined
+        }
       />
     </SafeAreaView>
   );
