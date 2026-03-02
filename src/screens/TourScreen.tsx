@@ -285,18 +285,20 @@ export default function TourScreen({ navigation, route }: Props) {
 
   useLayoutEffect(() => {
     navigation.setOptions({
-      headerRight: () => (
-        <TouchableOpacity
-          onPress={() => togglePin(tour)}
-          hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
-          accessibilityRole="button"
-          accessibilityLabel={pinned ? t.unpinCity : t.pinCity}
-        >
-          <Text style={styles.pinButton}>{pinned ? '📌' : '📍'}</Text>
-        </TouchableOpacity>
-      ),
+      headerRight: generatedStops
+        ? () => (
+            <TouchableOpacity
+              onPress={() => togglePin(tour)}
+              hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
+              accessibilityRole="button"
+              accessibilityLabel={pinned ? t.unpinCity : t.pinCity}
+            >
+              <Text style={styles.pinButton}>{pinned ? '📌' : '📍'}</Text>
+            </TouchableOpacity>
+          )
+        : undefined,
     });
-  }, [navigation, tour, pinned, togglePin, t]);
+  }, [navigation, tour, pinned, togglePin, t, generatedStops]);
 
   const handleGenerate = useCallback(
     async (prefs: TripPreferences) => {
