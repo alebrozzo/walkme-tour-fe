@@ -105,53 +105,94 @@ function SwipeableRow({ children, onDelete, isRTL, deleteAccessibilityLabel }: S
   const translateX = useRef(new Animated.Value(0)).current;
   const isRTLRef = useRef(isRTL);
   isRTLRef.current = isRTL;
+  // Tracks the live translateX value so panHandlers can read it on grant
+  const currentValueRef = useRef(0);
+  // Stores the open amount at the moment a new pan gesture starts
+  const startOffsetRef = useRef(0);
+  const [isOpen, setIsOpen] = useState(false);
+
+  useEffect(() => {
+    const id = translateX.addListener(({ value }) => {
+      currentValueRef.current = value;
+    });
+    return () => translateX.removeListener(id);
+  }, [translateX]);
+
+  // Snaps the row to the nearest stable position (open or closed).
+  const snapToStable = useCallback(
+    (rawCurrent: number) => {
+      const rtl = isRTLRef.current;
+      if (rawCurrent > SWIPE_DELETE_WIDTH / 2) {
+        Animated.spring(translateX, {
+          toValue: rtl ? SWIPE_DELETE_WIDTH : -SWIPE_DELETE_WIDTH,
+          useNativeDriver: true,
+        }).start();
+        setIsOpen(true);
+      } else {
+        Animated.spring(translateX, { toValue: 0, useNativeDriver: true }).start();
+        setIsOpen(false);
+      }
+    },
+    [translateX],
+  );
+  // Keep a ref so PanResponder (one-time closure) always calls the latest version
+  const snapToStableRef = useRef(snapToStable);
+  snapToStableRef.current = snapToStable;
 
   const close = useCallback(() => {
     Animated.spring(translateX, { toValue: 0, useNativeDriver: true }).start();
+    setIsOpen(false);
   }, [translateX]);
 
   const panResponder = useRef(
     PanResponder.create({
       onMoveShouldSetPanResponder: (_, gs) => Math.abs(gs.dx) > Math.abs(gs.dy) && Math.abs(gs.dx) > SWIPE_THRESHOLD_PX,
+      // Capture the current position so subsequent moves continue from where the row is,
+      // not from zero — prevents the jumpy snap when the row is already open.
+      onPanResponderGrant: () => {
+        const rtl = isRTLRef.current;
+        startOffsetRef.current = rtl ? currentValueRef.current : -currentValueRef.current;
+      },
       onPanResponderMove: (_, gs) => {
         const rtl = isRTLRef.current;
-        const raw = rtl ? gs.dx : -gs.dx;
-        const clamped = Math.min(Math.max(raw, 0), SWIPE_DELETE_WIDTH);
+        const rawTotal = startOffsetRef.current + (rtl ? gs.dx : -gs.dx);
+        const clamped = Math.min(Math.max(rawTotal, 0), SWIPE_DELETE_WIDTH);
         translateX.setValue(rtl ? clamped : -clamped);
       },
       onPanResponderRelease: (_, gs) => {
         const rtl = isRTLRef.current;
-        const raw = rtl ? gs.dx : -gs.dx;
-        if (raw > SWIPE_DELETE_WIDTH / 2) {
-          Animated.spring(translateX, {
-            toValue: rtl ? SWIPE_DELETE_WIDTH : -SWIPE_DELETE_WIDTH,
-            useNativeDriver: true,
-          }).start();
-        } else {
-          Animated.spring(translateX, { toValue: 0, useNativeDriver: true }).start();
-        }
+        snapToStableRef.current(startOffsetRef.current + (rtl ? gs.dx : -gs.dx));
+      },
+      // Snap to a stable position if the responder is taken over (e.g. by the FlatList)
+      onPanResponderTerminate: () => {
+        const rtl = isRTLRef.current;
+        snapToStableRef.current(rtl ? currentValueRef.current : -currentValueRef.current);
       },
     }),
   ).current;
 
   return (
-    <View style={styles.swipeableOuter}>
-      <View style={[styles.swipeDeleteArea, isRTL ? styles.swipeDeleteAreaRTL : styles.swipeDeleteAreaLTR]}>
-        <TouchableOpacity
-          style={styles.swipeDeleteButton}
-          onPress={() => {
-            close();
-            onDelete();
-          }}
-          accessibilityRole="button"
-          accessibilityLabel={deleteAccessibilityLabel}
-        >
-          <Text style={styles.swipeDeleteIcon}>🗑️</Text>
-        </TouchableOpacity>
+    <View style={styles.swipeableShadowWrapper}>
+      <View style={styles.swipeableClip}>
+        <View style={[styles.swipeDeleteArea, isRTL ? styles.swipeDeleteAreaRTL : styles.swipeDeleteAreaLTR]}>
+          <TouchableOpacity
+            style={styles.swipeDeleteButton}
+            onPress={() => {
+              close();
+              onDelete();
+            }}
+            accessibilityRole="button"
+            accessibilityLabel={deleteAccessibilityLabel}
+            accessibilityElementsHidden={!isOpen}
+            importantForAccessibility={isOpen ? 'yes' : 'no'}
+          >
+            <Text style={styles.swipeDeleteIcon}>🗑️</Text>
+          </TouchableOpacity>
+        </View>
+        <Animated.View style={[styles.swipeableContent, { transform: [{ translateX }] }]} {...panResponder.panHandlers}>
+          {children}
+        </Animated.View>
       </View>
-      <Animated.View style={[styles.swipeableContent, { transform: [{ translateX }] }]} {...panResponder.panHandlers}>
-        {children}
-      </Animated.View>
     </View>
   );
 }
@@ -985,9 +1026,21 @@ const styles = StyleSheet.create({
   moveButtonTextDisabled: {
     color: '#BDC3C7',
   },
-  swipeableOuter: {
+  // Outer wrapper: provides margin and shadow without clipping children
+  swipeableShadowWrapper: {
     marginHorizontal: 16,
     marginBottom: 10,
+    borderRadius: 12,
+    backgroundColor: '#F5F6FA',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 1 },
+    shadowOpacity: 0.06,
+    shadowRadius: 4,
+    elevation: 2,
+  },
+  // Inner wrapper: clips the sliding content without affecting the outer shadow
+  swipeableClip: {
+    borderRadius: 12,
     overflow: 'hidden',
   },
   swipeableContent: {
