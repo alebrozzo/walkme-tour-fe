@@ -45,6 +45,7 @@ Always run `npm run lint` and `npm run format` before considering code complete.
 - All files use `.ts` / `.tsx` extensions; no `.js` / `.jsx`
 - Import paths use the `@/*` alias for `src/` (e.g. `import { Stop } from '@/types'`)
 - Ignore legacy data that may be stored in the device. This app is not live yet so no backward compatibility is needed.
+- Always consider ltr and rtl layouts when making UI changes, even if the current task is only for one language.
 
 ## Key Patterns
 
