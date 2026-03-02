@@ -19,8 +19,25 @@ import { TYPE_ICON } from '../constants/stopTypes';
 import { useLanguage } from '../contexts/LanguageContext';
 import { usePinned } from '../contexts/PinnedContext';
 import { generateRecommendedStops } from '../services/generateStops';
+import { estimateWalkingTime } from '../services/walkingTime';
 
 type Props = NativeStackScreenProps<RootStackParamList, 'Tour'>;
+
+/**
+ * Recalculates order numbers and walking times for the entire stops array.
+ * Walking times are estimated from coordinates; the last stop of each day gets none.
+ */
+function recalculateStops(stops: Stop[]): Stop[] {
+  return stops.map((stop, i) => {
+    const next = i < stops.length - 1 ? stops[i + 1] : undefined;
+    const sameDay = next && next.day === stop.day;
+    return {
+      ...stop,
+      order: i + 1,
+      walkingTime: sameDay ? estimateWalkingTime(stop.coordinate, next.coordinate) : undefined,
+    };
+  });
+}
 
 function stopToLocation(s: Stop): string {
   // Legacy stops hydrated from AsyncStorage may lack the coordinate field
@@ -322,6 +339,29 @@ export default function TourScreen({ navigation, route }: Props) {
     }
   }, [pinned, generatedStops, savedItinerary, saveItinerary, tour.id]);
 
+  const handleMoveStop = useCallback(
+    (fromIndex: number, direction: -1 | 1) => {
+      if (!generatedStops) return;
+      const toIndex = fromIndex + direction;
+      if (toIndex < 0 || toIndex >= generatedStops.length) return;
+      const next = [...generatedStops];
+      const daysByPosition = next.map((s) => s.day);
+      [next[fromIndex], next[toIndex]] = [next[toIndex], next[fromIndex]];
+      // Restore day assignments to positions (days stay, stops move)
+      for (let i = 0; i < next.length; i++) {
+        next[i] = { ...next[i], day: daysByPosition[i] };
+      }
+      const updated = recalculateStops(next);
+      setGeneratedStops(updated);
+      // Persist if pinned
+      const prefs = lastPrefsRef.current;
+      if (pinnedRef.current && prefs) {
+        saveItinerary({ tourId: tour.id, preferences: prefs, stops: updated });
+      }
+    },
+    [generatedStops, tour.id, saveItinerary],
+  );
+
   // Use the currently generated stops (kept in sync with any saved itinerary)
   const stopsToShow = generatedStops;
 
@@ -420,6 +460,8 @@ export default function TourScreen({ navigation, route }: Props) {
           const isNewDay = index === 0 || item.day !== prevStop?.day;
           // Only show walking connector within the same day
           const walkingTime = !isNewDay && prevStop ? prevStop.walkingTime : undefined;
+          const isFirst = index === 0;
+          const isLast = index === stopsToShow.length - 1;
 
           return (
             <View>
@@ -427,11 +469,45 @@ export default function TourScreen({ navigation, route }: Props) {
                 <DayHeader day={item.day} tourColor={tour.color} />
               ) : null}
               {walkingTime != null ? <WalkingConnector walkingTime={walkingTime} tourColor={tour.color} /> : null}
-              <StopRow
-                stop={item}
-                tourColor={tour.color}
-                onPress={() => navigation.navigate('Stop', { stop: item, tourColor: tour.color })}
-              />
+              <View style={styles.stopRowWithActions}>
+                <View style={styles.stopRowContent}>
+                  <StopRow
+                    stop={item}
+                    tourColor={tour.color}
+                    onPress={() => navigation.navigate('Stop', { stop: item, tourColor: tour.color })}
+                  />
+                </View>
+                <View style={styles.moveButtons}>
+                  <TouchableOpacity
+                    onPress={() => handleMoveStop(index, -1)}
+                    disabled={isFirst}
+                    style={[styles.moveButton, isFirst && styles.moveButtonDisabled]}
+                    hitSlop={{ top: 4, bottom: 4, left: 4, right: 4 }}
+                    accessibilityRole="button"
+                    accessibilityLabel={t.tour.moveUp}
+                  >
+                    <Text
+                      style={[styles.moveButtonText, { color: tour.color }, isFirst && styles.moveButtonTextDisabled]}
+                    >
+                      ▲
+                    </Text>
+                  </TouchableOpacity>
+                  <TouchableOpacity
+                    onPress={() => handleMoveStop(index, 1)}
+                    disabled={isLast}
+                    style={[styles.moveButton, isLast && styles.moveButtonDisabled]}
+                    hitSlop={{ top: 4, bottom: 4, left: 4, right: 4 }}
+                    accessibilityRole="button"
+                    accessibilityLabel={t.tour.moveDown}
+                  >
+                    <Text
+                      style={[styles.moveButtonText, { color: tour.color }, isLast && styles.moveButtonTextDisabled]}
+                    >
+                      ▼
+                    </Text>
+                  </TouchableOpacity>
+                </View>
+              </View>
             </View>
           );
         }}
@@ -514,8 +590,6 @@ const styles = StyleSheet.create({
   },
   stopRow: {
     backgroundColor: '#FFFFFF',
-    marginHorizontal: 16,
-    marginBottom: 10,
     borderRadius: 12,
     padding: 14,
     flexDirection: 'row',
@@ -698,5 +772,37 @@ const styles = StyleSheet.create({
     color: '#7F8C8D',
     textAlign: 'center',
     lineHeight: 24,
+  },
+  stopRowWithActions: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginHorizontal: 16,
+    marginBottom: 10,
+  },
+  stopRowContent: {
+    flex: 1,
+  },
+  moveButtons: {
+    justifyContent: 'center',
+    gap: 4,
+    marginStart: 4,
+  },
+  moveButton: {
+    width: 28,
+    height: 28,
+    borderRadius: 14,
+    backgroundColor: '#F0F0F0',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  moveButtonDisabled: {
+    opacity: 0.3,
+  },
+  moveButtonText: {
+    fontSize: 12,
+    fontWeight: '700',
+  },
+  moveButtonTextDisabled: {
+    color: '#BDC3C7',
   },
 });
