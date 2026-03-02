@@ -2,9 +2,11 @@ import React, { useCallback, useEffect, useLayoutEffect, useRef, useState } from
 import {
   ActivityIndicator,
   Alert,
+  Animated,
   FlatList,
   Image,
   Linking,
+  PanResponder,
   Platform,
   ScrollView,
   StyleSheet,
@@ -87,6 +89,121 @@ async function openDirections(stops: Stop[]): Promise<void> {
   }
   const googleUrl = buildGoogleMapsUrl(stops);
   await Linking.openURL(googleUrl);
+}
+
+const SWIPE_DELETE_WIDTH = 72;
+const SWIPE_THRESHOLD_PX = 5;
+
+interface SwipeableRowProps {
+  children: React.ReactNode;
+  onDelete: () => void;
+  isRTL: boolean;
+  deleteAccessibilityLabel: string;
+}
+
+function SwipeableRow({ children, onDelete, isRTL, deleteAccessibilityLabel }: SwipeableRowProps) {
+  const translateX = useRef(new Animated.Value(0)).current;
+  const isRTLRef = useRef(isRTL);
+  isRTLRef.current = isRTL;
+  // Tracks the live translateX value so panHandlers can read it on grant
+  const currentValueRef = useRef(0);
+  // Stores the open amount at the moment a new pan gesture starts
+  const startOffsetRef = useRef(0);
+  const [isOpen, setIsOpen] = useState(false);
+
+  useEffect(() => {
+    const id = translateX.addListener(({ value }) => {
+      currentValueRef.current = value;
+    });
+    return () => translateX.removeListener(id);
+  }, [translateX]);
+
+  // Snaps the row to the nearest stable position (open or closed).
+  const snapToStable = useCallback(
+    (rawCurrent: number) => {
+      const rtl = isRTLRef.current;
+      if (rawCurrent > SWIPE_DELETE_WIDTH / 2) {
+        Animated.spring(translateX, {
+          toValue: rtl ? SWIPE_DELETE_WIDTH : -SWIPE_DELETE_WIDTH,
+          useNativeDriver: true,
+        }).start();
+        setIsOpen(true);
+      } else {
+        Animated.spring(translateX, { toValue: 0, useNativeDriver: true }).start();
+        setIsOpen(false);
+      }
+    },
+    [translateX],
+  );
+  // Keep a ref so PanResponder (one-time closure) always calls the latest version
+  const snapToStableRef = useRef(snapToStable);
+  snapToStableRef.current = snapToStable;
+
+  const close = useCallback(() => {
+    Animated.spring(translateX, { toValue: 0, useNativeDriver: true }).start();
+    setIsOpen(false);
+  }, [translateX]);
+
+  const panResponder = useRef(
+    PanResponder.create({
+      onMoveShouldSetPanResponder: (_, gs) => Math.abs(gs.dx) > Math.abs(gs.dy) && Math.abs(gs.dx) > SWIPE_THRESHOLD_PX,
+      // Capture the current position so subsequent moves continue from where the row is,
+      // not from zero — prevents the jumpy snap when the row is already open.
+      onPanResponderGrant: () => {
+        const rtl = isRTLRef.current;
+        startOffsetRef.current = rtl ? currentValueRef.current : -currentValueRef.current;
+      },
+      onPanResponderMove: (_, gs) => {
+        const rtl = isRTLRef.current;
+        const rawTotal = startOffsetRef.current + (rtl ? gs.dx : -gs.dx);
+        const clamped = Math.min(Math.max(rawTotal, 0), SWIPE_DELETE_WIDTH);
+        translateX.setValue(rtl ? clamped : -clamped);
+      },
+      onPanResponderRelease: (_, gs) => {
+        const rtl = isRTLRef.current;
+        snapToStableRef.current(startOffsetRef.current + (rtl ? gs.dx : -gs.dx));
+      },
+      // Snap to a stable position if the responder is taken over (e.g. by the FlatList)
+      onPanResponderTerminate: () => {
+        const rtl = isRTLRef.current;
+        snapToStableRef.current(rtl ? currentValueRef.current : -currentValueRef.current);
+      },
+    }),
+  ).current;
+
+  return (
+    <View style={styles.swipeableShadowWrapper}>
+      {/*
+       * Force direction:'ltr' on the clip so that swipe geometry (transforms and
+       * gesture coordinates) is always in physical/LTR space, regardless of the
+       * direction:'rtl' inherited from the parent FlatList.  RTL direction is
+       * re-applied to the sliding content view so the stop row still renders RTL.
+       */}
+      <View style={[styles.swipeableClip, { direction: 'ltr' }]}>
+        <View style={[styles.swipeDeleteArea, isRTL ? styles.swipeDeleteAreaRTL : styles.swipeDeleteAreaLTR]}>
+          <TouchableOpacity
+            style={styles.swipeDeleteButton}
+            onPress={() => {
+              close();
+              onDelete();
+            }}
+            accessibilityRole="button"
+            accessibilityLabel={deleteAccessibilityLabel}
+            accessibilityElementsHidden={!isOpen}
+            importantForAccessibility={isOpen ? 'yes' : 'no'}
+          >
+            <Text style={styles.swipeDeleteIcon}>🗑️</Text>
+          </TouchableOpacity>
+        </View>
+        <Animated.View
+          style={[styles.swipeableContent, { direction: isRTL ? 'rtl' : 'ltr' }, { transform: [{ translateX }] }]}
+          {...panResponder.panHandlers}
+        >
+          {children}
+        </Animated.View>
+      </View>
+    </View>
+  );
 }
 
 interface StopRowProps {
@@ -549,62 +666,59 @@ export default function TourScreen({ navigation, route }: Props) {
                 <DayHeader day={item.day} tourColor={tour.color} />
               ) : null}
               {walkingTime != null ? <WalkingConnector walkingTime={walkingTime} tourColor={tour.color} /> : null}
-              <View style={styles.stopRowWithActions}>
-                <View style={styles.stopRowContent}>
-                  <StopRow
-                    stop={item}
-                    tourColor={tour.color}
-                    onPress={() => navigation.navigate('Stop', { stop: item, tourColor: tour.color })}
-                  />
-                </View>
-                <View style={styles.moveButtons}>
-                  <TouchableOpacity
-                    onPress={() => handleMoveStop(index, -1)}
-                    disabled={!canMoveUp}
-                    style={[styles.moveButton, !canMoveUp && styles.moveButtonDisabled]}
-                    hitSlop={{ top: 4, bottom: 4, left: 4, right: 4 }}
-                    accessibilityRole="button"
-                    accessibilityLabel={t.tour.moveUp}
-                  >
-                    <Text
-                      style={[
-                        styles.moveButtonText,
-                        { color: tour.color },
-                        !canMoveUp && styles.moveButtonTextDisabled,
-                      ]}
+              <SwipeableRow
+                onDelete={() => handleRemoveStop(index)}
+                isRTL={language.isRTL}
+                deleteAccessibilityLabel={t.tour.removeStop}
+              >
+                <View style={styles.stopRowWithActions}>
+                  <View style={styles.stopRowContent}>
+                    <StopRow
+                      stop={item}
+                      tourColor={tour.color}
+                      onPress={() => navigation.navigate('Stop', { stop: item, tourColor: tour.color })}
+                    />
+                  </View>
+                  <View style={styles.moveButtons}>
+                    <TouchableOpacity
+                      onPress={() => handleMoveStop(index, -1)}
+                      disabled={!canMoveUp}
+                      style={[styles.moveButton, !canMoveUp && styles.moveButtonDisabled]}
+                      hitSlop={{ top: 4, bottom: 4, left: 4, right: 4 }}
+                      accessibilityRole="button"
+                      accessibilityLabel={t.tour.moveUp}
                     >
-                      ▲
-                    </Text>
-                  </TouchableOpacity>
-                  <TouchableOpacity
-                    onPress={() => handleMoveStop(index, 1)}
-                    disabled={!canMoveDown}
-                    style={[styles.moveButton, !canMoveDown && styles.moveButtonDisabled]}
-                    hitSlop={{ top: 4, bottom: 4, left: 4, right: 4 }}
-                    accessibilityRole="button"
-                    accessibilityLabel={t.tour.moveDown}
-                  >
-                    <Text
-                      style={[
-                        styles.moveButtonText,
-                        { color: tour.color },
-                        !canMoveDown && styles.moveButtonTextDisabled,
-                      ]}
+                      <Text
+                        style={[
+                          styles.moveButtonText,
+                          { color: tour.color },
+                          !canMoveUp && styles.moveButtonTextDisabled,
+                        ]}
+                      >
+                        ▲
+                      </Text>
+                    </TouchableOpacity>
+                    <TouchableOpacity
+                      onPress={() => handleMoveStop(index, 1)}
+                      disabled={!canMoveDown}
+                      style={[styles.moveButton, !canMoveDown && styles.moveButtonDisabled]}
+                      hitSlop={{ top: 4, bottom: 4, left: 4, right: 4 }}
+                      accessibilityRole="button"
+                      accessibilityLabel={t.tour.moveDown}
                     >
-                      ▼
-                    </Text>
-                  </TouchableOpacity>
-                  <TouchableOpacity
-                    onPress={() => handleRemoveStop(index)}
-                    style={styles.removeButton}
-                    hitSlop={{ top: 4, bottom: 4, left: 4, right: 4 }}
-                    accessibilityRole="button"
-                    accessibilityLabel={t.tour.removeStop}
-                  >
-                    <Text style={styles.removeButtonText}>🗑️</Text>
-                  </TouchableOpacity>
+                      <Text
+                        style={[
+                          styles.moveButtonText,
+                          { color: tour.color },
+                          !canMoveDown && styles.moveButtonTextDisabled,
+                        ]}
+                      >
+                        ▼
+                      </Text>
+                    </TouchableOpacity>
+                  </View>
                 </View>
-              </View>
+              </SwipeableRow>
             </View>
           );
         }}
@@ -893,8 +1007,6 @@ const styles = StyleSheet.create({
   stopRowWithActions: {
     flexDirection: 'row',
     alignItems: 'center',
-    marginHorizontal: 16,
-    marginBottom: 10,
   },
   stopRowContent: {
     flex: 1,
@@ -903,6 +1015,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     gap: 4,
     marginStart: 4,
+    marginEnd: 4,
   },
   moveButton: {
     width: 28,
@@ -922,16 +1035,48 @@ const styles = StyleSheet.create({
   moveButtonTextDisabled: {
     color: '#BDC3C7',
   },
-  removeButton: {
-    width: 28,
-    height: 28,
-    borderRadius: 14,
-    backgroundColor: '#FDE8E8',
+  // Outer wrapper: provides margin and shadow without clipping children
+  swipeableShadowWrapper: {
+    marginHorizontal: 16,
+    marginBottom: 10,
+    borderRadius: 12,
+    backgroundColor: '#F5F6FA',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 1 },
+    shadowOpacity: 0.06,
+    shadowRadius: 4,
+    elevation: 2,
+  },
+  // Inner wrapper: clips the sliding content without affecting the outer shadow
+  swipeableClip: {
+    borderRadius: 12,
+    overflow: 'hidden',
+  },
+  swipeableContent: {
+    backgroundColor: '#F5F6FA',
+  },
+  swipeDeleteArea: {
+    position: 'absolute',
+    top: 0,
+    bottom: 0,
+    width: SWIPE_DELETE_WIDTH,
+    backgroundColor: '#E74C3C',
     alignItems: 'center',
     justifyContent: 'center',
-    marginTop: 4,
   },
-  removeButtonText: {
-    fontSize: 13,
+  swipeDeleteAreaLTR: {
+    right: 0,
+  },
+  swipeDeleteAreaRTL: {
+    left: 0,
+  },
+  swipeDeleteButton: {
+    flex: 1,
+    alignItems: 'center',
+    justifyContent: 'center',
+    width: SWIPE_DELETE_WIDTH,
+  },
+  swipeDeleteIcon: {
+    fontSize: 22,
   },
 });
