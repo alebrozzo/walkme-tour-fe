@@ -378,8 +378,10 @@ export default function TourScreen({ navigation, route }: Props) {
       const toDay = next[toIndex].day;
 
       if (fromDay !== toDay) {
-        // Cross-day boundary: just change the stop's day, no swap
-        next[fromIndex] = { ...next[fromIndex], day: toDay };
+        // Cross-day boundary: move by exactly one day based on direction, ignoring gaps
+        const fromDaySafe = fromDay ?? 1;
+        const newDay = Math.min(Math.max(fromDaySafe + direction, 1), totalDays);
+        next[fromIndex] = { ...next[fromIndex], day: newDay };
       } else {
         // Same day: swap positions, days stay at positions
         [next[fromIndex], next[toIndex]] = [next[toIndex], next[fromIndex]];
