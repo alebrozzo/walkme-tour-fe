@@ -14,7 +14,7 @@ import {
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
-import { Coordinate, RootStackParamList, Stop, TripPreferences } from '../types';
+import { RootStackParamList, Stop, TripPreferences } from '../types';
 import { TYPE_ICON } from '../constants/stopTypes';
 import { useLanguage } from '../contexts/LanguageContext';
 import { usePinned } from '../contexts/PinnedContext';
@@ -40,12 +40,7 @@ function recalculateStops(stops: Stop[]): Stop[] {
 }
 
 function stopToLocation(s: Stop): string {
-  // Legacy stops hydrated from AsyncStorage may lack the coordinate field
-  const coord = s.coordinate as Coordinate | undefined;
-  if (coord) {
-    return `${coord.latitude},${coord.longitude}`;
-  }
-  return encodeURIComponent(s.address);
+  return `${s.coordinate.latitude},${s.coordinate.longitude}`;
 }
 
 function stopToLabel(s: Stop): string {
