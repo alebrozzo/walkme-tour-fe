@@ -48,11 +48,15 @@ function stopToLocation(s: Stop): string {
   return encodeURIComponent(s.address);
 }
 
+function stopToLabel(s: Stop): string {
+  return encodeURIComponent(s.name);
+}
+
 function buildGoogleMapsUrl(stops: Stop[]): string {
   if (stops.length === 0) return '';
-  const origin = stopToLocation(stops[0]);
-  const destination = stopToLocation(stops[stops.length - 1]);
-  const waypoints = stops.slice(1, -1).map(stopToLocation);
+  const origin = stopToLabel(stops[0]);
+  const destination = stopToLabel(stops[stops.length - 1]);
+  const waypoints = stops.slice(1, -1).map(stopToLabel);
   let url = `https://www.google.com/maps/dir/?api=1&origin=${origin}&destination=${destination}&travelmode=walking`;
   if (waypoints.length > 0) {
     url += `&waypoints=${waypoints.join('|')}`;
@@ -66,8 +70,8 @@ function buildAppleMapsUrl(stops: Stop[]): string {
     const location = stopToLocation(stops[0]);
     return `https://maps.apple.com/?q=${encodeURIComponent(stops[0].name)}&ll=${location}`;
   }
-  const origin = stopToLocation(stops[0]);
-  const destinations = stops.slice(1).map(stopToLocation);
+  const origin = stopToLabel(stops[0]);
+  const destinations = stops.slice(1).map(stopToLabel);
   return `https://maps.apple.com/?saddr=${origin}&daddr=${destinations.join('+to:')}&dirflg=w`;
 }
 
