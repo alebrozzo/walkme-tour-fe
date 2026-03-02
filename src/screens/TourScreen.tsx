@@ -173,7 +173,13 @@ function SwipeableRow({ children, onDelete, isRTL, deleteAccessibilityLabel }: S
 
   return (
     <View style={styles.swipeableShadowWrapper}>
-      <View style={styles.swipeableClip}>
+      {/*
+       * Force direction:'ltr' on the clip so that swipe geometry (transforms and
+       * gesture coordinates) is always in physical/LTR space, regardless of the
+       * direction:'rtl' inherited from the parent FlatList.  RTL direction is
+       * re-applied to the sliding content view so the stop row still renders RTL.
+       */}
+      <View style={[styles.swipeableClip, { direction: 'ltr' }]}>
         <View style={[styles.swipeDeleteArea, isRTL ? styles.swipeDeleteAreaRTL : styles.swipeDeleteAreaLTR]}>
           <TouchableOpacity
             style={styles.swipeDeleteButton}
@@ -189,7 +195,10 @@ function SwipeableRow({ children, onDelete, isRTL, deleteAccessibilityLabel }: S
             <Text style={styles.swipeDeleteIcon}>🗑️</Text>
           </TouchableOpacity>
         </View>
-        <Animated.View style={[styles.swipeableContent, { transform: [{ translateX }] }]} {...panResponder.panHandlers}>
+        <Animated.View
+          style={[styles.swipeableContent, { direction: isRTL ? 'rtl' : 'ltr' }, { transform: [{ translateX }] }]}
+          {...panResponder.panHandlers}
+        >
           {children}
         </Animated.View>
       </View>
