@@ -42,31 +42,11 @@ export function PinnedProvider({ children }: { children: React.ReactNode }) {
         }
         if (pinnedRaw[1]) {
           let ids: string[] = [];
-          let needsMigration = false;
 
           try {
             const parsed: unknown = JSON.parse(pinnedRaw[1]);
-            if (Array.isArray(parsed)) {
-              if (parsed.every((item) => typeof item === 'string')) {
-                // New format: string[] of tour IDs
-                ids = parsed as string[];
-              } else if (
-                parsed.every(
-                  (item) =>
-                    item !== null &&
-                    typeof item === 'object' &&
-                    'id' in (item as Record<string, unknown>) &&
-                    typeof (item as { id?: unknown }).id === 'string',
-                )
-              ) {
-                // Legacy format: Tour[] objects — extract ids and migrate
-                ids = (parsed as { id?: string }[])
-                  .map((item) => (typeof item.id === 'string' ? item.id : undefined))
-                  .filter((id): id is string => typeof id === 'string');
-                if (ids.length > 0) {
-                  needsMigration = true;
-                }
-              }
+            if (Array.isArray(parsed) && parsed.every((item) => typeof item === 'string')) {
+              ids = parsed as string[];
             }
           } catch {
             // Malformed pinned data — treat as empty
@@ -76,14 +56,6 @@ export function PinnedProvider({ children }: { children: React.ReactNode }) {
           if (!cancelled && ids.length > 0) {
             const resolved = ids.map((id) => toursById.get(id)).filter((t): t is Tour => t !== undefined);
             setPinnedTours(resolved);
-
-            if (needsMigration) {
-              try {
-                await AsyncStorage.setItem(STORAGE_KEY_PINNED, JSON.stringify(ids));
-              } catch {
-                // Best-effort migration; ignore failures
-              }
-            }
           }
         }
         if (cancelled) {
