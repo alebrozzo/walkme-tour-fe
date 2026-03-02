@@ -341,27 +341,25 @@ export default function TourScreen({ navigation, route }: Props) {
 
   const handleMoveStop = useCallback(
     (fromIndex: number, direction: -1 | 1) => {
-      setGeneratedStops((prev) => {
-        if (!prev) return prev;
-        const toIndex = fromIndex + direction;
-        if (toIndex < 0 || toIndex >= prev.length) return prev;
-        const next = [...prev];
-        const daysByPosition = next.map((s) => s.day);
-        [next[fromIndex], next[toIndex]] = [next[toIndex], next[fromIndex]];
-        // Restore day assignments to positions (days stay, stops move)
-        for (let i = 0; i < next.length; i++) {
-          next[i] = { ...next[i], day: daysByPosition[i] };
-        }
-        const updated = recalculateStops(next);
-        // Persist if pinned
-        const prefs = lastPrefsRef.current;
-        if (pinnedRef.current && prefs) {
-          saveItinerary({ tourId: tour.id, preferences: prefs, stops: updated });
-        }
-        return updated;
-      });
+      if (!generatedStops) return;
+      const toIndex = fromIndex + direction;
+      if (toIndex < 0 || toIndex >= generatedStops.length) return;
+      const next = [...generatedStops];
+      const daysByPosition = next.map((s) => s.day);
+      [next[fromIndex], next[toIndex]] = [next[toIndex], next[fromIndex]];
+      // Restore day assignments to positions (days stay, stops move)
+      for (let i = 0; i < next.length; i++) {
+        next[i] = { ...next[i], day: daysByPosition[i] };
+      }
+      const updated = recalculateStops(next);
+      setGeneratedStops(updated);
+      // Persist if pinned
+      const prefs = lastPrefsRef.current;
+      if (pinnedRef.current && prefs) {
+        saveItinerary({ tourId: tour.id, preferences: prefs, stops: updated });
+      }
     },
-    [tour.id, saveItinerary],
+    [generatedStops, tour.id, saveItinerary],
   );
 
   // Use the currently generated stops (kept in sync with any saved itinerary)

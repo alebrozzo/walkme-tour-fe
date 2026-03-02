@@ -15,7 +15,8 @@ function haversineDistanceKm(a: Coordinate, b: Coordinate): number {
   const sinLat = Math.sin(dLat / 2);
   const sinLon = Math.sin(dLon / 2);
   const h = sinLat * sinLat + Math.cos(toRadians(a.latitude)) * Math.cos(toRadians(b.latitude)) * sinLon * sinLon;
-  return 2 * EARTH_RADIUS_KM * Math.asin(Math.sqrt(h));
+  const hClamped = Math.min(1, Math.max(0, h));
+  return 2 * EARTH_RADIUS_KM * Math.asin(Math.sqrt(hClamped));
 }
 
 /**
