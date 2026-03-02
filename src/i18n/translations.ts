@@ -46,6 +46,11 @@ export interface Translations {
     viewOnMap: string;
     moveUp: string;
     moveDown: string;
+    removeStop: string;
+    removeStopTitle: string;
+    removeStopMessage: string;
+    confirmRemove: string;
+    cancelRemove: string;
   };
   stop: {
     address: string;
@@ -99,6 +104,11 @@ const en: Translations = {
     viewOnMap: 'View on Map',
     moveUp: 'Move up',
     moveDown: 'Move down',
+    removeStop: 'Remove stop',
+    removeStopTitle: 'Remove stop',
+    removeStopMessage: 'Are you sure you want to remove this stop from the itinerary?',
+    confirmRemove: 'Remove',
+    cancelRemove: 'Cancel',
   },
   stop: {
     address: 'Address',
@@ -162,6 +172,11 @@ const ar: Translations = {
     viewOnMap: 'عرض على الخريطة',
     moveUp: 'نقل لأعلى',
     moveDown: 'نقل لأسفل',
+    removeStop: 'إزالة المحطة',
+    removeStopTitle: 'إزالة المحطة',
+    removeStopMessage: 'هل أنت متأكد من إزالة هذه المحطة من المسار؟',
+    confirmRemove: 'إزالة',
+    cancelRemove: 'إلغاء',
   },
   stop: {
     address: 'العنوان',
@@ -225,6 +240,11 @@ const he: Translations = {
     viewOnMap: 'הצג במפה',
     moveUp: 'הזז למעלה',
     moveDown: 'הזז למטה',
+    removeStop: 'הסר עצירה',
+    removeStopTitle: 'הסר עצירה',
+    removeStopMessage: 'האם אתה בטוח שברצונך להסיר עצירה זו מהמסלול?',
+    confirmRemove: 'הסר',
+    cancelRemove: 'ביטול',
   },
   stop: {
     address: 'כתובת',
@@ -288,6 +308,11 @@ const es: Translations = {
     viewOnMap: 'Ver en el mapa',
     moveUp: 'Mover arriba',
     moveDown: 'Mover abajo',
+    removeStop: 'Eliminar parada',
+    removeStopTitle: 'Eliminar parada',
+    removeStopMessage: '¿Seguro que quieres eliminar esta parada del itinerario?',
+    confirmRemove: 'Eliminar',
+    cancelRemove: 'Cancelar',
   },
   stop: {
     address: 'Dirección',
@@ -351,6 +376,11 @@ const fr: Translations = {
     viewOnMap: 'Voir sur la carte',
     moveUp: 'Déplacer vers le haut',
     moveDown: 'Déplacer vers le bas',
+    removeStop: "Supprimer l'arrêt",
+    removeStopTitle: "Supprimer l'arrêt",
+    removeStopMessage: "Voulez-vous vraiment supprimer cet arrêt de l'itinéraire\u00a0?",
+    confirmRemove: 'Supprimer',
+    cancelRemove: 'Annuler',
   },
   stop: {
     address: 'Adresse',

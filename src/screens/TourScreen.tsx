@@ -1,6 +1,7 @@
 import React, { useCallback, useEffect, useLayoutEffect, useRef, useState } from 'react';
 import {
   ActivityIndicator,
+  Alert,
   FlatList,
   Image,
   Linking,
@@ -399,6 +400,29 @@ export default function TourScreen({ navigation, route }: Props) {
     [generatedStops, tour.id, saveItinerary],
   );
 
+  const handleRemoveStop = useCallback(
+    (index: number) => {
+      if (!generatedStops) return;
+      Alert.alert(t.tour.removeStopTitle, t.tour.removeStopMessage, [
+        { text: t.tour.cancelRemove, style: 'cancel' },
+        {
+          text: t.tour.confirmRemove,
+          style: 'destructive',
+          onPress: () => {
+            const next = generatedStops.filter((_, i) => i !== index);
+            const updated = recalculateStops(next);
+            setGeneratedStops(updated);
+            const prefs = lastPrefsRef.current;
+            if (pinnedRef.current && prefs) {
+              saveItinerary({ tourId: tour.id, preferences: prefs, stops: updated });
+            }
+          },
+        },
+      ]);
+    },
+    [generatedStops, tour.id, saveItinerary, t],
+  );
+
   // Use the currently generated stops (kept in sync with any saved itinerary)
   const stopsToShow = generatedStops;
 
@@ -563,6 +587,15 @@ export default function TourScreen({ navigation, route }: Props) {
                     >
                       ▼
                     </Text>
+                  </TouchableOpacity>
+                  <TouchableOpacity
+                    onPress={() => handleRemoveStop(index)}
+                    style={styles.removeButton}
+                    hitSlop={{ top: 4, bottom: 4, left: 4, right: 4 }}
+                    accessibilityRole="button"
+                    accessibilityLabel={t.tour.removeStop}
+                  >
+                    <Text style={styles.removeButtonText}>🗑️</Text>
                   </TouchableOpacity>
                 </View>
               </View>
@@ -882,5 +915,17 @@ const styles = StyleSheet.create({
   },
   moveButtonTextDisabled: {
     color: '#BDC3C7',
+  },
+  removeButton: {
+    width: 28,
+    height: 28,
+    borderRadius: 14,
+    backgroundColor: '#FDE8E8',
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginTop: 4,
+  },
+  removeButtonText: {
+    fontSize: 13,
   },
 });
