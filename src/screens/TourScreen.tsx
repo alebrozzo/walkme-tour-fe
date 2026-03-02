@@ -372,14 +372,22 @@ export default function TourScreen({ navigation, route }: Props) {
         return;
       }
 
-      // Normal swap
+      // Normal swap (same day) or day change (cross-day boundary)
       const next = [...generatedStops];
       const fromDay = next[fromIndex].day;
       const toDay = next[toIndex].day;
-      [next[fromIndex], next[toIndex]] = [next[toIndex], next[fromIndex]];
-      // Days stay at positions, stops move between them
-      next[fromIndex] = { ...next[fromIndex], day: fromDay };
-      next[toIndex] = { ...next[toIndex], day: toDay };
+
+      if (fromDay !== toDay) {
+        // Cross-day boundary: move by exactly one day based on direction, ignoring gaps
+        const fromDaySafe = fromDay ?? 1;
+        const newDay = Math.min(Math.max(fromDaySafe + direction, 1), totalDays);
+        next[fromIndex] = { ...next[fromIndex], day: newDay };
+      } else {
+        // Same day: swap positions, days stay at positions
+        [next[fromIndex], next[toIndex]] = [next[toIndex], next[fromIndex]];
+        next[fromIndex] = { ...next[fromIndex], day: fromDay };
+        next[toIndex] = { ...next[toIndex], day: toDay };
+      }
       const updated = recalculateStops(next);
       setGeneratedStops(updated);
       // Persist if pinned
