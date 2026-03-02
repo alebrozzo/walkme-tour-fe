@@ -44,6 +44,8 @@ export interface Translations {
     day: (n: number) => string;
     free: string;
     viewOnMap: string;
+    moveUp: string;
+    moveDown: string;
   };
   stop: {
     address: string;
@@ -95,6 +97,8 @@ const en: Translations = {
     day: (n) => `Day ${n}`,
     free: 'Free',
     viewOnMap: 'View on Map',
+    moveUp: 'Move up',
+    moveDown: 'Move down',
   },
   stop: {
     address: 'Address',
@@ -156,6 +160,8 @@ const ar: Translations = {
     day: (n) => `اليوم ${n}`,
     free: 'مجاني',
     viewOnMap: 'عرض على الخريطة',
+    moveUp: 'نقل لأعلى',
+    moveDown: 'نقل لأسفل',
   },
   stop: {
     address: 'العنوان',
@@ -217,6 +223,8 @@ const he: Translations = {
     day: (n) => `יום ${n}`,
     free: 'חינם',
     viewOnMap: 'הצג במפה',
+    moveUp: 'הזז למעלה',
+    moveDown: 'הזז למטה',
   },
   stop: {
     address: 'כתובת',
@@ -278,6 +286,8 @@ const es: Translations = {
     day: (n) => `Día ${n}`,
     free: 'Gratis',
     viewOnMap: 'Ver en el mapa',
+    moveUp: 'Mover arriba',
+    moveDown: 'Mover abajo',
   },
   stop: {
     address: 'Dirección',
@@ -339,6 +349,8 @@ const fr: Translations = {
     day: (n) => `Jour ${n}`,
     free: 'Gratuit',
     viewOnMap: 'Voir sur la carte',
+    moveUp: 'Déplacer vers le haut',
+    moveDown: 'Déplacer vers le bas',
   },
   stop: {
     address: 'Adresse',
