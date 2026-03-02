@@ -21,10 +21,10 @@ function haversineDistanceKm(a: Coordinate, b: Coordinate): number {
 /**
  * Estimates walking time in minutes between two coordinates.
  * Uses straight-line distance × 1.3 detour factor at 5 km/h.
- * Returns at least 1 minute for any non-zero distance.
+ * Returns at least 0 minutes (0 for identical coordinates).
  */
 export function estimateWalkingTime(a: Coordinate, b: Coordinate): number {
   const distanceKm = haversineDistanceKm(a, b) * 1.3; // detour factor
   const minutes = (distanceKm / WALKING_SPEED_KM_H) * MINUTES_PER_HOUR;
-  return Math.max(1, Math.round(minutes));
+  return Math.round(minutes);
 }

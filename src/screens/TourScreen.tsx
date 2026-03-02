@@ -342,11 +342,11 @@ export default function TourScreen({ navigation, route }: Props) {
         const toIndex = fromIndex + direction;
         if (toIndex < 0 || toIndex >= prev.length) return prev;
         const next = [...prev];
-        const dayAtPositions = next.map((s) => s.day);
+        const daysByPosition = next.map((s) => s.day);
         [next[fromIndex], next[toIndex]] = [next[toIndex], next[fromIndex]];
         // Restore day assignments to positions (days stay, stops move)
         for (let i = 0; i < next.length; i++) {
-          next[i] = { ...next[i], day: dayAtPositions[i] };
+          next[i] = { ...next[i], day: daysByPosition[i] };
         }
         const updated = recalculateStops(next);
         // Persist if pinned
