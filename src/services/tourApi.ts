@@ -1,6 +1,5 @@
 import { Platform } from 'react-native';
-import { estimateWalkingTime } from './walkingTime';
-import { Difficulty, Stop, Tour } from '../types';
+import { Stop, Tour } from '../types';
 
 const REQUEST_TIMEOUT_MS = 20000;
 
@@ -44,55 +43,6 @@ function getApiBaseUrl(): string {
   return 'http://localhost:3000';
 }
 
-function normalizeStops(stops: ApiStop[]): Stop[] {
-  const sorted = [...stops].sort((a, b) => a.order - b.order);
-
-  return sorted.map((stop, index) => {
-    const nextStop = sorted[index + 1];
-    return {
-      ...stop,
-      walkingTime: nextStop ? estimateWalkingTime(stop.coordinate, nextStop.coordinate) : undefined,
-    };
-  });
-}
-
-function estimateTotalDuration(stops: Stop[]): number {
-  const visitMinutes = stops.reduce((sum, stop) => sum + stop.duration, 0);
-  const walkingMinutes = stops.reduce((sum, stop) => sum + (stop.walkingTime ?? 0), 0);
-  return visitMinutes + walkingMinutes;
-}
-
-function estimateDistanceKm(stops: Stop[]): number {
-  const walkingMinutes = stops.reduce((sum, stop) => sum + (stop.walkingTime ?? 0), 0);
-  const km = (walkingMinutes / 60) * 5;
-  return Number(km.toFixed(1));
-}
-
-function inferDifficulty(distanceKm: number): Difficulty {
-  if (distanceKm < 5) return 'easy';
-  if (distanceKm < 8) return 'moderate';
-  return 'hard';
-}
-
-function mergeTourWithLocalDefaults(apiTour: ApiTour, localTour: Tour): Tour {
-  const normalizedStops = normalizeStops(apiTour.stops);
-  const distance = estimateDistanceKm(normalizedStops);
-
-  return {
-    ...localTour,
-    id: apiTour.id,
-    city: apiTour.city,
-    country: apiTour.country,
-    description: apiTour.description,
-    color: apiTour.color,
-    imageUrl: apiTour.imageUrl,
-    duration: estimateTotalDuration(normalizedStops),
-    distance,
-    difficulty: inferDifficulty(distance),
-    stops: normalizedStops,
-  };
-}
-
 export async function fetchTourForCity(localTour: Tour): Promise<Tour> {
   const controller = new AbortController();
   const timeout = setTimeout(() => controller.abort(), REQUEST_TIMEOUT_MS);
@@ -121,7 +71,10 @@ export async function fetchTourForCity(localTour: Tour): Promise<Tour> {
       throw new Error('Tour API returned an invalid payload');
     }
 
-    return mergeTourWithLocalDefaults(data, localTour);
+    return {
+      ...localTour,
+      ...data,
+    };
   } finally {
     clearTimeout(timeout);
   }
