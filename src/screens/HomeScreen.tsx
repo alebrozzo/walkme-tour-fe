@@ -1,5 +1,7 @@
-import React, { useEffect, useLayoutEffect, useMemo, useState } from 'react';
+import React, { useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react';
 import {
+  ActivityIndicator,
+  Alert,
   Image,
   Modal,
   Pressable,
@@ -17,15 +19,17 @@ import tours from '../data/tours';
 import { RootStackParamList, Tour } from '../types';
 import { useLanguage } from '../contexts/LanguageContext';
 import { usePinned } from '../contexts/PinnedContext';
+import { fetchTourForCity } from '../services/tourApi';
 
 type Props = NativeStackScreenProps<RootStackParamList, 'Home'>;
 
 interface CityResultProps {
   tour: Tour;
+  loading: boolean;
   onPress: () => void;
 }
 
-function CityResult({ tour, onPress }: CityResultProps) {
+function CityResult({ tour, loading, onPress }: CityResultProps) {
   const { language } = useLanguage();
   const [imageLoadError, setImageLoadError] = useState(false);
 
@@ -37,6 +41,7 @@ function CityResult({ tour, onPress }: CityResultProps) {
     <TouchableOpacity
       style={[styles.resultRow, { direction: language.isRTL ? 'rtl' : 'ltr' }]}
       onPress={onPress}
+      disabled={loading}
       activeOpacity={0.8}
     >
       {tour.imageUrl && !imageLoadError ? (
@@ -53,7 +58,11 @@ function CityResult({ tour, onPress }: CityResultProps) {
         <Text style={styles.resultCity}>{tour.city}</Text>
         <Text style={styles.resultCountry}>{tour.country}</Text>
       </View>
-      <Text style={styles.resultChevron}>{language.isRTL ? '‹' : '›'}</Text>
+      {loading ? (
+        <ActivityIndicator size="small" color={tour.color} />
+      ) : (
+        <Text style={styles.resultChevron}>{language.isRTL ? '‹' : '›'}</Text>
+      )}
     </TouchableOpacity>
   );
 }
@@ -109,6 +118,8 @@ export default function HomeScreen({ navigation }: Props) {
   const { pinnedTours, togglePin } = usePinned();
   const [showLangPicker, setShowLangPicker] = useState(false);
   const [query, setQuery] = useState('');
+  const [loadingCityId, setLoadingCityId] = useState<string | null>(null);
+  const activeRequestIdRef = useRef(0);
 
   useLayoutEffect(() => {
     navigation.setOptions({
@@ -127,11 +138,32 @@ export default function HomeScreen({ navigation }: Props) {
     return tours.filter((tour) => tour.city.toLowerCase().includes(q));
   }, [query]);
 
+  const isRTL = language.isRTL;
   const hasQuery = query.trim().length > 0;
-  const directionStyle = useMemo(
-    () => ({ direction: language.isRTL ? ('rtl' as const) : ('ltr' as const) }),
-    [language.isRTL],
-  );
+  const directionStyle = isRTL ? styles.directionRTL : styles.directionLTR;
+  const textAlignStyle = isRTL ? styles.textAlignRight : styles.textAlignLeft;
+
+  const handleCityPress = async (tour: Tour) => {
+    activeRequestIdRef.current += 1;
+    const requestId = activeRequestIdRef.current;
+    setLoadingCityId(tour.id);
+    try {
+      const apiTour = await fetchTourForCity(tour);
+      setQuery('');
+      navigation.navigate('Tour', { tour: apiTour });
+    } catch (error) {
+      if (__DEV__) {
+        console.warn(`Failed to fetch remote tour for ${tour.city}`, error);
+      }
+      Alert.alert(t.home.offlineModeTitle, t.home.offlineModeMessage);
+      setQuery('');
+      navigation.navigate('Tour', { tour });
+    } finally {
+      if (activeRequestIdRef.current === requestId) {
+        setLoadingCityId(null);
+      }
+    }
+  };
 
   return (
     <SafeAreaView style={styles.safeArea} edges={['bottom']}>
@@ -140,13 +172,12 @@ export default function HomeScreen({ navigation }: Props) {
           <View style={styles.searchContainer}>
             <Text style={styles.searchIcon}>🔍</Text>
             <TextInput
-              style={styles.searchInput}
+              style={[styles.searchInput, textAlignStyle]}
               placeholder={t.searchPlaceholder}
               placeholderTextColor="#A0A9B3"
               value={query}
               onChangeText={setQuery}
               autoCorrect={false}
-              textAlign={language.isRTL ? 'right' : 'left'}
             />
             {hasQuery && (
               <TouchableOpacity
@@ -168,10 +199,8 @@ export default function HomeScreen({ navigation }: Props) {
                   <CityResult
                     key={item.id}
                     tour={item}
-                    onPress={() => {
-                      setQuery('');
-                      navigation.navigate('Tour', { tour: item });
-                    }}
+                    loading={loadingCityId === item.id}
+                    onPress={() => handleCityPress(item)}
                   />
                 ))
               )}
@@ -199,19 +228,23 @@ export default function HomeScreen({ navigation }: Props) {
         <TouchableWithoutFeedback onPress={() => setShowLangPicker(false)}>
           <View style={styles.modalOverlay}>
             <TouchableWithoutFeedback>
-              <View style={styles.modalCard}>
+              <View style={[styles.modalCard, directionStyle]}>
                 <Text style={styles.modalTitle}>{t.selectLanguage}</Text>
                 {languages.map((lang) => (
                   <TouchableOpacity
                     key={lang.code}
-                    style={[styles.langOption, language.code === lang.code && styles.langOptionSelected]}
+                    style={[
+                      styles.langOption,
+                      isRTL ? styles.langOptionRTL : styles.langOptionLTR,
+                      language.code === lang.code && styles.langOptionSelected,
+                    ]}
                     onPress={() => {
                       setLanguage(lang.code);
                       setShowLangPicker(false);
                     }}
                   >
-                    <Text style={styles.langNativeName}>{lang.nativeName}</Text>
-                    <Text style={styles.langName}>{lang.name}</Text>
+                    <Text style={[styles.langNativeName, textAlignStyle]}>{lang.nativeName}</Text>
+                    <Text style={[styles.langName, textAlignStyle]}>{t.languageNames[lang.code]}</Text>
                     {language.code === lang.code && <Text style={styles.checkmark}>✓</Text>}
                   </TouchableOpacity>
                 ))}
@@ -231,6 +264,18 @@ const styles = StyleSheet.create({
   },
   scrollContent: {
     flexGrow: 1,
+  },
+  directionLTR: {
+    direction: 'ltr',
+  },
+  directionRTL: {
+    direction: 'rtl',
+  },
+  textAlignLeft: {
+    textAlign: 'left',
+  },
+  textAlignRight: {
+    textAlign: 'right',
   },
   searchContainer: {
     flexDirection: 'row',
@@ -396,11 +441,16 @@ const styles = StyleSheet.create({
     textAlign: 'center',
   },
   langOption: {
-    flexDirection: 'row',
     alignItems: 'center',
     paddingVertical: 12,
     paddingHorizontal: 8,
     borderRadius: 8,
+  },
+  langOptionLTR: {
+    flexDirection: 'row',
+  },
+  langOptionRTL: {
+    flexDirection: 'row-reverse',
   },
   langOptionSelected: {
     backgroundColor: '#F0F4FF',

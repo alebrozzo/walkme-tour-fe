@@ -531,6 +531,7 @@ export default function TourScreen({ navigation, route }: Props) {
           style: 'destructive',
           onPress: () => {
             setGeneratedStops((prev) => {
+              if (!prev) return prev;
               const next = prev.filter((stop) => stop.id !== stopId);
               const updated = recalculateStops(next);
               const prefs = lastPrefsRef.current;
