@@ -1,3 +1,4 @@
+import { LanguageCode } from '@/i18n/translations';
 import { Stop, Tour } from '../types';
 
 const REQUEST_TIMEOUT_MS = 20000;
@@ -22,6 +23,7 @@ interface ApiTour {
   id: string;
   city: string;
   country: string;
+  language: LanguageCode;
   description: string;
   color: string;
   imageUrl?: string;
@@ -37,7 +39,7 @@ function getApiBaseUrl(): string | null {
   return null;
 }
 
-export async function fetchTourForCity(localTour: Tour, languageCode: string): Promise<Tour> {
+export async function fetchTourForCity(localTour: Tour, languageCode: LanguageCode): Promise<Tour> {
   const baseUrl = getApiBaseUrl();
   if (!baseUrl) {
     return localTour;
