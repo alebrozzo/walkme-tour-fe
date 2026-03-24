@@ -1,4 +1,3 @@
-import { Platform } from 'react-native';
 import { Stop, Tour } from '../types';
 
 const REQUEST_TIMEOUT_MS = 20000;
@@ -29,21 +28,21 @@ interface ApiTour {
   stops: ApiStop[];
 }
 
-function getApiBaseUrl(): string {
+function getApiBaseUrl(): string | null {
   const envUrl = process.env.EXPO_PUBLIC_API_BASE_URL?.trim();
   if (envUrl) {
     return envUrl.replace(/\/$/, '');
   }
 
-  // Android emulator cannot reach localhost directly.
-  if (Platform.OS === 'android') {
-    return 'http://10.0.2.2:3000';
-  }
-
-  return 'http://localhost:3000';
+  return null;
 }
 
 export async function fetchTourForCity(localTour: Tour): Promise<Tour> {
+  const baseUrl = getApiBaseUrl();
+  if (!baseUrl) {
+    return localTour;
+  }
+
   const controller = new AbortController();
   const timeout = setTimeout(() => controller.abort(), REQUEST_TIMEOUT_MS);
 
@@ -54,7 +53,7 @@ export async function fetchTourForCity(localTour: Tour): Promise<Tour> {
       country: localTour.country,
     });
 
-    const response = await fetch(`${getApiBaseUrl()}/api/cities?${params.toString()}`, {
+    const response = await fetch(`${baseUrl}/api/cities?${params.toString()}`, {
       method: 'GET',
       signal: controller.signal,
       headers: {
