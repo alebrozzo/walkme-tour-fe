@@ -103,12 +103,16 @@ export default function HomeScreen({ navigation }: Props) {
       setSuggestions([]);
       return;
     }
+    const controller = new AbortController();
     debounceRef.current = setTimeout(async () => {
-      const results = await searchCities(trimmed, language.code);
-      setSuggestions(results);
+      const results = await searchCities(trimmed, language.code, controller.signal);
+      if (!controller.signal.aborted) {
+        setSuggestions(results);
+      }
     }, 350);
     return () => {
       if (debounceRef.current) clearTimeout(debounceRef.current);
+      controller.abort();
     };
   }, [query, language.code]);
   const isRTL = language.isRTL;
