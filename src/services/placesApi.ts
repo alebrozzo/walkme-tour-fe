@@ -67,7 +67,9 @@ export async function searchCities(input: string, languageCode: LanguageCode): P
         country: p.structuredFormat?.secondaryText?.text ?? '',
       }));
   } catch (err) {
-    if (__DEV__) console.warn('[Places] searchCities failed:', err);
+    if (__DEV__) {
+      console.warn('[Places] searchCities failed:', err);
+    }
     return [];
   } finally {
     clearTimeout(timeout);
