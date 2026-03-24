@@ -37,7 +37,7 @@ function getApiBaseUrl(): string | null {
   return null;
 }
 
-export async function fetchTourForCity(localTour: Tour): Promise<Tour> {
+export async function fetchTourForCity(localTour: Tour, languageCode: string): Promise<Tour> {
   const baseUrl = getApiBaseUrl();
   if (!baseUrl) {
     return localTour;
@@ -51,6 +51,7 @@ export async function fetchTourForCity(localTour: Tour): Promise<Tour> {
       placeId: localTour.id,
       name: localTour.city,
       country: localTour.country,
+      language: languageCode,
     });
 
     const response = await fetch(`${baseUrl}/api/cities?${params.toString()}`, {
