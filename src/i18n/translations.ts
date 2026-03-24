@@ -23,6 +23,11 @@ export interface Translations {
   headerSubtitle: string;
   searchPlaceholder: string;
   searchNoResults: string;
+  languageNames: Record<LanguageCode, string>;
+  home: {
+    offlineModeTitle: string;
+    offlineModeMessage: string;
+  };
   difficulty: Record<'easy' | 'moderate' | 'hard', string>;
   units: {
     min: string;
@@ -77,6 +82,17 @@ const en: Translations = {
   headerSubtitle: 'Explore the world one step at a time',
   searchPlaceholder: 'Search for a city…',
   searchNoResults: 'No cities found',
+  languageNames: {
+    en: 'English',
+    ar: 'Arabic',
+    he: 'Hebrew',
+    es: 'Spanish',
+    fr: 'French',
+  },
+  home: {
+    offlineModeTitle: 'Offline mode',
+    offlineModeMessage: 'Could not reach the server. Using local city data.',
+  },
   difficulty: {
     easy: 'Easy',
     moderate: 'Moderate',
@@ -145,6 +161,17 @@ const ar: Translations = {
   headerSubtitle: 'استكشف العالم خطوة بخطوة',
   searchPlaceholder: 'ابحث عن مدينة…',
   searchNoResults: 'لا توجد مدن',
+  languageNames: {
+    en: 'الإنجليزية',
+    ar: 'العربية',
+    he: 'العبرية',
+    es: 'الإسبانية',
+    fr: 'الفرنسية',
+  },
+  home: {
+    offlineModeTitle: 'وضع عدم الاتصال',
+    offlineModeMessage: 'تعذر الوصول إلى الخادم. سيتم استخدام بيانات المدينة المحلية.',
+  },
   difficulty: {
     easy: 'سهل',
     moderate: 'متوسط',
@@ -213,6 +240,17 @@ const he: Translations = {
   headerSubtitle: 'גלה את העולם צעד אחר צעד',
   searchPlaceholder: 'חפש עיר…',
   searchNoResults: 'לא נמצאו ערים',
+  languageNames: {
+    en: 'אנגלית',
+    ar: 'ערבית',
+    he: 'עברית',
+    es: 'ספרדית',
+    fr: 'צרפתית',
+  },
+  home: {
+    offlineModeTitle: 'מצב לא מקוון',
+    offlineModeMessage: 'לא ניתן היה להגיע לשרת. נעשה שימוש בנתוני העיר המקומיים.',
+  },
   difficulty: {
     easy: 'קל',
     moderate: 'בינוני',
@@ -281,6 +319,17 @@ const es: Translations = {
   headerSubtitle: 'Explora el mundo paso a paso',
   searchPlaceholder: 'Buscar una ciudad…',
   searchNoResults: 'No se encontraron ciudades',
+  languageNames: {
+    en: 'Inglés',
+    ar: 'Árabe',
+    he: 'Hebreo',
+    es: 'Español',
+    fr: 'Francés',
+  },
+  home: {
+    offlineModeTitle: 'Modo sin conexión',
+    offlineModeMessage: 'No se pudo contactar con el servidor. Se usarán los datos locales de la ciudad.',
+  },
   difficulty: {
     easy: 'Fácil',
     moderate: 'Moderado',
@@ -349,6 +398,17 @@ const fr: Translations = {
   headerSubtitle: 'Explorez le monde pas à pas',
   searchPlaceholder: 'Rechercher une ville…',
   searchNoResults: 'Aucune ville trouvée',
+  languageNames: {
+    en: 'Anglais',
+    ar: 'Arabe',
+    he: 'Hebreu',
+    es: 'Espagnol',
+    fr: 'Français',
+  },
+  home: {
+    offlineModeTitle: 'Mode hors ligne',
+    offlineModeMessage: 'Impossible de joindre le serveur. Les donnees locales de la ville seront utilisees.',
+  },
   difficulty: {
     easy: 'Facile',
     moderate: 'Modéré',

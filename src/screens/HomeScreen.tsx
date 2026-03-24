@@ -138,11 +138,10 @@ export default function HomeScreen({ navigation }: Props) {
     return tours.filter((tour) => tour.city.toLowerCase().includes(q));
   }, [query]);
 
+  const isRTL = language.isRTL;
   const hasQuery = query.trim().length > 0;
-  const directionStyle = useMemo(
-    () => ({ direction: language.isRTL ? ('rtl' as const) : ('ltr' as const) }),
-    [language.isRTL],
-  );
+  const directionStyle = isRTL ? styles.directionRTL : styles.directionLTR;
+  const textAlignStyle = isRTL ? styles.textAlignRight : styles.textAlignLeft;
 
   const handleCityPress = async (tour: Tour) => {
     activeRequestIdRef.current += 1;
@@ -156,7 +155,7 @@ export default function HomeScreen({ navigation }: Props) {
       if (__DEV__) {
         console.warn(`Failed to fetch remote tour for ${tour.city}`, error);
       }
-      Alert.alert('Offline mode', 'Could not reach the server. Using local city data.');
+      Alert.alert(t.home.offlineModeTitle, t.home.offlineModeMessage);
       setQuery('');
       navigation.navigate('Tour', { tour });
     } finally {
@@ -173,13 +172,12 @@ export default function HomeScreen({ navigation }: Props) {
           <View style={styles.searchContainer}>
             <Text style={styles.searchIcon}>🔍</Text>
             <TextInput
-              style={styles.searchInput}
+              style={[styles.searchInput, textAlignStyle]}
               placeholder={t.searchPlaceholder}
               placeholderTextColor="#A0A9B3"
               value={query}
               onChangeText={setQuery}
               autoCorrect={false}
-              textAlign={language.isRTL ? 'right' : 'left'}
             />
             {hasQuery && (
               <TouchableOpacity
@@ -230,19 +228,23 @@ export default function HomeScreen({ navigation }: Props) {
         <TouchableWithoutFeedback onPress={() => setShowLangPicker(false)}>
           <View style={styles.modalOverlay}>
             <TouchableWithoutFeedback>
-              <View style={styles.modalCard}>
+              <View style={[styles.modalCard, directionStyle]}>
                 <Text style={styles.modalTitle}>{t.selectLanguage}</Text>
                 {languages.map((lang) => (
                   <TouchableOpacity
                     key={lang.code}
-                    style={[styles.langOption, language.code === lang.code && styles.langOptionSelected]}
+                    style={[
+                      styles.langOption,
+                      isRTL ? styles.langOptionRTL : styles.langOptionLTR,
+                      language.code === lang.code && styles.langOptionSelected,
+                    ]}
                     onPress={() => {
                       setLanguage(lang.code);
                       setShowLangPicker(false);
                     }}
                   >
-                    <Text style={styles.langNativeName}>{lang.nativeName}</Text>
-                    <Text style={styles.langName}>{lang.name}</Text>
+                    <Text style={[styles.langNativeName, textAlignStyle]}>{lang.nativeName}</Text>
+                    <Text style={[styles.langName, textAlignStyle]}>{t.languageNames[lang.code]}</Text>
                     {language.code === lang.code && <Text style={styles.checkmark}>✓</Text>}
                   </TouchableOpacity>
                 ))}
@@ -262,6 +264,18 @@ const styles = StyleSheet.create({
   },
   scrollContent: {
     flexGrow: 1,
+  },
+  directionLTR: {
+    direction: 'ltr',
+  },
+  directionRTL: {
+    direction: 'rtl',
+  },
+  textAlignLeft: {
+    textAlign: 'left',
+  },
+  textAlignRight: {
+    textAlign: 'right',
   },
   searchContainer: {
     flexDirection: 'row',
@@ -427,11 +441,16 @@ const styles = StyleSheet.create({
     textAlign: 'center',
   },
   langOption: {
-    flexDirection: 'row',
     alignItems: 'center',
     paddingVertical: 12,
     paddingHorizontal: 8,
     borderRadius: 8,
+  },
+  langOptionLTR: {
+    flexDirection: 'row',
+  },
+  langOptionRTL: {
+    flexDirection: 'row-reverse',
   },
   langOptionSelected: {
     backgroundColor: '#F0F4FF',
