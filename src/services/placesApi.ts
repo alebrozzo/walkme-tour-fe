@@ -74,7 +74,7 @@ export async function searchCities(
         country: p.structuredFormat?.secondaryText?.text ?? '',
       }));
   } catch (err) {
-    if (!signal?.aborted) {
+    if (!signal?.aborted && __DEV__) {
       console.warn('[Places] searchCities failed:', err);
     }
     return [];

@@ -99,7 +99,7 @@ export default function HomeScreen({ navigation }: Props) {
       return;
     }
     if (!hasPlacesApiKey()) {
-      console.warn('[Places] EXPO_PUBLIC_GOOGLE_PLACES_API_KEY is not set');
+      if (__DEV__) console.warn('[Places] EXPO_PUBLIC_GOOGLE_PLACES_API_KEY is not set');
       setSuggestions([]);
       return;
     }
