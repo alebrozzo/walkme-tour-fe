@@ -608,12 +608,6 @@ export default function TourScreen({ navigation, route }: Props) {
               <Text style={styles.heroCountry}>{tour.country}</Text>
               <Text style={styles.heroDescription}>{tour.description}</Text>
               <View style={styles.heroMeta}>
-                <Text style={styles.heroMetaItem}>
-                  🕐 {tour.duration} {t.units.min}
-                </Text>
-                <Text style={styles.heroMetaItem}>
-                  📍 {tour.distance} {t.units.km}
-                </Text>
                 <Text style={styles.heroMetaItem}>🏛️ {t.units.stops(stopsToShow.length)}</Text>
               </View>
             </View>

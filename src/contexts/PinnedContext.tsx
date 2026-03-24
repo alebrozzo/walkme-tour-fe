@@ -1,6 +1,5 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import React, { createContext, useCallback, useContext, useEffect, useMemo, useRef, useState } from 'react';
-import tours from '../data/tours';
 import { GeneratedItinerary, Tour } from '../types';
 
 const STORAGE_KEY_PINNED = '@walkme:pinnedTours';
@@ -32,7 +31,6 @@ export function PinnedProvider({ children }: { children: React.ReactNode }) {
   // Hydrate from storage on mount
   useEffect(() => {
     let cancelled = false;
-    const toursById = new Map(tours.map((t) => [t.id, t]));
 
     (async () => {
       try {
@@ -41,21 +39,18 @@ export function PinnedProvider({ children }: { children: React.ReactNode }) {
           return;
         }
         if (pinnedRaw[1]) {
-          let ids: string[] = [];
-
           try {
             const parsed: unknown = JSON.parse(pinnedRaw[1]);
-            if (Array.isArray(parsed) && parsed.every((item) => typeof item === 'string')) {
-              ids = parsed as string[];
+            if (Array.isArray(parsed)) {
+              const resolved = parsed.filter(
+                (t): t is Tour => t !== null && typeof t === 'object' && typeof t.id === 'string',
+              );
+              if (!cancelled && resolved.length > 0) {
+                setPinnedTours(resolved);
+              }
             }
           } catch {
             // Malformed pinned data — treat as empty
-            ids = [];
-          }
-
-          if (!cancelled && ids.length > 0) {
-            const resolved = ids.map((id) => toursById.get(id)).filter((t): t is Tour => t !== undefined);
-            setPinnedTours(resolved);
           }
         }
         if (cancelled) {
@@ -90,7 +85,7 @@ export function PinnedProvider({ children }: { children: React.ReactNode }) {
     }
 
     AsyncStorage.multiSet([
-      [STORAGE_KEY_PINNED, JSON.stringify(pinnedTours.map((t) => t.id))],
+      [STORAGE_KEY_PINNED, JSON.stringify(pinnedTours)],
       [STORAGE_KEY_ITINERARIES, JSON.stringify(filteredItineraries)],
     ]).catch(() => {});
   }, [pinnedTours, itineraries]);

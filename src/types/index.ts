@@ -9,8 +9,6 @@ export type StopType =
   | 'market'
   | 'beach';
 
-export type Difficulty = 'easy' | 'moderate' | 'hard';
-
 export interface Coordinate {
   latitude: number;
   longitude: number;
@@ -43,9 +41,6 @@ export interface Tour {
   country: string;
   language?: string;
   description: string;
-  duration: number;
-  distance: number;
-  difficulty: Difficulty;
   color: string;
   /** Optional remote image URL shown in city cards/hero banners when available. */
   imageUrl?: string;

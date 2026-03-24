@@ -50,11 +50,15 @@ function getApiBaseUrl(): string | null {
   return null;
 }
 
-export async function fetchTourForCity(localTour: Tour, languageCode: LanguageCode): Promise<Tour> {
+export async function fetchCityTour(
+  placeId: string,
+  cityName: string,
+  country: string,
+  languageCode: LanguageCode,
+): Promise<Tour> {
   const baseUrl = getApiBaseUrl();
   if (!baseUrl) {
-    console.warn('API base URL is not configured. Returning local tour data only.');
-    return localTour;
+    throw new Error('API base URL is not configured.');
   }
 
   const controller = new AbortController();
@@ -62,9 +66,9 @@ export async function fetchTourForCity(localTour: Tour, languageCode: LanguageCo
 
   try {
     const params = new URLSearchParams({
-      placeId: localTour.placeId,
-      name: localTour.city,
-      country: localTour.country,
+      placeId,
+      city: cityName.trim(),
+      ...(country.trim() ? { country: country.trim() } : {}),
       language: languageCode,
     });
 
@@ -86,10 +90,7 @@ export async function fetchTourForCity(localTour: Tour, languageCode: LanguageCo
       throw new Error('Tour API returned an invalid payload');
     }
 
-    return {
-      ...localTour,
-      ...data,
-    };
+    return data;
   } finally {
     clearTimeout(timeout);
   }

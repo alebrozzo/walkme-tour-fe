@@ -1,4 +1,4 @@
-import React, { useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react';
+import React, { useEffect, useLayoutEffect, useRef, useState } from 'react';
 import {
   ActivityIndicator,
   Alert,
@@ -15,57 +15,13 @@ import {
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
-import tours from '../data/tours';
 import { RootStackParamList, Tour } from '../types';
 import { useLanguage } from '../contexts/LanguageContext';
 import { usePinned } from '../contexts/PinnedContext';
-import { fetchTourForCity } from '../services/tourApi';
+import { fetchCityTour } from '../services/tourApi';
+import { hasPlacesApiKey, PlaceSuggestion, searchCities } from '../services/placesApi';
 
 type Props = NativeStackScreenProps<RootStackParamList, 'Home'>;
-
-interface CityResultProps {
-  tour: Tour;
-  loading: boolean;
-  onPress: () => void;
-}
-
-function CityResult({ tour, loading, onPress }: CityResultProps) {
-  const { language } = useLanguage();
-  const [imageLoadError, setImageLoadError] = useState(false);
-
-  useEffect(() => {
-    setImageLoadError(false);
-  }, [tour.imageUrl]);
-
-  return (
-    <TouchableOpacity
-      style={[styles.resultRow, { direction: language.isRTL ? 'rtl' : 'ltr' }]}
-      onPress={onPress}
-      disabled={loading}
-      activeOpacity={0.8}
-    >
-      {tour.imageUrl && !imageLoadError ? (
-        <Image
-          source={{ uri: tour.imageUrl }}
-          style={styles.resultThumb}
-          resizeMode="cover"
-          onError={() => setImageLoadError(true)}
-        />
-      ) : (
-        <View style={[styles.resultColorDot, { backgroundColor: tour.color }]} />
-      )}
-      <View style={styles.resultTextContainer}>
-        <Text style={styles.resultCity}>{tour.city}</Text>
-        <Text style={styles.resultCountry}>{tour.country}</Text>
-      </View>
-      {loading ? (
-        <ActivityIndicator size="small" color={tour.color} />
-      ) : (
-        <Text style={styles.resultChevron}>{language.isRTL ? '‹' : '›'}</Text>
-      )}
-    </TouchableOpacity>
-  );
-}
 
 interface PinnedCardProps {
   tour: Tour;
@@ -118,8 +74,10 @@ export default function HomeScreen({ navigation }: Props) {
   const { pinnedTours, togglePin } = usePinned();
   const [showLangPicker, setShowLangPicker] = useState(false);
   const [query, setQuery] = useState('');
-  const [loadingCityId, setLoadingCityId] = useState<string | null>(null);
+  const [suggestions, setSuggestions] = useState<PlaceSuggestion[]>([]);
+  const [isSearching, setIsSearching] = useState(false);
   const activeRequestIdRef = useRef(0);
+  const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   useLayoutEffect(() => {
     navigation.setOptions({
@@ -132,35 +90,52 @@ export default function HomeScreen({ navigation }: Props) {
     });
   }, [navigation, t, setShowLangPicker]);
 
-  const filtered = useMemo(() => {
-    const q = query.trim().toLowerCase();
-    if (!q) return [];
-    return tours.filter((tour) => tour.city.toLowerCase().includes(q));
-  }, [query]);
-
+  // Debounced Places autocomplete
+  useEffect(() => {
+    if (debounceRef.current) clearTimeout(debounceRef.current);
+    const trimmed = query.trim();
+    if (!trimmed) {
+      setSuggestions([]);
+      return;
+    }
+    if (!hasPlacesApiKey()) {
+      console.warn('[Places] EXPO_PUBLIC_GOOGLE_PLACES_API_KEY is not set');
+      setSuggestions([]);
+      return;
+    }
+    debounceRef.current = setTimeout(async () => {
+      const results = await searchCities(trimmed, language.code);
+      setSuggestions(results);
+    }, 350);
+    return () => {
+      if (debounceRef.current) clearTimeout(debounceRef.current);
+    };
+  }, [query, language.code]);
   const isRTL = language.isRTL;
   const hasQuery = query.trim().length > 0;
   const directionStyle = isRTL ? styles.directionRTL : styles.directionLTR;
   const textAlignStyle = isRTL ? styles.textAlignRight : styles.textAlignLeft;
 
-  const handleCityPress = async (tour: Tour) => {
+  const handleCitySelect = async (placeId: string, cityName: string, country: string = '') => {
+    if (debounceRef.current) clearTimeout(debounceRef.current);
+    setSuggestions([]);
     activeRequestIdRef.current += 1;
     const requestId = activeRequestIdRef.current;
-    setLoadingCityId(tour.id);
+    setIsSearching(true);
     try {
-      const apiTour = await fetchTourForCity(tour, language.code);
-      setQuery('');
-      navigation.navigate('Tour', { tour: apiTour });
-    } catch (error) {
-      if (__DEV__) {
-        console.warn(`Failed to fetch remote tour for ${tour.city}`, error);
-      }
-      Alert.alert(t.home.offlineModeTitle, t.home.offlineModeMessage);
+      const tour = await fetchCityTour(placeId, cityName, country, language.code);
+      if (activeRequestIdRef.current !== requestId) return;
       setQuery('');
       navigation.navigate('Tour', { tour });
+    } catch (error) {
+      if (activeRequestIdRef.current !== requestId) return;
+      if (__DEV__) {
+        console.warn(`Failed to fetch tour for ${cityName}`, error);
+      }
+      Alert.alert(t.home.offlineModeTitle, t.home.offlineModeMessage);
     } finally {
       if (activeRequestIdRef.current === requestId) {
-        setLoadingCityId(null);
+        setIsSearching(false);
       }
     }
   };
@@ -177,9 +152,10 @@ export default function HomeScreen({ navigation }: Props) {
               placeholderTextColor="#A0A9B3"
               value={query}
               onChangeText={setQuery}
+              returnKeyType="search"
               autoCorrect={false}
             />
-            {hasQuery && (
+            {hasQuery && !isSearching && (
               <TouchableOpacity
                 onPress={() => setQuery('')}
                 style={styles.clearButton}
@@ -188,22 +164,31 @@ export default function HomeScreen({ navigation }: Props) {
                 <Text style={styles.clearButtonText}>✕</Text>
               </TouchableOpacity>
             )}
+            {isSearching && <ActivityIndicator size="small" color="#1A1A2E" style={styles.searchSpinner} />}
           </View>
 
           {hasQuery && (
             <View style={styles.resultsList}>
-              {filtered.length === 0 ? (
-                <Text style={styles.noResults}>{t.searchNoResults}</Text>
-              ) : (
-                filtered.map((item) => (
-                  <CityResult
-                    key={item.id}
-                    tour={item}
-                    loading={loadingCityId === item.id}
-                    onPress={() => handleCityPress(item)}
-                  />
-                ))
-              )}
+              {suggestions.map((s) => (
+                <TouchableOpacity
+                  key={s.placeId}
+                  style={[styles.resultRow, { direction: isRTL ? 'rtl' : 'ltr' }]}
+                  onPress={() => handleCitySelect(s.placeId, s.name, s.country)}
+                  disabled={isSearching}
+                  activeOpacity={0.8}
+                >
+                  <Text style={styles.searchIcon}>📍</Text>
+                  <View style={styles.resultTextContainer}>
+                    <Text style={styles.resultCity}>{s.name}</Text>
+                    {!!s.country && <Text style={styles.resultCountry}>{s.country}</Text>}
+                  </View>
+                  {isSearching ? (
+                    <ActivityIndicator size="small" color="#BDC3C7" />
+                  ) : (
+                    <Text style={styles.resultChevron}>{isRTL ? '‹' : '›'}</Text>
+                  )}
+                </TouchableOpacity>
+              ))}
             </View>
           )}
 
@@ -309,6 +294,9 @@ const styles = StyleSheet.create({
     fontSize: 14,
     color: '#95A5A6',
   },
+  searchSpinner: {
+    marginStart: 8,
+  },
   resultsList: {
     paddingHorizontal: 16,
     paddingBottom: 32,
@@ -333,6 +321,7 @@ const styles = StyleSheet.create({
     shadowRadius: 4,
     elevation: 2,
   },
+
   resultColorDot: {
     width: 14,
     height: 14,
