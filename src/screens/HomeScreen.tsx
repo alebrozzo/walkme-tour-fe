@@ -148,7 +148,7 @@ export default function HomeScreen({ navigation }: Props) {
     const requestId = activeRequestIdRef.current;
     setLoadingCityId(tour.id);
     try {
-      const apiTour = await fetchTourForCity(tour);
+      const apiTour = await fetchTourForCity(tour, language.code);
       setQuery('');
       navigation.navigate('Tour', { tour: apiTour });
     } catch (error) {

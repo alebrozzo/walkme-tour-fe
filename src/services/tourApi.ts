@@ -1,4 +1,5 @@
 import { Platform } from 'react-native';
+import { LanguageCode } from '@/i18n/translations';
 import { Stop, Tour } from '../types';
 
 const REQUEST_TIMEOUT_MS = 20000;
@@ -22,8 +23,10 @@ interface ApiStop {
 
 interface ApiTour {
   id: string;
+  placeId: string;
   city: string;
   country: string;
+  language: LanguageCode;
   description: string;
   color: string;
   imageUrl?: string;
@@ -47,7 +50,7 @@ function getApiBaseUrl(): string | null {
   return null;
 }
 
-export async function fetchTourForCity(localTour: Tour): Promise<Tour> {
+export async function fetchTourForCity(localTour: Tour, languageCode: LanguageCode): Promise<Tour> {
   const baseUrl = getApiBaseUrl();
   if (!baseUrl) {
     console.warn('API base URL is not configured. Returning local tour data only.');
@@ -59,9 +62,10 @@ export async function fetchTourForCity(localTour: Tour): Promise<Tour> {
 
   try {
     const params = new URLSearchParams({
-      placeId: localTour.id,
+      placeId: localTour.placeId,
       name: localTour.city,
       country: localTour.country,
+      language: languageCode,
     });
 
     console.log(`Fetching tour data from API: ${baseUrl}/api/cities?${params.toString()}`);
