@@ -119,7 +119,7 @@ export default function HomeScreen({ navigation }: Props) {
   const [showLangPicker, setShowLangPicker] = useState(false);
   const [query, setQuery] = useState('');
   const [loadingCityId, setLoadingCityId] = useState<string | null>(null);
-  const activeRequestIdRef = useRef(0);
+  const fetchInFlightRef = useRef(false);
 
   useLayoutEffect(() => {
     navigation.setOptions({
@@ -145,8 +145,8 @@ export default function HomeScreen({ navigation }: Props) {
   );
 
   const handleCityPress = async (tour: Tour) => {
-    activeRequestIdRef.current += 1;
-    const requestId = activeRequestIdRef.current;
+    if (fetchInFlightRef.current) return;
+    fetchInFlightRef.current = true;
     setLoadingCityId(tour.id);
     try {
       const apiTour = await fetchTourForCity(tour);
@@ -160,9 +160,8 @@ export default function HomeScreen({ navigation }: Props) {
       setQuery('');
       navigation.navigate('Tour', { tour });
     } finally {
-      if (activeRequestIdRef.current === requestId) {
-        setLoadingCityId(null);
-      }
+      fetchInFlightRef.current = false;
+      setLoadingCityId(null);
     }
   };
 
