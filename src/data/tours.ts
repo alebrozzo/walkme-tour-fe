@@ -3,6 +3,7 @@ import { Tour } from '../types';
 const tours: Tour[] = [
   {
     id: '1',
+    placeId: '1',
     city: 'Paris',
     country: 'France',
     description:
@@ -87,6 +88,7 @@ const tours: Tour[] = [
   },
   {
     id: '2',
+    placeId: '2',
     city: 'Rome',
     country: 'Italy',
     description: 'Walk through 2,500 years of history in the Eternal City, from ancient ruins to Baroque fountains.',
@@ -183,6 +185,7 @@ const tours: Tour[] = [
   },
   {
     id: '3',
+    placeId: '3',
     city: 'Tokyo',
     country: 'Japan',
     description:
@@ -261,6 +264,7 @@ const tours: Tour[] = [
   },
   {
     id: '4',
+    placeId: '4',
     city: 'New York',
     country: 'USA',
     description:
@@ -340,6 +344,7 @@ const tours: Tour[] = [
   },
   {
     id: '5',
+    placeId: '5',
     city: 'Barcelona',
     country: 'Spain',
     description:
@@ -420,6 +425,7 @@ const tours: Tour[] = [
   },
   {
     id: '6',
+    placeId: '6',
     city: 'Málaga',
     country: 'Spain',
     description:
@@ -487,6 +493,7 @@ const tours: Tour[] = [
   },
   {
     id: '7',
+    placeId: '7',
     city: 'Fuengirola',
     country: 'Spain',
     description:
@@ -552,6 +559,7 @@ const tours: Tour[] = [
   },
   {
     id: '8',
+    placeId: '8',
     city: 'Buenos Aires',
     country: 'Argentina',
     description:
@@ -615,6 +623,7 @@ const tours: Tour[] = [
   },
   {
     id: '9',
+    placeId: '9',
     city: 'Rio de Janeiro',
     country: 'Brazil',
     description:
@@ -680,6 +689,7 @@ const tours: Tour[] = [
   },
   {
     id: '10',
+    placeId: '10',
     city: 'Madrid',
     country: 'Spain',
     description: 'Walk across Spain’s capital through grand boulevards, royal landmarks, and world-class museums.',
@@ -743,6 +753,7 @@ const tours: Tour[] = [
   },
   {
     id: '11',
+    placeId: '11',
     city: 'Lisbon',
     country: 'Portugal',
     description:
@@ -808,6 +819,7 @@ const tours: Tour[] = [
   },
   {
     id: '12',
+    placeId: '12',
     city: 'Berlin',
     country: 'Germany',
     description:
@@ -870,6 +882,7 @@ const tours: Tour[] = [
   },
   {
     id: '13',
+    placeId: '13',
     city: 'Mexico City',
     country: 'Mexico',
     description:
@@ -935,6 +948,7 @@ const tours: Tour[] = [
   },
   {
     id: '14',
+    placeId: '14',
     city: 'Christchurch',
     country: 'New Zealand',
     description:
@@ -997,6 +1011,7 @@ const tours: Tour[] = [
   },
   {
     id: '15',
+    placeId: '15',
     city: 'Cairo',
     country: 'Egypt',
     description: 'Discover Cairo through its historic core, riverfront views, and world-renowned antiquities.',
@@ -1059,6 +1074,7 @@ const tours: Tour[] = [
   },
   {
     id: '16',
+    placeId: '16',
     city: 'Seoul',
     country: 'South Korea',
     description: 'Walk through Seoul’s blend of palaces, contemporary districts, and riverside public spaces.',
@@ -1120,6 +1136,7 @@ const tours: Tour[] = [
   },
   {
     id: '17',
+    placeId: '17',
     city: 'Sydney',
     country: 'Australia',
     description: 'See Sydney’s iconic harbor, historic quarter, and coastal lifestyle in one walkable route.',
@@ -1180,6 +1197,7 @@ const tours: Tour[] = [
   },
   {
     id: '18',
+    placeId: '18',
     city: 'Nairobi',
     country: 'Kenya',
     description: 'Experience Nairobi’s civic core, cultural sites, and green spaces in a compact city walk.',
@@ -1241,6 +1259,7 @@ const tours: Tour[] = [
   },
   {
     id: '19',
+    placeId: '19',
     city: 'Istanbul',
     country: 'Türkiye',
     description:
@@ -1303,6 +1322,7 @@ const tours: Tour[] = [
   },
   {
     id: '20',
+    placeId: '20',
     city: 'Vancouver',
     country: 'Canada',
     description: 'Enjoy Vancouver with a scenic route linking downtown waterfront, parks, and cultural districts.',
@@ -1363,6 +1383,7 @@ const tours: Tour[] = [
   },
   {
     id: '21',
+    placeId: '21',
     city: 'Bangkok',
     country: 'Thailand',
     description: 'Walk through Bangkok’s riverside heritage, temples, and lively street markets.',
@@ -1425,6 +1446,7 @@ const tours: Tour[] = [
   },
   {
     id: '22',
+    placeId: '22',
     city: 'Reykjavík',
     country: 'Iceland',
     description: 'Discover Reykjavík’s compact center through harborside landmarks, culture, and Nordic design.',
@@ -1486,6 +1508,7 @@ const tours: Tour[] = [
   },
   {
     id: '23',
+    placeId: '23',
     city: 'Marrakech',
     country: 'Morocco',
     description: 'Walk across Marrakech through medina lanes, historic palaces, and vibrant public squares.',

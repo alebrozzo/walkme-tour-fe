@@ -23,6 +23,7 @@ interface ApiStop {
 
 interface ApiTour {
   id: string;
+  placeId: string;
   city: string;
   country: string;
   language: LanguageCode;
@@ -61,7 +62,7 @@ export async function fetchTourForCity(localTour: Tour, languageCode: LanguageCo
 
   try {
     const params = new URLSearchParams({
-      placeId: localTour.id,
+      placeId: localTour.placeId,
       name: localTour.city,
       country: localTour.country,
       language: languageCode,
