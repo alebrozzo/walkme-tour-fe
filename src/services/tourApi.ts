@@ -1,7 +1,9 @@
+import { Platform } from 'react-native';
 import { LanguageCode } from '@/i18n/translations';
 import { Stop, Tour } from '../types';
 
 const REQUEST_TIMEOUT_MS = 20000;
+const LOCALHOST_PORT = 3000;
 
 interface ApiStop {
   id: string;
@@ -36,12 +38,21 @@ function getApiBaseUrl(): string | null {
     return envUrl.replace(/\/$/, '');
   }
 
+  // Platform-aware localhost fallback for development
+  if (__DEV__) {
+    if (Platform.OS === 'android') {
+      return `http://10.0.2.2:${LOCALHOST_PORT}`;
+    }
+    return `http://localhost:${LOCALHOST_PORT}`;
+  }
+
   return null;
 }
 
 export async function fetchTourForCity(localTour: Tour, languageCode: LanguageCode): Promise<Tour> {
   const baseUrl = getApiBaseUrl();
   if (!baseUrl) {
+    console.warn('API base URL is not configured. Returning local tour data only.');
     return localTour;
   }
 
@@ -56,6 +67,7 @@ export async function fetchTourForCity(localTour: Tour, languageCode: LanguageCo
       language: languageCode,
     });
 
+    console.log(`Fetching tour data from API: ${baseUrl}/api/cities?${params.toString()}`);
     const response = await fetch(`${baseUrl}/api/cities?${params.toString()}`, {
       method: 'GET',
       signal: controller.signal,
