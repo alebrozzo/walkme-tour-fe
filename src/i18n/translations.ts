@@ -401,13 +401,13 @@ const fr: Translations = {
   languageNames: {
     en: 'Anglais',
     ar: 'Arabe',
-    he: 'Hebreu',
+    he: 'Hébreu',
     es: 'Espagnol',
     fr: 'Français',
   },
   home: {
     offlineModeTitle: 'Mode hors ligne',
-    offlineModeMessage: 'Impossible de joindre le serveur. Les donnees locales de la ville seront utilisees.',
+    offlineModeMessage: 'Impossible de joindre le serveur. Les données locales de la ville seront utilisées.',
   },
   difficulty: {
     easy: 'Facile',
