@@ -17,12 +17,19 @@ export function hasPlacesApiKey(): boolean {
   return !!getPlacesApiKey();
 }
 
-export async function searchCities(input: string, languageCode: LanguageCode): Promise<PlaceSuggestion[]> {
+export async function searchCities(
+  input: string,
+  languageCode: LanguageCode,
+  signal?: AbortSignal,
+): Promise<PlaceSuggestion[]> {
   const apiKey = getPlacesApiKey();
   if (!apiKey || !input.trim()) return [];
+  if (signal?.aborted) return [];
 
   const controller = new AbortController();
   const timeout = setTimeout(() => controller.abort(), REQUEST_TIMEOUT_MS);
+  const onExternalAbort = () => controller.abort();
+  signal?.addEventListener('abort', onExternalAbort);
 
   try {
     const response = await fetch(AUTOCOMPLETE_URL, {
@@ -67,11 +74,12 @@ export async function searchCities(input: string, languageCode: LanguageCode): P
         country: p.structuredFormat?.secondaryText?.text ?? '',
       }));
   } catch (err) {
-    if (__DEV__) {
+    if (!signal?.aborted && __DEV__) {
       console.warn('[Places] searchCities failed:', err);
     }
     return [];
   } finally {
     clearTimeout(timeout);
+    signal?.removeEventListener('abort', onExternalAbort);
   }
 }
