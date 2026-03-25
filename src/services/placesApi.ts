@@ -65,6 +65,8 @@ export async function searchCities(
     if (__DEV__) {
       console.log('[Places] data:', JSON.stringify(data).slice(0, 500));
     }
+      console.log('[Places] data:', JSON.stringify(data).slice(0, 500));
+    }
     if (!Array.isArray(data.suggestions)) return [];
 
     return data.suggestions
