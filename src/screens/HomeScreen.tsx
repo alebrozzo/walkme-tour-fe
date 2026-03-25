@@ -173,26 +173,58 @@ export default function HomeScreen({ navigation }: Props) {
 
           {hasQuery && (
             <View style={styles.resultsList}>
-              {suggestions.map((s) => (
-                <TouchableOpacity
-                  key={s.placeId}
-                  style={[styles.resultRow, { direction: isRTL ? 'rtl' : 'ltr' }]}
-                  onPress={() => handleCitySelect(s.placeId, s.name, s.country)}
-                  disabled={isSearching}
-                  activeOpacity={0.8}
+              {isSearching ? (
+                suggestions.map((s) => (
+                  <TouchableOpacity
+                    key={s.placeId}
+                    style={[styles.resultRow, { direction: isRTL ? 'rtl' : 'ltr' }]}
+                    onPress={() => handleCitySelect(s.placeId, s.name, s.country)}
+                    disabled={isSearching}
+                    activeOpacity={0.8}
+                  >
+                    <Text style={styles.searchIcon}>📍</Text>
+                    <View style={styles.resultTextContainer}>
+                      <Text style={styles.resultCity}>{s.name}</Text>
+                      {!!s.country && <Text style={styles.resultCountry}>{s.country}</Text>}
+                    </View>
+                    {isSearching ? (
+                      <ActivityIndicator size="small" color="#BDC3C7" />
+                    ) : (
+                      <Text style={styles.resultChevron}>{isRTL ? '‹' : '›'}</Text>
+                    )}
+                  </TouchableOpacity>
+                ))
+              ) : suggestions.length === 0 ? (
+                <View
+                  style={[
+                    styles.resultRow,
+                    {
+                      justifyContent: 'center',
+                      alignItems: 'center',
+                      direction: isRTL ? 'rtl' : 'ltr',
+                    },
+                  ]}
                 >
-                  <Text style={styles.searchIcon}>📍</Text>
-                  <View style={styles.resultTextContainer}>
-                    <Text style={styles.resultCity}>{s.name}</Text>
-                    {!!s.country && <Text style={styles.resultCountry}>{s.country}</Text>}
-                  </View>
-                  {isSearching ? (
-                    <ActivityIndicator size="small" color="#BDC3C7" />
-                  ) : (
+                  <Text style={styles.resultCity}>{t.searchNoResults}</Text>
+                </View>
+              ) : (
+                suggestions.map((s) => (
+                  <TouchableOpacity
+                    key={s.placeId}
+                    style={[styles.resultRow, { direction: isRTL ? 'rtl' : 'ltr' }]}
+                    onPress={() => handleCitySelect(s.placeId, s.name, s.country)}
+                    disabled={isSearching}
+                    activeOpacity={0.8}
+                  >
+                    <Text style={styles.searchIcon}>📍</Text>
+                    <View style={styles.resultTextContainer}>
+                      <Text style={styles.resultCity}>{s.name}</Text>
+                      {!!s.country && <Text style={styles.resultCountry}>{s.country}</Text>}
+                    </View>
                     <Text style={styles.resultChevron}>{isRTL ? '‹' : '›'}</Text>
-                  )}
-                </TouchableOpacity>
-              ))}
+                  </TouchableOpacity>
+                ))
+              )}
             </View>
           )}
 
