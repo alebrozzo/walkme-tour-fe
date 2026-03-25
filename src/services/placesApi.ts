@@ -62,7 +62,9 @@ export async function searchCities(
     }
 
     const data = (await response.json()) as AutocompleteResponse;
-    console.log('[Places] data:', JSON.stringify(data).slice(0, 500));
+    if (__DEV__) {
+      console.log('[Places] data:', JSON.stringify(data).slice(0, 500));
+    }
     if (!Array.isArray(data.suggestions)) return [];
 
     return data.suggestions
