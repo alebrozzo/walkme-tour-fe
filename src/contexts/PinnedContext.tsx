@@ -1,6 +1,43 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import React, { createContext, useCallback, useContext, useEffect, useMemo, useRef, useState } from 'react';
-import { GeneratedItinerary, Tour } from '../types';
+import { TYPE_ICON } from '../constants/stopTypes';
+import { GeneratedItinerary, Stop, Tour } from '../types';
+
+const VALID_STOP_TYPES = new Set(Object.keys(TYPE_ICON));
+
+function isValidStop(s: unknown): s is Stop {
+  if (s === null || typeof s !== 'object') return false;
+  const stop = s as Record<string, unknown>;
+  return (
+    typeof stop.id === 'string' &&
+    typeof stop.order === 'number' &&
+    typeof stop.name === 'string' &&
+    typeof stop.address === 'string' &&
+    typeof stop.description === 'string' &&
+    typeof stop.duration === 'number' &&
+    typeof stop.type === 'string' &&
+    VALID_STOP_TYPES.has(stop.type) &&
+    stop.coordinate !== null &&
+    typeof stop.coordinate === 'object' &&
+    typeof (stop.coordinate as Record<string, unknown>).latitude === 'number' &&
+    typeof (stop.coordinate as Record<string, unknown>).longitude === 'number'
+  );
+}
+
+function isValidTour(t: unknown): t is Tour {
+  if (t === null || typeof t !== 'object') return false;
+  const tour = t as Record<string, unknown>;
+  return (
+    typeof tour.id === 'string' &&
+    typeof tour.placeId === 'string' &&
+    typeof tour.city === 'string' &&
+    typeof tour.country === 'string' &&
+    typeof tour.description === 'string' &&
+    typeof tour.color === 'string' &&
+    Array.isArray(tour.stops) &&
+    (tour.stops as unknown[]).every(isValidStop)
+  );
+}
 
 const STORAGE_KEY_PINNED = '@walkme:pinnedTours';
 const STORAGE_KEY_ITINERARIES = '@walkme:itineraries';
@@ -42,9 +79,7 @@ export function PinnedProvider({ children }: { children: React.ReactNode }) {
           try {
             const parsed: unknown = JSON.parse(pinnedRaw[1]);
             if (Array.isArray(parsed)) {
-              const resolved = parsed.filter(
-                (t): t is Tour => t !== null && typeof t === 'object' && typeof t.id === 'string',
-              );
+              const resolved = parsed.filter(isValidTour);
               if (!cancelled && resolved.length > 0) {
                 setPinnedTours(resolved);
               }
