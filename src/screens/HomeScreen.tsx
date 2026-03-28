@@ -1,4 +1,4 @@
-import React, { useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react';
+import React, { useEffect, useLayoutEffect, useRef, useState } from 'react';
 import {
   ActivityIndicator,
   Alert,
@@ -15,28 +15,22 @@ import {
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
-import tours from '../data/tours';
 import { RootStackParamList, Tour } from '../types';
 import { useLanguage } from '../contexts/LanguageContext';
 import { usePinned } from '../contexts/PinnedContext';
 import { fetchTourForCity } from '../services/tourApi';
+import { searchCities, CityPrediction } from '../services/placesApi';
 
 type Props = NativeStackScreenProps<RootStackParamList, 'Home'>;
 
-interface CityResultProps {
-  tour: Tour;
+interface PlaceResultProps {
+  prediction: CityPrediction;
   loading: boolean;
   onPress: () => void;
 }
 
-function CityResult({ tour, loading, onPress }: CityResultProps) {
+function PlaceResult({ prediction, loading, onPress }: PlaceResultProps) {
   const { language } = useLanguage();
-  const [imageLoadError, setImageLoadError] = useState(false);
-
-  useEffect(() => {
-    setImageLoadError(false);
-  }, [tour.imageUrl]);
-
   return (
     <TouchableOpacity
       style={[styles.resultRow, { direction: language.isRTL ? 'rtl' : 'ltr' }]}
@@ -44,22 +38,12 @@ function CityResult({ tour, loading, onPress }: CityResultProps) {
       disabled={loading}
       activeOpacity={0.8}
     >
-      {tour.imageUrl && !imageLoadError ? (
-        <Image
-          source={{ uri: tour.imageUrl }}
-          style={styles.resultThumb}
-          resizeMode="cover"
-          onError={() => setImageLoadError(true)}
-        />
-      ) : (
-        <View style={[styles.resultColorDot, { backgroundColor: tour.color }]} />
-      )}
+      <Text style={styles.resultPlaceIcon}>📍</Text>
       <View style={styles.resultTextContainer}>
-        <Text style={styles.resultCity}>{tour.city}</Text>
-        <Text style={styles.resultCountry}>{tour.country}</Text>
+        <Text style={styles.resultCity}>{prediction.description}</Text>
       </View>
       {loading ? (
-        <ActivityIndicator size="small" color={tour.color} />
+        <ActivityIndicator size="small" color="#2C3E8C" />
       ) : (
         <Text style={styles.resultChevron}>{language.isRTL ? '‹' : '›'}</Text>
       )}
@@ -118,6 +102,8 @@ export default function HomeScreen({ navigation }: Props) {
   const { pinnedTours, togglePin } = usePinned();
   const [showLangPicker, setShowLangPicker] = useState(false);
   const [query, setQuery] = useState('');
+  const [predictions, setPredictions] = useState<CityPrediction[]>([]);
+  const [searchLoading, setSearchLoading] = useState(false);
   const [loadingCityId, setLoadingCityId] = useState<string | null>(null);
   const activeRequestIdRef = useRef(0);
 
@@ -132,32 +118,63 @@ export default function HomeScreen({ navigation }: Props) {
     });
   }, [navigation, t, setShowLangPicker]);
 
-  const filtered = useMemo(() => {
-    const q = query.trim().toLowerCase();
-    if (!q) return [];
-    return tours.filter((tour) => tour.city.toLowerCase().includes(q));
-  }, [query]);
+  useEffect(() => {
+    const q = query.trim();
+    if (!q) {
+      setPredictions([]);
+      setSearchLoading(false);
+      return;
+    }
+    setSearchLoading(true);
+    const controller = new AbortController();
+    const timer = setTimeout(async () => {
+      try {
+        const results = await searchCities(q, language.code, controller.signal);
+        setPredictions(results);
+      } catch (e) {
+        if ((e as Error).name !== 'AbortError') {
+          setPredictions([]);
+        }
+      } finally {
+        setSearchLoading(false);
+      }
+    }, 350);
+    return () => {
+      clearTimeout(timer);
+      controller.abort();
+    };
+  }, [query, language.code]);
 
   const isRTL = language.isRTL;
   const hasQuery = query.trim().length > 0;
   const directionStyle = isRTL ? styles.directionRTL : styles.directionLTR;
   const textAlignStyle = isRTL ? styles.textAlignRight : styles.textAlignLeft;
 
-  const handleCityPress = async (tour: Tour) => {
+  const handleCityPress = async (prediction: CityPrediction) => {
     activeRequestIdRef.current += 1;
     const requestId = activeRequestIdRef.current;
-    setLoadingCityId(tour.id);
+    setLoadingCityId(prediction.placeId);
+    const tourStub: Tour = {
+      id: prediction.placeId,
+      placeId: prediction.placeId,
+      city: prediction.city,
+      country: prediction.country,
+      description: '',
+      duration: 0,
+      distance: 0,
+      difficulty: 'moderate',
+      color: '#2C3E8C',
+      stops: [],
+    };
     try {
-      const apiTour = await fetchTourForCity(tour, language.code);
+      const apiTour = await fetchTourForCity(tourStub, language.code);
       setQuery('');
       navigation.navigate('Tour', { tour: apiTour });
     } catch (error) {
       if (__DEV__) {
-        console.warn(`Failed to fetch remote tour for ${tour.city}`, error);
+        console.warn(`Failed to fetch remote tour for ${prediction.city}`, error);
       }
       Alert.alert(t.home.offlineModeTitle, t.home.offlineModeMessage);
-      setQuery('');
-      navigation.navigate('Tour', { tour });
     } finally {
       if (activeRequestIdRef.current === requestId) {
         setLoadingCityId(null);
@@ -192,14 +209,16 @@ export default function HomeScreen({ navigation }: Props) {
 
           {hasQuery && (
             <View style={styles.resultsList}>
-              {filtered.length === 0 ? (
+              {searchLoading ? (
+                <ActivityIndicator size="small" color="#2C3E8C" style={styles.searchSpinner} />
+              ) : predictions.length === 0 ? (
                 <Text style={styles.noResults}>{t.searchNoResults}</Text>
               ) : (
-                filtered.map((item) => (
-                  <CityResult
-                    key={item.id}
-                    tour={item}
-                    loading={loadingCityId === item.id}
+                predictions.map((item) => (
+                  <PlaceResult
+                    key={item.placeId}
+                    prediction={item}
+                    loading={loadingCityId === item.placeId}
                     onPress={() => handleCityPress(item)}
                   />
                 ))
@@ -353,15 +372,17 @@ const styles = StyleSheet.create({
     fontWeight: '700',
     color: '#1A1A2E',
   },
-  resultCountry: {
-    fontSize: 13,
-    color: '#7F8C8D',
-    marginTop: 2,
-  },
   resultChevron: {
     fontSize: 22,
     color: '#BDC3C7',
     fontWeight: '300',
+  },
+  resultPlaceIcon: {
+    fontSize: 20,
+    marginEnd: 12,
+  },
+  searchSpinner: {
+    marginTop: 32,
   },
   pinnedSection: {
     paddingHorizontal: 16,
