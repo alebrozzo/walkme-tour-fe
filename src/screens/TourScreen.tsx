@@ -51,7 +51,9 @@ function stopToLabel(s: Stop): string {
 }
 
 function buildGoogleMapsUrl(stops: Stop[]): string {
-  if (stops.length === 0) return '';
+  if (stops.length === 0) {
+    return '';
+  }
   const origin = stopToLabel(stops[0]);
   const destination = stopToLabel(stops[stops.length - 1]);
   const waypoints = stops.slice(1, -1).map(stopToLabel);
@@ -63,7 +65,9 @@ function buildGoogleMapsUrl(stops: Stop[]): string {
 }
 
 function buildAppleMapsUrl(stops: Stop[]): string {
-  if (stops.length === 0) return '';
+  if (stops.length === 0) {
+    return '';
+  }
   if (stops.length === 1) {
     const location = stopToLocation(stops[0]);
     return `https://maps.apple.com/?q=${encodeURIComponent(stops[0].name)}&ll=${location}`;
@@ -303,7 +307,9 @@ function TourHeroImage({ imageUrl }: TourHeroImageProps) {
     setImageLoadError(false);
   }, [imageUrl]);
 
-  if (!imageUrl || imageLoadError) return null;
+  if (!imageUrl || imageLoadError) {
+    return null;
+  }
   return (
     <Image
       source={{ uri: imageUrl }}
@@ -531,7 +537,9 @@ export default function TourScreen({ navigation, route }: Props) {
           style: 'destructive',
           onPress: () => {
             setGeneratedStops((prev) => {
-              if (!prev) return prev;
+              if (!prev) {
+                return prev;
+              }
               const next = prev.filter((stop) => stop.id !== stopId);
               const updated = recalculateStops(next);
               const prefs = lastPrefsRef.current;
@@ -732,7 +740,9 @@ export default function TourScreen({ navigation, route }: Props) {
                 for (let d = lastDay + 1; d <= totalDays; d++) {
                   trailing.push(d);
                 }
-                if (trailing.length === 0) return null;
+                if (trailing.length === 0) {
+                  return null;
+                }
                 return (
                   <View>
                     {trailing.map((d) => (
