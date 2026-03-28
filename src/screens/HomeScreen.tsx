@@ -66,7 +66,7 @@ function PinnedCard({ tour, onPress, onUnpin }: PinnedCardProps) {
   }, [tour.imageUrl]);
 
   return (
-    <View style={[styles.pinnedCard, { backgroundColor: tour.color, direction: language.isRTL ? 'rtl' : 'ltr' }]}>
+    <View style={[styles.pinnedCard, { direction: language.isRTL ? 'rtl' : 'ltr' }]}>
       {tour.imageUrl && !imageLoadError ? (
         <Image
           source={{ uri: tour.imageUrl }}
@@ -162,10 +162,6 @@ export default function HomeScreen({ navigation }: Props) {
       city: prediction.city,
       country: prediction.country,
       description: '',
-      duration: 0,
-      distance: 0,
-      difficulty: 'moderate',
-      color: '#2C3E8C',
       stops: [],
     };
     try {

@@ -212,11 +212,10 @@ function SwipeableRow({ children, onDelete, isRTL, deleteAccessibilityLabel }: S
 
 interface StopRowProps {
   stop: Stop;
-  tourColor: string;
   onPress: () => void;
 }
 
-function StopRow({ stop, tourColor, onPress }: StopRowProps) {
+function StopRow({ stop, onPress }: StopRowProps) {
   const { t, language } = useLanguage();
   const [imageLoadError, setImageLoadError] = useState(false);
 
@@ -226,7 +225,7 @@ function StopRow({ stop, tourColor, onPress }: StopRowProps) {
 
   return (
     <TouchableOpacity style={styles.stopRow} onPress={onPress} activeOpacity={0.85}>
-      <View style={[styles.orderBubble, { backgroundColor: tourColor }]}>
+      <View style={styles.orderBubble}>
         <Text style={styles.orderText}>{stop.order}</Text>
       </View>
       <View style={styles.stopInfo}>
@@ -265,33 +264,31 @@ interface PreferencesFormProps {
 
 interface WalkingConnectorProps {
   walkingTime: number;
-  tourColor: string;
 }
 
-function WalkingConnector({ walkingTime, tourColor }: WalkingConnectorProps) {
+function WalkingConnector({ walkingTime }: WalkingConnectorProps) {
   const { t } = useLanguage();
   return (
     <View style={styles.walkingConnector}>
-      <View style={[styles.walkingLine, { backgroundColor: tourColor }]} />
+      <View style={styles.walkingLine} />
       <View style={styles.walkingBadge}>
         <Text style={styles.walkingIcon}>🚶</Text>
         <Text style={styles.walkingText}>{t.tour.walkingMinutes(walkingTime)}</Text>
       </View>
-      <View style={[styles.walkingLine, { backgroundColor: tourColor }]} />
+      <View style={styles.walkingLine} />
     </View>
   );
 }
 
 interface DayHeaderProps {
   day: number;
-  tourColor: string;
 }
 
-function DayHeader({ day, tourColor }: DayHeaderProps) {
+function DayHeader({ day }: DayHeaderProps) {
   const { t } = useLanguage();
   return (
-    <View style={[styles.dayHeader, { borderLeftColor: tourColor }]}>
-      <Text style={[styles.dayHeaderText, { color: tourColor }]}>{t.tour.day(day)}</Text>
+    <View style={styles.dayHeader}>
+      <Text style={styles.dayHeaderText}>{t.tour.day(day)}</Text>
     </View>
   );
 }
@@ -331,7 +328,7 @@ function PreferencesForm({ tour, onGenerate }: PreferencesFormProps) {
 
   return (
     <ScrollView style={{ direction: language.isRTL ? 'rtl' : 'ltr' }} keyboardShouldPersistTaps="handled">
-      <View style={[styles.heroBanner, { backgroundColor: tour.color }]}>
+      <View style={styles.heroBanner}>
         <TourHeroImage imageUrl={tour.imageUrl} />
         <Text style={styles.heroCity}>{tour.city}</Text>
         <Text style={styles.heroCountry}>{tour.country}</Text>
@@ -363,7 +360,7 @@ function PreferencesForm({ tour, onGenerate }: PreferencesFormProps) {
         <Text style={styles.formHint}>{t.tour.hoursPerDayHint}</Text>
 
         <TouchableOpacity
-          style={[styles.generateButton, { backgroundColor: tour.color }, !isValid && styles.generateButtonDisabled]}
+          style={[styles.generateButton, !isValid && styles.generateButtonDisabled]}
           onPress={() => isValid && onGenerate({ days: daysNum, hoursPerDay: hoursNum })}
           disabled={!isValid}
           activeOpacity={0.85}
@@ -562,7 +559,7 @@ export default function TourScreen({ navigation, route }: Props) {
     return (
       <SafeAreaView style={styles.safeArea} edges={['bottom']}>
         <View style={styles.loadingContainer}>
-          <ActivityIndicator size="large" color={tour.color} />
+          <ActivityIndicator size="large" />
           <Text style={styles.loadingText}>{t.tour.generating}</Text>
         </View>
       </SafeAreaView>
@@ -581,7 +578,7 @@ export default function TourScreen({ navigation, route }: Props) {
     return (
       <SafeAreaView style={styles.safeArea} edges={['bottom']}>
         <View style={{ direction: language.isRTL ? 'rtl' : 'ltr' }}>
-          <View style={[styles.heroBanner, { backgroundColor: tour.color }]}>
+          <View style={styles.heroBanner}>
             <TourHeroImage imageUrl={tour.imageUrl} />
             <Text style={styles.heroCity}>{tour.city}</Text>
             <Text style={styles.heroCountry}>{tour.country}</Text>
@@ -589,7 +586,7 @@ export default function TourScreen({ navigation, route }: Props) {
           <View style={styles.emptyContainer}>
             <Text style={styles.emptyText}>{t.tour.noRecommendedStops}</Text>
             <TouchableOpacity
-              style={[styles.generateButton, { backgroundColor: tour.color }]}
+              style={styles.generateButton}
               onPress={() => setGeneratedStops(null)}
               activeOpacity={0.85}
             >
@@ -610,24 +607,20 @@ export default function TourScreen({ navigation, route }: Props) {
         contentContainerStyle={styles.list}
         ListHeaderComponent={
           <View>
-            <View style={[styles.heroBanner, { backgroundColor: tour.color }]}>
+            <View style={styles.heroBanner}>
               <TourHeroImage imageUrl={tour.imageUrl} />
               <Text style={styles.heroCity}>{tour.city}</Text>
               <Text style={styles.heroCountry}>{tour.country}</Text>
               <Text style={styles.heroDescription}>{tour.description}</Text>
               <View style={styles.heroMeta}>
-                <Text style={styles.heroMetaItem}>
-                  🕐 {tour.duration} {t.units.min}
-                </Text>
-                <Text style={styles.heroMetaItem}>
-                  📍 {tour.distance} {t.units.km}
-                </Text>
+                <Text style={styles.heroMetaItem}>🕐 {'TODO, maybe'}</Text>
+                <Text style={styles.heroMetaItem}>📍 {'TODO, maybe'}</Text>
                 <Text style={styles.heroMetaItem}>🏛️ {t.units.stops(stopsToShow.length)}</Text>
               </View>
             </View>
             <Text style={styles.sectionTitle}>{t.tour.recommendedStops}</Text>
             <TouchableOpacity
-              style={[styles.mapButton, { borderColor: tour.color }]}
+              style={[styles.mapButton]}
               onPress={async () => {
                 try {
                   await openDirections(stopsToShow);
@@ -644,7 +637,7 @@ export default function TourScreen({ navigation, route }: Props) {
               <Text style={styles.mapButtonIcon} accessible={false}>
                 🗺️
               </Text>
-              <Text style={[styles.mapButtonText, { color: tour.color }]}>{t.tour.viewOnMap}</Text>
+              <Text style={[styles.mapButtonText]}>{t.tour.viewOnMap}</Text>
             </TouchableOpacity>
           </View>
         }
@@ -669,12 +662,10 @@ export default function TourScreen({ navigation, route }: Props) {
           return (
             <View>
               {emptyDayHeaders.map((d) => (
-                <DayHeader key={`empty-day-${d}`} day={d} tourColor={tour.color} />
+                <DayHeader key={`empty-day-${d}`} day={d} />
               ))}
-              {isNewDay && item.day !== null && item.day !== undefined ? (
-                <DayHeader day={item.day} tourColor={tour.color} />
-              ) : null}
-              {walkingTime != null ? <WalkingConnector walkingTime={walkingTime} tourColor={tour.color} /> : null}
+              {isNewDay && item.day !== null && item.day !== undefined ? <DayHeader day={item.day} /> : null}
+              {walkingTime != null ? <WalkingConnector walkingTime={walkingTime} /> : null}
               <SwipeableRow
                 onDelete={() => handleRemoveStop(index)}
                 isRTL={language.isRTL}
@@ -682,11 +673,7 @@ export default function TourScreen({ navigation, route }: Props) {
               >
                 <View style={styles.stopRowWithActions}>
                   <View style={styles.stopRowContent}>
-                    <StopRow
-                      stop={item}
-                      tourColor={tour.color}
-                      onPress={() => navigation.navigate('Stop', { stop: item, tourColor: tour.color })}
-                    />
+                    <StopRow stop={item} onPress={() => navigation.navigate('Stop', { stop: item })} />
                   </View>
                   <View style={styles.moveButtons}>
                     <TouchableOpacity
@@ -697,15 +684,7 @@ export default function TourScreen({ navigation, route }: Props) {
                       accessibilityRole="button"
                       accessibilityLabel={t.tour.moveUp}
                     >
-                      <Text
-                        style={[
-                          styles.moveButtonText,
-                          { color: tour.color },
-                          !canMoveUp && styles.moveButtonTextDisabled,
-                        ]}
-                      >
-                        ▲
-                      </Text>
+                      <Text style={[styles.moveButtonText, !canMoveUp && styles.moveButtonTextDisabled]}>▲</Text>
                     </TouchableOpacity>
                     <TouchableOpacity
                       onPress={() => handleMoveStop(index, 1)}
@@ -715,15 +694,7 @@ export default function TourScreen({ navigation, route }: Props) {
                       accessibilityRole="button"
                       accessibilityLabel={t.tour.moveDown}
                     >
-                      <Text
-                        style={[
-                          styles.moveButtonText,
-                          { color: tour.color },
-                          !canMoveDown && styles.moveButtonTextDisabled,
-                        ]}
-                      >
-                        ▼
-                      </Text>
+                      <Text style={[styles.moveButtonText, !canMoveDown && styles.moveButtonTextDisabled]}>▼</Text>
                     </TouchableOpacity>
                   </View>
                 </View>
@@ -746,7 +717,7 @@ export default function TourScreen({ navigation, route }: Props) {
                 return (
                   <View>
                     {trailing.map((d) => (
-                      <DayHeader key={`trailing-day-${d}`} day={d} tourColor={tour.color} />
+                      <DayHeader key={`trailing-day-${d}`} day={d} />
                     ))}
                   </View>
                 );
