@@ -43,7 +43,7 @@ function PlaceResult({ prediction, loading, onPress }: PlaceResultProps) {
         <Text style={styles.resultCity}>{prediction.description}</Text>
       </View>
       {loading ? (
-        <ActivityIndicator size="small" color="#2C3E8C" />
+        <ActivityIndicator size="small" color={styles.activityIndicator.color} />
       ) : (
         <Text style={styles.resultChevron}>{language.isRTL ? '‹' : '›'}</Text>
       )}
@@ -130,6 +130,8 @@ export default function HomeScreen({ navigation }: Props) {
     const timer = setTimeout(async () => {
       try {
         const results = await searchCities(q, language.code, controller.signal);
+        console.log({ results });
+
         setPredictions(results);
       } catch (e) {
         if ((e as Error).name !== 'AbortError') {
@@ -210,7 +212,7 @@ export default function HomeScreen({ navigation }: Props) {
           {hasQuery && (
             <View style={styles.resultsList}>
               {searchLoading ? (
-                <ActivityIndicator size="small" color="#2C3E8C" style={styles.searchSpinner} />
+                <ActivityIndicator size="small" color={styles.activityIndicator.color} style={styles.searchSpinner} />
               ) : predictions.length === 0 ? (
                 <Text style={styles.noResults}>{t.searchNoResults}</Text>
               ) : (
@@ -380,6 +382,9 @@ const styles = StyleSheet.create({
   resultPlaceIcon: {
     fontSize: 20,
     marginEnd: 12,
+  },
+  activityIndicator: {
+    color: '#2C3E8C',
   },
   searchSpinner: {
     marginTop: 32,
