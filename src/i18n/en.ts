@@ -15,7 +15,10 @@ const en: Translations = {
   },
   home: {
     offlineModeTitle: 'Offline mode',
-    offlineModeMessage: 'Could not reach the server. Using local city data.',
+    offlineModeMessage: 'Cannot reach the server. Using local city data.',
+    errorTitle: 'Tour unavailable',
+    serverErrorMessage: 'The server encountered an error. Using local city data.',
+    requestErrorMessage: 'Could not load tour data for this city. Using local city data.',
   },
   difficulty: {
     easy: 'Easy',

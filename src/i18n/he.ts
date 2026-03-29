@@ -15,7 +15,10 @@ const he: Translations = {
   },
   home: {
     offlineModeTitle: 'מצב לא מקוון',
-    offlineModeMessage: 'לא ניתן היה להגיע לשרת. נעשה שימוש בנתוני העיר המקומיים.',
+    offlineModeMessage: 'לא ניתן להגיע לשרת. נעשה שימוש בנתוני העיר המקומיים.',
+    errorTitle: 'הסיור אינו זמין',
+    serverErrorMessage: 'אירעה שגיאה בשרת. נעשה שימוש בנתוני העיר המקומיים.',
+    requestErrorMessage: 'לא ניתן לטעון את נתוני הסיור עבור עיר זו. נעשה שימוש בנתוני העיר המקומיים.',
   },
   difficulty: {
     easy: 'קל',

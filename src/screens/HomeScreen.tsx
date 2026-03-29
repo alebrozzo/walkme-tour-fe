@@ -18,7 +18,7 @@ import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { RootStackParamList, Tour } from '../types';
 import { useLanguage } from '../contexts/LanguageContext';
 import { usePinned } from '../contexts/PinnedContext';
-import { fetchTourForCity } from '../services/tourApi';
+import { fetchTourForCity, TourApiError } from '../services/tourApi';
 import { searchCities, CityPrediction } from '../services/placesApi';
 
 type Props = NativeStackScreenProps<RootStackParamList, 'Home'>;
@@ -172,7 +172,12 @@ export default function HomeScreen({ navigation }: Props) {
       if (__DEV__) {
         console.warn(`Failed to fetch remote tour for ${prediction.city}`, error);
       }
-      Alert.alert(t.home.offlineModeTitle, t.home.offlineModeMessage);
+      if (error instanceof TourApiError && error.statusCode !== undefined) {
+        const message = error.statusCode >= 500 ? t.home.serverErrorMessage : t.home.requestErrorMessage;
+        Alert.alert(t.home.errorTitle, message);
+      } else {
+        Alert.alert(t.home.offlineModeTitle, t.home.offlineModeMessage);
+      }
     } finally {
       if (activeRequestIdRef.current === requestId) {
         setLoadingCityId(null);

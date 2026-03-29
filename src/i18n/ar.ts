@@ -15,7 +15,10 @@ const ar: Translations = {
   },
   home: {
     offlineModeTitle: 'وضع عدم الاتصال',
-    offlineModeMessage: 'تعذر الوصول إلى الخادم. سيتم استخدام بيانات المدينة المحلية.',
+    offlineModeMessage: 'لا يمكن الوصول إلى الخادم. سيتم استخدام بيانات المدينة المحلية.',
+    errorTitle: 'الجولة غير متوفرة',
+    serverErrorMessage: 'حدث خطأ في الخادم. سيتم استخدام بيانات المدينة المحلية.',
+    requestErrorMessage: 'تعذر تحميل بيانات الجولة لهذه المدينة. سيتم استخدام بيانات المدينة المحلية.',
   },
   difficulty: {
     easy: 'سهل',
