@@ -34,12 +34,6 @@ function AppNavigator() {
               component={TourScreen}
               options={({ route }) => ({
                 title: route.params.tour.city,
-                headerStyle: {
-                  backgroundColor: route.params.tour.color,
-                },
-                headerTintColor: '#FFFFFF',
-                statusBarStyle: 'light',
-                statusBarColor: route.params.tour.color,
               })}
             />
             <Stack.Screen
@@ -47,12 +41,6 @@ function AppNavigator() {
               component={StopScreen}
               options={({ route }) => ({
                 title: route.params.stop.name,
-                headerStyle: {
-                  backgroundColor: route.params.tourColor,
-                },
-                headerTintColor: '#FFFFFF',
-                statusBarStyle: 'light',
-                statusBarColor: route.params.tourColor,
               })}
             />
           </Stack.Navigator>

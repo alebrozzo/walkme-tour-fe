@@ -15,7 +15,11 @@ const es: Translations = {
   },
   home: {
     offlineModeTitle: 'Modo sin conexión',
-    offlineModeMessage: 'No se pudo contactar con el servidor. Se usarán los datos locales de la ciudad.',
+    offlineModeMessage: 'No se puede contactar con el servidor. Se usarán los datos locales de la ciudad.',
+    errorTitle: 'Tour no disponible',
+    serverErrorMessage: 'El servidor encontró un error. Se usarán los datos locales de la ciudad.',
+    requestErrorMessage:
+      'No se pudieron cargar los datos del tour para esta ciudad. Se usarán los datos locales de la ciudad.',
   },
   difficulty: {
     easy: 'Fácil',

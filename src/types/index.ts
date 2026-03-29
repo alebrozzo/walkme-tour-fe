@@ -1,3 +1,5 @@
+import { LanguageCode } from '@/i18n/types';
+
 export type StopType =
   | 'landmark'
   | 'museum'
@@ -41,12 +43,8 @@ export interface Tour {
   placeId: string;
   city: string;
   country: string;
-  language?: string;
+  language?: LanguageCode;
   description: string;
-  duration: number;
-  distance: number;
-  difficulty: Difficulty;
-  color: string;
   /** Optional remote image URL shown in city cards/hero banners when available. */
   imageUrl?: string;
   stops: Stop[];
@@ -66,5 +64,5 @@ export interface GeneratedItinerary {
 export type RootStackParamList = {
   Home: undefined;
   Tour: { tour: Tour };
-  Stop: { stop: Stop; tourColor: string };
+  Stop: { stop: Stop };
 };

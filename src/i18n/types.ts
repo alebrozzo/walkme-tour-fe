@@ -27,6 +27,9 @@ export interface Translations {
   home: {
     offlineModeTitle: string;
     offlineModeMessage: string;
+    errorTitle: string;
+    serverErrorMessage: string;
+    requestErrorMessage: string;
   };
   difficulty: Record<'easy' | 'moderate' | 'hard', string>;
   units: {

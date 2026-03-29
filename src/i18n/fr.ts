@@ -16,6 +16,10 @@ const fr: Translations = {
   home: {
     offlineModeTitle: 'Mode hors ligne',
     offlineModeMessage: 'Impossible de joindre le serveur. Les données locales de la ville seront utilisées.',
+    errorTitle: 'Circuit indisponible',
+    serverErrorMessage: 'Le serveur a rencontré une erreur. Les données locales de la ville seront utilisées.',
+    requestErrorMessage:
+      'Impossible de charger les données du circuit pour cette ville. Les données locales seront utilisées.',
   },
   difficulty: {
     easy: 'Facile',

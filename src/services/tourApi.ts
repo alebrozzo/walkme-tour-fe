@@ -5,6 +5,16 @@ import { Stop, Tour } from '../types';
 const REQUEST_TIMEOUT_MS = 20000;
 const LOCALHOST_PORT = 3000;
 
+export class TourApiError extends Error {
+  constructor(
+    message: string,
+    public readonly statusCode?: number,
+  ) {
+    super(message);
+    this.name = 'TourApiError';
+  }
+}
+
 interface ApiStop {
   id: string;
   order: number;
@@ -63,7 +73,7 @@ export async function fetchTourForCity(localTour: Tour, languageCode: LanguageCo
   try {
     const params = new URLSearchParams({
       placeId: localTour.placeId,
-      name: localTour.city,
+      city: localTour.city,
       country: localTour.country,
       language: languageCode,
     });
@@ -78,7 +88,7 @@ export async function fetchTourForCity(localTour: Tour, languageCode: LanguageCo
     });
 
     if (!response.ok) {
-      throw new Error(`Tour API request failed with status ${response.status}`);
+      throw new TourApiError(`Tour API request failed with status ${response.status}`, response.status);
     }
 
     const data = (await response.json()) as ApiTour;

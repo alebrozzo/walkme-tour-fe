@@ -1,9 +1,11 @@
-import React, { useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react';
+import React, { useCallback, useEffect, useLayoutEffect, useRef, useState } from 'react';
 import {
   ActivityIndicator,
   Alert,
+  Animated,
   Image,
   Modal,
+  PanResponder,
   Pressable,
   ScrollView,
   StyleSheet,
@@ -15,28 +17,22 @@ import {
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
-import tours from '../data/tours';
 import { RootStackParamList, Tour } from '../types';
 import { useLanguage } from '../contexts/LanguageContext';
 import { usePinned } from '../contexts/PinnedContext';
-import { fetchTourForCity } from '../services/tourApi';
+import { fetchTourForCity, TourApiError } from '../services/tourApi';
+import { searchCities, CityPrediction } from '../services/placesApi';
 
 type Props = NativeStackScreenProps<RootStackParamList, 'Home'>;
 
-interface CityResultProps {
-  tour: Tour;
+interface PlaceResultProps {
+  prediction: CityPrediction;
   loading: boolean;
   onPress: () => void;
 }
 
-function CityResult({ tour, loading, onPress }: CityResultProps) {
+function PlaceResult({ prediction, loading, onPress }: PlaceResultProps) {
   const { language } = useLanguage();
-  const [imageLoadError, setImageLoadError] = useState(false);
-
-  useEffect(() => {
-    setImageLoadError(false);
-  }, [tour.imageUrl]);
-
   return (
     <TouchableOpacity
       style={[styles.resultRow, { direction: language.isRTL ? 'rtl' : 'ltr' }]}
@@ -44,28 +40,21 @@ function CityResult({ tour, loading, onPress }: CityResultProps) {
       disabled={loading}
       activeOpacity={0.8}
     >
-      {tour.imageUrl && !imageLoadError ? (
-        <Image
-          source={{ uri: tour.imageUrl }}
-          style={styles.resultThumb}
-          resizeMode="cover"
-          onError={() => setImageLoadError(true)}
-        />
-      ) : (
-        <View style={[styles.resultColorDot, { backgroundColor: tour.color }]} />
-      )}
+      <Text style={styles.resultPlaceIcon}>📍</Text>
       <View style={styles.resultTextContainer}>
-        <Text style={styles.resultCity}>{tour.city}</Text>
-        <Text style={styles.resultCountry}>{tour.country}</Text>
+        <Text style={styles.resultCity}>{prediction.description}</Text>
       </View>
       {loading ? (
-        <ActivityIndicator size="small" color={tour.color} />
+        <ActivityIndicator size="small" color={styles.activityIndicator.color} />
       ) : (
         <Text style={styles.resultChevron}>{language.isRTL ? '‹' : '›'}</Text>
       )}
     </TouchableOpacity>
   );
 }
+
+const SWIPE_DELETE_WIDTH = 72;
+const SWIPE_THRESHOLD_PX = 5;
 
 interface PinnedCardProps {
   tour: Tour;
@@ -76,39 +65,116 @@ interface PinnedCardProps {
 function PinnedCard({ tour, onPress, onUnpin }: PinnedCardProps) {
   const { t, language } = useLanguage();
   const [imageLoadError, setImageLoadError] = useState(false);
+  const isRTL = language.isRTL;
+  const isRTLRef = useRef(isRTL);
+  isRTLRef.current = isRTL;
+
+  const translateX = useRef(new Animated.Value(0)).current;
+  const currentValueRef = useRef(0);
+  const startOffsetRef = useRef(0);
+  const [isOpen, setIsOpen] = useState(false);
 
   useEffect(() => {
     setImageLoadError(false);
   }, [tour.imageUrl]);
 
+  useEffect(() => {
+    const id = translateX.addListener(({ value }) => {
+      currentValueRef.current = value;
+    });
+    return () => translateX.removeListener(id);
+  }, [translateX]);
+
+  const snapToStable = useCallback(
+    (rawCurrent: number) => {
+      const rtl = isRTLRef.current;
+      if (rawCurrent > SWIPE_DELETE_WIDTH / 2) {
+        Animated.spring(translateX, {
+          toValue: rtl ? SWIPE_DELETE_WIDTH : -SWIPE_DELETE_WIDTH,
+          useNativeDriver: true,
+        }).start();
+        setIsOpen(true);
+      } else {
+        Animated.spring(translateX, { toValue: 0, useNativeDriver: true }).start();
+        setIsOpen(false);
+      }
+    },
+    [translateX],
+  );
+  const snapToStableRef = useRef(snapToStable);
+  snapToStableRef.current = snapToStable;
+
+  const close = useCallback(() => {
+    Animated.spring(translateX, { toValue: 0, useNativeDriver: true }).start();
+    setIsOpen(false);
+  }, [translateX]);
+
+  const panResponder = useRef(
+    PanResponder.create({
+      onMoveShouldSetPanResponder: (_, gs) => Math.abs(gs.dx) > Math.abs(gs.dy) && Math.abs(gs.dx) > SWIPE_THRESHOLD_PX,
+      onPanResponderGrant: () => {
+        const rtl = isRTLRef.current;
+        startOffsetRef.current = rtl ? currentValueRef.current : -currentValueRef.current;
+      },
+      onPanResponderMove: (_, gs) => {
+        const rtl = isRTLRef.current;
+        const rawTotal = startOffsetRef.current + (rtl ? gs.dx : -gs.dx);
+        const clamped = Math.min(Math.max(rawTotal, 0), SWIPE_DELETE_WIDTH);
+        translateX.setValue(rtl ? clamped : -clamped);
+      },
+      onPanResponderRelease: (_, gs) => {
+        const rtl = isRTLRef.current;
+        snapToStableRef.current(startOffsetRef.current + (rtl ? gs.dx : -gs.dx));
+      },
+      onPanResponderTerminate: () => {
+        const rtl = isRTLRef.current;
+        snapToStableRef.current(rtl ? currentValueRef.current : -currentValueRef.current);
+      },
+    }),
+  ).current;
+
   return (
-    <View style={[styles.pinnedCard, { backgroundColor: tour.color, direction: language.isRTL ? 'rtl' : 'ltr' }]}>
-      {tour.imageUrl && !imageLoadError ? (
-        <Image
-          source={{ uri: tour.imageUrl }}
-          style={styles.pinnedCardThumb}
-          resizeMode="cover"
-          onError={() => setImageLoadError(true)}
-        />
-      ) : null}
-      <Pressable
-        style={styles.pinnedCardContent}
-        onPress={onPress}
-        android_ripple={null}
-        accessibilityRole="button"
-        accessibilityLabel={tour.city}
-      >
-        <Text style={styles.pinnedCardCity}>{tour.city}</Text>
-        <Text style={styles.pinnedCardCountry}>{tour.country}</Text>
-      </Pressable>
-      <TouchableOpacity
-        onPress={onUnpin}
-        hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
-        accessibilityRole="button"
-        accessibilityLabel={t.unpinCity}
-      >
-        <Text style={styles.pinnedCardUnpin}>📌</Text>
-      </TouchableOpacity>
+    <View style={styles.pinnedCardShadowWrapper}>
+      <View style={[styles.pinnedCardClip, { direction: 'ltr' }]}>
+        <View style={[styles.swipeDeleteArea, isRTL ? styles.swipeDeleteAreaRTL : styles.swipeDeleteAreaLTR]}>
+          <TouchableOpacity
+            style={styles.swipeDeleteButton}
+            onPress={() => {
+              close();
+              onUnpin();
+            }}
+            accessibilityRole="button"
+            accessibilityLabel={t.unpinCity}
+            accessibilityElementsHidden={!isOpen}
+            importantForAccessibility={isOpen ? 'yes' : 'no'}
+          >
+            <Text style={styles.swipeDeleteIcon}>🗑️</Text>
+          </TouchableOpacity>
+        </View>
+        <Animated.View
+          style={[styles.pinnedCard, { direction: isRTL ? 'rtl' : 'ltr' }, { transform: [{ translateX }] }]}
+          {...panResponder.panHandlers}
+        >
+          {tour.imageUrl && !imageLoadError ? (
+            <Image
+              source={{ uri: tour.imageUrl }}
+              style={styles.pinnedCardThumb}
+              resizeMode="cover"
+              onError={() => setImageLoadError(true)}
+            />
+          ) : null}
+          <Pressable
+            style={styles.pinnedCardContent}
+            onPress={onPress}
+            accessibilityRole="button"
+            accessibilityLabel={tour.city}
+          >
+            <Text style={styles.pinnedCardCity}>{tour.city}</Text>
+            <Text style={styles.pinnedCardCountry}>{tour.country}</Text>
+          </Pressable>
+          <Text style={styles.pinnedCardChevron}>{isRTL ? '‹' : '›'}</Text>
+        </Animated.View>
+      </View>
     </View>
   );
 }
@@ -118,8 +184,11 @@ export default function HomeScreen({ navigation }: Props) {
   const { pinnedTours, togglePin } = usePinned();
   const [showLangPicker, setShowLangPicker] = useState(false);
   const [query, setQuery] = useState('');
+  const [predictions, setPredictions] = useState<CityPrediction[]>([]);
+  const [searchLoading, setSearchLoading] = useState(false);
   const [loadingCityId, setLoadingCityId] = useState<string | null>(null);
   const activeRequestIdRef = useRef(0);
+  const latestSearchIdRef = useRef(0);
 
   useLayoutEffect(() => {
     navigation.setOptions({
@@ -132,32 +201,72 @@ export default function HomeScreen({ navigation }: Props) {
     });
   }, [navigation, t, setShowLangPicker]);
 
-  const filtered = useMemo(() => {
-    const q = query.trim().toLowerCase();
-    if (!q) return [];
-    return tours.filter((tour) => tour.city.toLowerCase().includes(q));
-  }, [query]);
+  useEffect(() => {
+    const q = query.trim();
+    if (!q) {
+      setPredictions([]);
+      setSearchLoading(false);
+      return;
+    }
+    latestSearchIdRef.current += 1;
+    const requestId = latestSearchIdRef.current;
+    setSearchLoading(true);
+    const controller = new AbortController();
+    const timer = setTimeout(async () => {
+      try {
+        const results = await searchCities(q, language.code, controller.signal);
+        if (requestId !== latestSearchIdRef.current) return;
+        if (__DEV__) {
+          console.log({ results });
+        }
+        setPredictions(results);
+      } catch (e) {
+        if ((e as Error).name !== 'AbortError' && requestId === latestSearchIdRef.current) {
+          setPredictions([]);
+        }
+      } finally {
+        if (requestId === latestSearchIdRef.current) {
+          setSearchLoading(false);
+        }
+      }
+    }, 350);
+    return () => {
+      clearTimeout(timer);
+      controller.abort();
+    };
+  }, [query, language.code]);
 
   const isRTL = language.isRTL;
   const hasQuery = query.trim().length > 0;
   const directionStyle = isRTL ? styles.directionRTL : styles.directionLTR;
   const textAlignStyle = isRTL ? styles.textAlignRight : styles.textAlignLeft;
 
-  const handleCityPress = async (tour: Tour) => {
+  const handleCityPress = async (prediction: CityPrediction) => {
     activeRequestIdRef.current += 1;
     const requestId = activeRequestIdRef.current;
-    setLoadingCityId(tour.id);
+    setLoadingCityId(prediction.placeId);
+    const tourStub: Tour = {
+      id: prediction.placeId,
+      placeId: prediction.placeId,
+      city: prediction.city,
+      country: prediction.country,
+      description: '',
+      stops: [],
+    };
     try {
-      const apiTour = await fetchTourForCity(tour, language.code);
+      const apiTour = await fetchTourForCity(tourStub, language.code);
       setQuery('');
       navigation.navigate('Tour', { tour: apiTour });
     } catch (error) {
       if (__DEV__) {
-        console.warn(`Failed to fetch remote tour for ${tour.city}`, error);
+        console.warn(`Failed to fetch remote tour for ${prediction.city}`, error);
       }
-      Alert.alert(t.home.offlineModeTitle, t.home.offlineModeMessage);
-      setQuery('');
-      navigation.navigate('Tour', { tour });
+      if (error instanceof TourApiError && error.statusCode !== undefined) {
+        const message = error.statusCode >= 500 ? t.home.serverErrorMessage : t.home.requestErrorMessage;
+        Alert.alert(t.home.errorTitle, message);
+      } else {
+        Alert.alert(t.home.offlineModeTitle, t.home.offlineModeMessage);
+      }
     } finally {
       if (activeRequestIdRef.current === requestId) {
         setLoadingCityId(null);
@@ -192,14 +301,16 @@ export default function HomeScreen({ navigation }: Props) {
 
           {hasQuery && (
             <View style={styles.resultsList}>
-              {filtered.length === 0 ? (
+              {searchLoading ? (
+                <ActivityIndicator size="small" color={styles.activityIndicator.color} style={styles.searchSpinner} />
+              ) : predictions.length === 0 ? (
                 <Text style={styles.noResults}>{t.searchNoResults}</Text>
               ) : (
-                filtered.map((item) => (
-                  <CityResult
-                    key={item.id}
-                    tour={item}
-                    loading={loadingCityId === item.id}
+                predictions.map((item) => (
+                  <PlaceResult
+                    key={item.placeId}
+                    prediction={item}
+                    loading={loadingCityId === item.placeId}
                     onPress={() => handleCityPress(item)}
                   />
                 ))
@@ -353,15 +464,20 @@ const styles = StyleSheet.create({
     fontWeight: '700',
     color: '#1A1A2E',
   },
-  resultCountry: {
-    fontSize: 13,
-    color: '#7F8C8D',
-    marginTop: 2,
-  },
   resultChevron: {
     fontSize: 22,
     color: '#BDC3C7',
     fontWeight: '300',
+  },
+  resultPlaceIcon: {
+    fontSize: 20,
+    marginEnd: 12,
+  },
+  activityIndicator: {
+    color: '#2C3E8C',
+  },
+  searchSpinner: {
+    marginTop: 32,
   },
   pinnedSection: {
     paddingHorizontal: 16,
@@ -373,26 +489,58 @@ const styles = StyleSheet.create({
     color: '#1A1A2E',
     marginBottom: 12,
   },
-  pinnedCard: {
-    borderRadius: 12,
+  pinnedCardShadowWrapper: {
     marginBottom: 10,
+    borderRadius: 12,
+    backgroundColor: '#F5F6FA',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.07,
+    shadowRadius: 6,
+    elevation: 3,
+  },
+  pinnedCardClip: {
+    borderRadius: 12,
+    overflow: 'hidden',
+  },
+  pinnedCard: {
+    backgroundColor: '#FFFFFF',
     paddingHorizontal: 16,
     paddingVertical: 16,
     flexDirection: 'row',
     alignItems: 'center',
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 6,
-    elevation: 3,
+  },
+  swipeDeleteArea: {
+    position: 'absolute',
+    top: 0,
+    bottom: 0,
+    width: SWIPE_DELETE_WIDTH,
+    backgroundColor: '#E74C3C',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  swipeDeleteAreaLTR: {
+    right: 0,
+  },
+  swipeDeleteAreaRTL: {
+    left: 0,
+  },
+  swipeDeleteButton: {
+    flex: 1,
+    alignItems: 'center',
+    justifyContent: 'center',
+    width: SWIPE_DELETE_WIDTH,
+  },
+  swipeDeleteIcon: {
+    fontSize: 22,
   },
   pinnedCardThumb: {
     width: 48,
     height: 48,
     borderRadius: 8,
     marginEnd: 12,
-    borderWidth: 2,
-    borderColor: 'rgba(255,255,255,0.45)',
+    borderWidth: 1,
+    borderColor: 'rgba(0,0,0,0.08)',
   },
   pinnedCardContent: {
     flex: 1,
@@ -400,15 +548,17 @@ const styles = StyleSheet.create({
   pinnedCardCity: {
     fontSize: 18,
     fontWeight: '700',
-    color: '#FFFFFF',
+    color: '#1A1A2E',
   },
   pinnedCardCountry: {
     fontSize: 13,
-    color: 'rgba(255,255,255,0.8)',
+    color: '#7F8C8D',
     marginTop: 2,
   },
-  pinnedCardUnpin: {
-    fontSize: 20,
+  pinnedCardChevron: {
+    fontSize: 22,
+    color: '#BDC3C7',
+    fontWeight: '300',
   },
   langButton: {
     padding: 4,

@@ -106,7 +106,9 @@ export function PinnedProvider({ children }: { children: React.ReactNode }) {
     setPinnedTours((prev) => (wasPinned ? prev.filter((t) => t.id !== tour.id) : [...prev, tour]));
     if (wasPinned) {
       setItineraries((curr) => {
-        if (!(tour.id in curr)) return curr;
+        if (!(tour.id in curr)) {
+          return curr;
+        }
         const next = { ...curr };
         delete next[tour.id];
         return next;

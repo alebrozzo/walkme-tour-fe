@@ -28,7 +28,7 @@ function InfoRow({ icon, label, value }: InfoRowProps) {
 }
 
 export default function StopScreen({ route }: Props) {
-  const { stop, tourColor } = route.params;
+  const { stop } = route.params;
   const { t, language } = useLanguage();
   const insets = useSafeAreaInsets();
   const [isSpeaking, setIsSpeaking] = useState(false);
@@ -88,7 +88,7 @@ export default function StopScreen({ route }: Props) {
     <SafeAreaView style={styles.safeArea} edges={['bottom']}>
       <ScrollView style={{ direction: language.isRTL ? 'rtl' : 'ltr' }} contentContainerStyle={styles.scroll}>
         {/* Header */}
-        <View style={[styles.header, { backgroundColor: tourColor }]}>
+        <View style={[styles.header]}>
           {stop.imageUrl && !imageLoadError ? (
             <Pressable
               onPress={() => setImageModalVisible(true)}
@@ -213,18 +213,18 @@ const styles = StyleSheet.create({
     borderRadius: 16,
     marginBottom: 12,
     borderWidth: 2,
-    borderColor: 'rgba(255,255,255,0.45)',
+    borderColor: 'rgba(0,0,0,0.08)',
   },
   stopName: {
     fontSize: 26,
     fontWeight: '800',
-    color: '#FFFFFF',
+    color: '#1A1A2E',
     textAlign: 'center',
     marginBottom: 6,
   },
   stopType: {
     fontSize: 14,
-    color: 'rgba(255,255,255,0.8)',
+    color: '#5A6376',
     fontWeight: '500',
     textTransform: 'uppercase',
     letterSpacing: 1,
