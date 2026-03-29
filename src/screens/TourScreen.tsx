@@ -196,13 +196,22 @@ function WalkingConnector({ walkingTime }: WalkingConnectorProps) {
 
 interface DayHeaderProps {
   day: number;
+  stops?: Stop[];
 }
 
-function DayHeader({ day }: DayHeaderProps) {
+function DayHeader({ day, stops = [] }: DayHeaderProps) {
   const { t } = useLanguage();
+  const { totalMinutes, totalKm } = computeTripTotals(stops);
   return (
     <View style={styles.dayHeader}>
       <Text style={styles.dayHeaderText}>{t.tour.day(day)}</Text>
+      {stops.length > 0 && (
+        <View style={styles.dayHeaderMeta}>
+          <Text style={styles.dayHeaderMetaText}>🕐 {formatMinutes(totalMinutes, t.units.min)}</Text>
+          <Text style={styles.dayHeaderMetaText}>📍 {formatKm(totalKm, t.units.km)}</Text>
+          <Text style={styles.dayHeaderMetaText}>🏛️ {t.units.stops(stops.length)}</Text>
+        </View>
+      )}
     </View>
   );
 }
@@ -559,7 +568,9 @@ export default function TourScreen({ navigation, route }: Props) {
               {emptyDayHeaders.map((d) => (
                 <DayHeader key={`empty-day-${d}`} day={d} />
               ))}
-              {isNewDay && item.day !== null && item.day !== undefined ? <DayHeader day={item.day} /> : null}
+              {isNewDay && item.day !== null && item.day !== undefined ? (
+                <DayHeader day={item.day} stops={stopsToShow.filter((s) => s.day === item.day)} />
+              ) : null}
               {walkingTime != null ? <WalkingConnector walkingTime={walkingTime} /> : null}
               <SwipeableRow
                 onDelete={() => handleRemoveStop(index)}
@@ -785,6 +796,15 @@ const styles = StyleSheet.create({
     fontSize: 14,
     fontWeight: '700',
     letterSpacing: 0.5,
+  },
+  dayHeaderMeta: {
+    flexDirection: 'row',
+    gap: 10,
+    marginTop: 4,
+  },
+  dayHeaderMetaText: {
+    fontSize: 12,
+    opacity: 0.6,
   },
   walkingLine: {
     flex: 1,

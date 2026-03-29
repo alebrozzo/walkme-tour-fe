@@ -26,7 +26,8 @@ export async function generateRecommendedStops(allStops: Stop[], preferences: Tr
       const stop = allStops[stopIndex];
       const prevStop = selected[selected.length - 1];
       // Walking time only applies within the same day; no walking overhead at the start of a new day
-      const walkFromPrev = isFirstStopOfDay || !prevStop ? 0 : estimateWalkingTime(prevStop.coordinate, stop.coordinate);
+      const walkFromPrev =
+        isFirstStopOfDay || !prevStop ? 0 : estimateWalkingTime(prevStop.coordinate, stop.coordinate);
       const needed = stop.duration + walkFromPrev;
       if (needed <= remainingToday) {
         selected.push({ ...stop, order, day });
