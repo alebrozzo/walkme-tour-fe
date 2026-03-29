@@ -188,6 +188,7 @@ export default function HomeScreen({ navigation }: Props) {
   const [searchLoading, setSearchLoading] = useState(false);
   const [loadingCityId, setLoadingCityId] = useState<string | null>(null);
   const activeRequestIdRef = useRef(0);
+  const latestSearchIdRef = useRef(0);
 
   useLayoutEffect(() => {
     navigation.setOptions({
@@ -207,20 +208,26 @@ export default function HomeScreen({ navigation }: Props) {
       setSearchLoading(false);
       return;
     }
+    latestSearchIdRef.current += 1;
+    const requestId = latestSearchIdRef.current;
     setSearchLoading(true);
     const controller = new AbortController();
     const timer = setTimeout(async () => {
       try {
         const results = await searchCities(q, language.code, controller.signal);
-        console.log({ results });
-
+        if (requestId !== latestSearchIdRef.current) return;
+        if (__DEV__) {
+          console.log({ results });
+        }
         setPredictions(results);
       } catch (e) {
-        if ((e as Error).name !== 'AbortError') {
+        if ((e as Error).name !== 'AbortError' && requestId === latestSearchIdRef.current) {
           setPredictions([]);
         }
       } finally {
-        setSearchLoading(false);
+        if (requestId === latestSearchIdRef.current) {
+          setSearchLoading(false);
+        }
       }
     }, 350);
     return () => {
