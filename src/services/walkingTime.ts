@@ -31,7 +31,7 @@ export function estimateWalkingTime(a: Coordinate, b: Coordinate): number {
 }
 
 /**
- * Sums the walking distance and time across all stops, computed directly from coordinates.
+ * Sums the walking distance and stop time across all stops, computed directly from coordinates.
  * Only legs within the same day are counted.
  */
 export function computeTripTotals(stops: Stop[]): { totalMinutes: number; totalKm: number } {
@@ -43,7 +43,7 @@ export function computeTripTotals(stops: Stop[]): { totalMinutes: number; totalK
     if (current.day === next.day) {
       const distKm = haversineDistanceKm(current.coordinate, next.coordinate) * 1.3;
       totalKm += distKm;
-      totalMinutes += Math.round((distKm / WALKING_SPEED_KM_H) * MINUTES_PER_HOUR);
+      totalMinutes += estimateWalkingTime(current.coordinate, next.coordinate);
     }
   }
   return { totalMinutes, totalKm };
