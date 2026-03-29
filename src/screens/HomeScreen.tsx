@@ -59,10 +59,10 @@ const SWIPE_THRESHOLD_PX = 5;
 interface PinnedCardProps {
   tour: Tour;
   onPress: () => void;
-  onUnpin: () => void;
+  onRemove: () => void;
 }
 
-function PinnedCard({ tour, onPress, onUnpin }: PinnedCardProps) {
+function PinnedCard({ tour, onPress, onRemove }: PinnedCardProps) {
   const { t, language } = useLanguage();
   const [imageLoadError, setImageLoadError] = useState(false);
   const isRTL = language.isRTL;
@@ -141,10 +141,10 @@ function PinnedCard({ tour, onPress, onUnpin }: PinnedCardProps) {
             style={styles.swipeDeleteButton}
             onPress={() => {
               close();
-              onUnpin();
+              onRemove();
             }}
             accessibilityRole="button"
-            accessibilityLabel={t.unpinCity}
+            accessibilityLabel={t.removeCity}
             accessibilityElementsHidden={!isOpen}
             importantForAccessibility={isOpen ? 'yes' : 'no'}
           >
@@ -173,7 +173,7 @@ function PinnedCard({ tour, onPress, onUnpin }: PinnedCardProps) {
             <Text style={styles.pinnedCardCity}>{tour.city}</Text>
             <Text style={styles.pinnedCardCountry}>{tour.country}</Text>
           </Pressable>
-          <Text style={styles.pinnedCardChevron}>{isRTL ? '‹' : '›'}</Text>
+              <Text style={styles.pinnedCardChevron}>{isRTL ? '‹' : '›'}</Text>
         </Animated.View>
       </View>
     </View>
@@ -182,7 +182,7 @@ function PinnedCard({ tour, onPress, onUnpin }: PinnedCardProps) {
 
 export default function HomeScreen({ navigation }: Props) {
   const { t, language, languages, setLanguage } = useLanguage();
-  const { pinnedTours, togglePin } = usePinned();
+  const { pinnedTours, removeCity } = usePinned();
   const [showLangPicker, setShowLangPicker] = useState(false);
   const [query, setQuery] = useState('');
   const [predictions, setPredictions] = useState<CityPrediction[]>([]);
@@ -314,13 +314,13 @@ export default function HomeScreen({ navigation }: Props) {
 
           {!hasQuery && pinnedTours.length > 0 && (
             <View style={styles.pinnedSection}>
-              <Text style={styles.pinnedSectionTitle}>{t.pinnedCities}</Text>
+              <Text style={styles.pinnedSectionTitle}>{t.recentCities}</Text>
               {pinnedTours.map((tour) => (
                 <PinnedCard
                   key={tour.id}
                   tour={tour}
                   onPress={() => navigation.navigate('Tour', { tour })}
-                  onUnpin={() => togglePin(tour)}
+                  onRemove={() => removeCity(tour.id)}
                 />
               ))}
             </View>

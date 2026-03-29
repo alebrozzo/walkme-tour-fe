@@ -77,9 +77,8 @@ const ar: Translations = {
   },
   language: 'اللغة',
   selectLanguage: 'اختر اللغة',
-  pinCity: 'تثبيت المدينة',
-  unpinCity: 'إلغاء التثبيت',
-  pinnedCities: 'المدن المثبتة',
+  removeCity: 'إزالة المدينة',
+  recentCities: 'المدن الأخيرة',
 };
 
 export default ar;

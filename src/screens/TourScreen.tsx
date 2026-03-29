@@ -375,51 +375,39 @@ function PreferencesForm({ tour, onGenerate }: PreferencesFormProps) {
 export default function TourScreen({ navigation, route }: Props) {
   const { tour } = route.params;
   const { t, language } = useLanguage();
-  const { isPinned, togglePin, getItinerary, saveItinerary, removeItinerary } = usePinned();
-  const pinned = isPinned(tour.id);
+  const { addCity, getItinerary, saveItinerary } = usePinned();
 
   const savedItinerary = getItinerary(tour.id);
 
   const [generatedStops, setGeneratedStops] = useState<Stop[] | null>(savedItinerary?.stops ?? null);
   const [loading, setLoading] = useState(false);
   const lastPrefsRef = useRef<TripPreferences | null>(savedItinerary?.preferences ?? null);
-  const pinnedRef = useRef(pinned);
-  pinnedRef.current = pinned;
   const cancelRef = useRef<(() => void) | null>(null);
 
-  // When a saved itinerary appears (e.g. freshly pinned), sync local state
+  // Auto-track every visited city
+  useEffect(() => {
+    addCity(tour);
+  }, []);
+
+  // When a saved itinerary appears (e.g. navigating back to a tracked city), sync local state
   useEffect(() => {
     if (savedItinerary) {
       setGeneratedStops(savedItinerary.stops);
     }
   }, [savedItinerary]);
 
-  // Clean up itinerary when leaving the screen if the tour is not pinned
+  // Cancel any in-flight generation on unmount
   useEffect(() => {
     return () => {
       cancelRef.current?.();
-      if (!pinnedRef.current) {
-        removeItinerary(tour.id);
-      }
     };
   }, []);
 
   useLayoutEffect(() => {
     navigation.setOptions({
-      headerRight: generatedStops
-        ? () => (
-            <TouchableOpacity
-              onPress={() => togglePin(tour)}
-              hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
-              accessibilityRole="button"
-              accessibilityLabel={pinned ? t.unpinCity : t.pinCity}
-            >
-              <Text style={styles.pinButton}>{pinned ? '📌' : '📍'}</Text>
-            </TouchableOpacity>
-          )
-        : undefined,
+      title: tour.city,
     });
-  }, [navigation, tour, pinned, togglePin, t, generatedStops]);
+  }, [navigation, tour]);
 
   const handleGenerate = useCallback(
     async (prefs: TripPreferences) => {
@@ -433,29 +421,15 @@ export default function TourScreen({ navigation, route }: Props) {
         if (cancelled) return;
         setGeneratedStops(stops);
         lastPrefsRef.current = prefs;
-
-        if (isPinned(tour.id)) {
-          saveItinerary({ tourId: tour.id, preferences: prefs, stops });
-        }
+        saveItinerary({ tourId: tour.id, preferences: prefs, stops });
       } finally {
         if (!cancelled) {
           setLoading(false);
         }
       }
     },
-    [tour, isPinned, saveItinerary],
+    [tour, saveItinerary],
   );
-
-  // When pin state changes while we have generated stops, save or prepare for cleanup
-  useEffect(() => {
-    if (generatedStops && pinned && !savedItinerary) {
-      const prefs = lastPrefsRef.current;
-      if (!prefs) {
-        return;
-      }
-      saveItinerary({ tourId: tour.id, preferences: prefs, stops: generatedStops });
-    }
-  }, [pinned, generatedStops, savedItinerary, saveItinerary, tour.id]);
 
   const handleMoveStop = useCallback(
     (fromIndex: number, direction: -1 | 1) => {
@@ -472,7 +446,7 @@ export default function TourScreen({ navigation, route }: Props) {
           const updated = recalculateStops(next);
           setGeneratedStops(updated);
           const prefs = lastPrefsRef.current;
-          if (pinnedRef.current && prefs) {
+          if (prefs) {
             saveItinerary({ tourId: tour.id, preferences: prefs, stops: updated });
           }
         }
@@ -488,7 +462,7 @@ export default function TourScreen({ navigation, route }: Props) {
           const updated = recalculateStops(next);
           setGeneratedStops(updated);
           const prefs = lastPrefsRef.current;
-          if (pinnedRef.current && prefs) {
+          if (prefs) {
             saveItinerary({ tourId: tour.id, preferences: prefs, stops: updated });
           }
         }
@@ -513,9 +487,9 @@ export default function TourScreen({ navigation, route }: Props) {
       }
       const updated = recalculateStops(next);
       setGeneratedStops(updated);
-      // Persist if pinned
+      // Persist updated order
       const prefs = lastPrefsRef.current;
-      if (pinnedRef.current && prefs) {
+      if (prefs) {
         saveItinerary({ tourId: tour.id, preferences: prefs, stops: updated });
       }
     },
@@ -540,7 +514,7 @@ export default function TourScreen({ navigation, route }: Props) {
               const next = prev.filter((stop) => stop.id !== stopId);
               const updated = recalculateStops(next);
               const prefs = lastPrefsRef.current;
-              if (pinnedRef.current && prefs) {
+              if (prefs) {
                 saveItinerary({ tourId: tour.id, preferences: prefs, stops: updated });
               }
               return updated;
@@ -549,7 +523,7 @@ export default function TourScreen({ navigation, route }: Props) {
         },
       ]);
     },
-    [tour.id, saveItinerary, t],
+    [generatedStops, tour.id, saveItinerary, t],
   );
 
   // Use the currently generated stops (kept in sync with any saved itinerary)
