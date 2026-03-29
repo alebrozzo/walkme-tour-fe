@@ -435,61 +435,6 @@ const styles = StyleSheet.create({
   langButtonText: {
     fontSize: 22,
   },
-  modalOverlay: {
-    flex: 1,
-    backgroundColor: 'rgba(15,23,42,0.6)',
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  modalCard: {
-    backgroundColor: '#FFFFFF',
-    borderRadius: 20,
-    padding: 24,
-    width: 290,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 8 },
-    shadowOpacity: 0.2,
-    shadowRadius: 20,
-    elevation: 12,
-  },
-  modalTitle: {
-    fontSize: 17,
-    fontWeight: '800',
-    color: '#0F172A',
-    marginBottom: 16,
-    textAlign: 'center',
-  },
-  langOption: {
-    alignItems: 'center',
-    paddingVertical: 12,
-    paddingHorizontal: 8,
-    borderRadius: 10,
-  },
-  langOptionLTR: {
-    flexDirection: 'row',
-  },
-  langOptionRTL: {
-    flexDirection: 'row-reverse',
-  },
-  langOptionSelected: {
-    backgroundColor: '#EEF2FF',
-  },
-  langNativeName: {
-    fontSize: 16,
-    fontWeight: '600',
-    color: '#0F172A',
-    flex: 1,
-  },
-  langName: {
-    fontSize: 13,
-    color: '#64748B',
-    marginEnd: 8,
-  },
-  checkmark: {
-    fontSize: 16,
-    color: '#4F46E5',
-    fontWeight: '700',
-  },
   loadingOverlay: {
     flex: 1,
     backgroundColor: 'rgba(15,23,42,0.6)',
