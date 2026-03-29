@@ -93,7 +93,7 @@ export default function StopScreen({ route }: Props) {
             style={styles.heroImageWrapper}
             onPress={() => setImageModalVisible(true)}
             accessibilityRole="button"
-            accessibilityLabel={t.stop.viewFullScreen}
+            accessibilityLabel={`${stop.name}, ${stopTypeLabel}. ${t.stop.viewFullScreen}`}
           >
             <Image
               source={{ uri: stop.imageUrl }}
