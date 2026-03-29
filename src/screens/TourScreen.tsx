@@ -721,11 +721,6 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     marginEnd: 12,
     backgroundColor: '#4F46E5',
-    shadowColor: '#4F46E5',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.35,
-    shadowRadius: 4,
-    elevation: 3,
   },
   orderText: {
     color: '#FFFFFF',
