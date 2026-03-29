@@ -379,7 +379,7 @@ const styles = StyleSheet.create({
     marginEnd: 12,
   },
   activityIndicator: {
-    color: '#4F46E5',
+    color: '#2C3E8C',
   },
   searchSpinner: {
     marginTop: 32,
