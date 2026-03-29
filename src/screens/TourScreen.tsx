@@ -98,7 +98,7 @@ function buildAppleMapsUrl(stops: Stop[]): string {
   }
   if (stops.length === 1) {
     const location = stopToGeoLocation(stops[0]);
-    return `https://maps.apple.com/?q=${encodeURIComponent(stops[0].name)}&ll=${location}`;
+    return `https://maps.apple.com/?q=${stopName(stops[0])}&ll=${location}`;
   }
   const origin = stopName(stops[0]);
   const destinations = stops.slice(1).map(stopName);
