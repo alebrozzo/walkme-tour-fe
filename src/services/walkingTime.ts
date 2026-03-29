@@ -35,7 +35,7 @@ export function estimateWalkingTime(a: Coordinate, b: Coordinate): number {
  * Only legs within the same day are counted.
  */
 export function computeTripTotals(stops: Stop[]): { totalMinutes: number; totalKm: number } {
-  let totalMinutes = 0;
+  let totalMinutes = stops.reduce((sum, s) => sum + s.duration, 0);
   let totalKm = 0;
   for (let i = 0; i < stops.length - 1; i++) {
     const current = stops[i];
