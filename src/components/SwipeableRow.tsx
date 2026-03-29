@@ -93,7 +93,7 @@ export default function SwipeableRow({ children, onDelete, isRTL, deleteAccessib
           </TouchableOpacity>
         </View>
         <Animated.View
-          style={[{ direction: isRTL ? 'rtl' : 'ltr' }, { transform: [{ translateX }] }]}
+          style={[styles.content, { direction: isRTL ? 'rtl' : 'ltr' }, { transform: [{ translateX }] }]}
           {...panResponder.panHandlers}
         >
           {children}
@@ -117,6 +117,9 @@ const styles = StyleSheet.create({
   clip: {
     borderRadius: 12,
     overflow: 'hidden',
+  },
+  content: {
+    backgroundColor: '#F5F6FA',
   },
   deleteArea: {
     position: 'absolute',
