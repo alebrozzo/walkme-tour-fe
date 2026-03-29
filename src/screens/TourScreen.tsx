@@ -805,7 +805,6 @@ const styles = StyleSheet.create({
     paddingVertical: 7,
     borderRadius: 20,
     backgroundColor: '#EEF2FF',
-    alignSelf: 'flex-start',
     borderWidth: 1,
     borderColor: '#C7D2FE',
   },
