@@ -74,7 +74,6 @@ export interface Translations {
   stopTypes: Record<StopType, string>;
   language: string;
   selectLanguage: string;
-  pinCity: string;
-  unpinCity: string;
-  pinnedCities: string;
+  removeCity: string;
+  recentCities: string;
 }

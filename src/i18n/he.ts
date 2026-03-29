@@ -77,9 +77,8 @@ const he: Translations = {
   },
   language: 'שפה',
   selectLanguage: 'בחר שפה',
-  pinCity: 'נעץ עיר',
-  unpinCity: 'הסר נעיצה',
-  pinnedCities: 'ערים מנועצות',
+  removeCity: 'הסר עיר',
+  recentCities: 'ערים אחרונות',
 };
 
 export default he;

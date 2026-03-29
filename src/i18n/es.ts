@@ -78,9 +78,8 @@ const es: Translations = {
   },
   language: 'Idioma',
   selectLanguage: 'Seleccionar idioma',
-  pinCity: 'Fijar ciudad',
-  unpinCity: 'Desfijar ciudad',
-  pinnedCities: 'Ciudades fijadas',
+  removeCity: 'Eliminar ciudad',
+  recentCities: 'Ciudades recientes',
 };
 
 export default es;

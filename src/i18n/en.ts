@@ -77,9 +77,8 @@ const en: Translations = {
   },
   language: 'Language',
   selectLanguage: 'Select Language',
-  pinCity: 'Pin city',
-  unpinCity: 'Unpin city',
-  pinnedCities: 'Pinned Cities',
+  removeCity: 'Remove city',
+  recentCities: 'Recent Cities',
 };
 
 export default en;
