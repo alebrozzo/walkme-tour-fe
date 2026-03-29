@@ -5,7 +5,9 @@ import { StyleSheet, View } from 'react-native';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { LanguageProvider, useLanguage } from './src/contexts/LanguageContext';
 import { PinnedProvider } from './src/contexts/PinnedContext';
+import { SettingsProvider } from './src/contexts/SettingsContext';
 import HomeScreen from './src/screens/HomeScreen';
+import SettingsScreen from './src/screens/SettingsScreen';
 import StopScreen from './src/screens/StopScreen';
 import TourScreen from './src/screens/TourScreen';
 import { RootStackParamList } from './src/types';
@@ -43,6 +45,7 @@ function AppNavigator() {
                 title: route.params.stop.name,
               })}
             />
+            <Stack.Screen name="Settings" component={SettingsScreen} options={{ title: t.settings.title }} />
           </Stack.Navigator>
         </NavigationContainer>
       </SafeAreaProvider>
@@ -65,9 +68,11 @@ const styles = StyleSheet.create({
 export default function App() {
   return (
     <LanguageProvider>
-      <PinnedProvider>
-        <AppNavigator />
-      </PinnedProvider>
+      <SettingsProvider>
+        <PinnedProvider>
+          <AppNavigator />
+        </PinnedProvider>
+      </SettingsProvider>
     </LanguageProvider>
   );
 }

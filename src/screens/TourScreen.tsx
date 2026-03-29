@@ -20,7 +20,8 @@ import { TYPE_ICON } from '../constants/stopTypes';
 import { useLanguage } from '../contexts/LanguageContext';
 import { usePinned } from '../contexts/PinnedContext';
 import { generateRecommendedStops } from '../services/generateStops';
-import { estimateWalkingTime } from '../services/walkingTime';
+import { computeTripTotals, estimateWalkingTime } from '../services/walkingTime';
+import { formatMinutes, useFormatDistance } from '../utils/formatLabels';
 import SwipeableRow from '../components/SwipeableRow';
 
 type Props = NativeStackScreenProps<RootStackParamList, 'Tour'>;
@@ -195,13 +196,23 @@ function WalkingConnector({ walkingTime }: WalkingConnectorProps) {
 
 interface DayHeaderProps {
   day: number;
+  stops?: Stop[];
 }
 
-function DayHeader({ day }: DayHeaderProps) {
+function DayHeader({ day, stops = [] }: DayHeaderProps) {
   const { t } = useLanguage();
+  const formatDistance = useFormatDistance();
+  const { totalMinutes, totalKm } = computeTripTotals(stops);
   return (
     <View style={styles.dayHeader}>
       <Text style={styles.dayHeaderText}>{t.tour.day(day)}</Text>
+      {stops.length > 0 && (
+        <View style={styles.dayHeaderMeta}>
+          <Text style={styles.dayHeaderMetaText}>🕐 {formatMinutes(totalMinutes, t.units.min)}</Text>
+          <Text style={styles.dayHeaderMetaText}>📍 {formatDistance(totalKm)}</Text>
+          <Text style={styles.dayHeaderMetaText}>🏛️ {t.units.stops(stops.length)}</Text>
+        </View>
+      )}
     </View>
   );
 }
@@ -288,6 +299,7 @@ function PreferencesForm({ tour, onGenerate }: PreferencesFormProps) {
 export default function TourScreen({ navigation, route }: Props) {
   const { tour } = route.params;
   const { t, language } = useLanguage();
+  const formatDistance = useFormatDistance();
   const { addCity, getItinerary, saveItinerary } = usePinned();
 
   const savedItinerary = getItinerary(tour.id);
@@ -500,9 +512,16 @@ export default function TourScreen({ navigation, route }: Props) {
               <Text style={styles.heroCountry}>{tour.country}</Text>
               <Text style={styles.heroDescription}>{tour.description}</Text>
               <View style={styles.heroMeta}>
-                <Text style={styles.heroMetaItem}>🕐 {'TODO, maybe'}</Text>
-                <Text style={styles.heroMetaItem}>📍 {'TODO, maybe'}</Text>
-                <Text style={styles.heroMetaItem}>🏛️ {t.units.stops(stopsToShow.length)}</Text>
+                {(() => {
+                  const { totalMinutes, totalKm } = computeTripTotals(stopsToShow);
+                  return (
+                    <>
+                      <Text style={styles.heroMetaItem}>🕐 {formatMinutes(totalMinutes, t.units.min)}</Text>
+                      <Text style={styles.heroMetaItem}>📍 {formatDistance(totalKm)}</Text>
+                      <Text style={styles.heroMetaItem}>🏛️ {t.units.stops(stopsToShow.length)}</Text>
+                    </>
+                  );
+                })()}
               </View>
             </View>
             <Text style={styles.sectionTitle}>{t.tour.recommendedStops}</Text>
@@ -551,7 +570,9 @@ export default function TourScreen({ navigation, route }: Props) {
               {emptyDayHeaders.map((d) => (
                 <DayHeader key={`empty-day-${d}`} day={d} />
               ))}
-              {isNewDay && item.day !== null && item.day !== undefined ? <DayHeader day={item.day} /> : null}
+              {isNewDay && item.day !== null && item.day !== undefined ? (
+                <DayHeader day={item.day} stops={stopsToShow.filter((s) => s.day === item.day)} />
+              ) : null}
               {walkingTime != null ? <WalkingConnector walkingTime={walkingTime} /> : null}
               <SwipeableRow
                 onDelete={() => handleRemoveStop(index)}
@@ -794,6 +815,15 @@ const styles = StyleSheet.create({
     letterSpacing: 0.5,
     color: '#4F46E5',
     textTransform: 'uppercase',
+  },
+  dayHeaderMeta: {
+    flexDirection: 'row',
+    gap: 10,
+    marginTop: 4,
+  },
+  dayHeaderMetaText: {
+    fontSize: 12,
+    opacity: 0.6,
   },
   walkingLine: {
     flex: 1,
