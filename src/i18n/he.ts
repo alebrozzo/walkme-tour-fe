@@ -30,6 +30,7 @@ const he: Translations = {
   units: {
     min: "דק'",
     km: 'ק"מ',
+    mi: 'מייל',
     stops: (n) => `${n} עצירות`,
     minutes: (n) => `${n} דקות`,
   },
@@ -81,6 +82,13 @@ const he: Translations = {
   selectLanguage: 'בחר שפה',
   removeCity: 'הסר עיר',
   recentCities: 'ערים אחרונות',
+  settings: {
+    title: 'הגדרות',
+    language: 'שפה',
+    distanceUnit: 'יחידת מרחק',
+    km: 'קילומטרים (ק"מ)',
+    mi: 'מיילים (מייל)',
+  },
 };
 
 export default he;

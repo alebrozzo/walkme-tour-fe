@@ -37,6 +37,7 @@ export interface Translations {
   units: {
     min: string;
     km: string;
+    mi: string;
     stops: (n: number) => string;
     minutes: (n: number) => string;
   };
@@ -78,4 +79,11 @@ export interface Translations {
   selectLanguage: string;
   removeCity: string;
   recentCities: string;
+  settings: {
+    title: string;
+    language: string;
+    distanceUnit: string;
+    km: string;
+    mi: string;
+  };
 }

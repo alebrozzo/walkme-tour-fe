@@ -30,6 +30,7 @@ const ar: Translations = {
   units: {
     min: 'دقيقة',
     km: 'كم',
+    mi: 'ميل',
     stops: (n) => `${n} محطات`,
     minutes: (n) => `${n} دقائق`,
   },
@@ -81,6 +82,13 @@ const ar: Translations = {
   selectLanguage: 'اختر اللغة',
   removeCity: 'إزالة المدينة',
   recentCities: 'المدن الأخيرة',
+  settings: {
+    title: 'الإعدادات',
+    language: 'اللغة',
+    distanceUnit: 'وحدة المسافة',
+    km: 'كيلومترات (كم)',
+    mi: 'أميال (ميل)',
+  },
 };
 
 export default ar;

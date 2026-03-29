@@ -21,7 +21,7 @@ import { useLanguage } from '../contexts/LanguageContext';
 import { usePinned } from '../contexts/PinnedContext';
 import { generateRecommendedStops } from '../services/generateStops';
 import { computeTripTotals, estimateWalkingTime } from '../services/walkingTime';
-import { formatKm, formatMinutes } from '../utils/formatLabels';
+import { formatMinutes, useFormatDistance } from '../utils/formatLabels';
 import SwipeableRow from '../components/SwipeableRow';
 
 type Props = NativeStackScreenProps<RootStackParamList, 'Tour'>;
@@ -201,6 +201,7 @@ interface DayHeaderProps {
 
 function DayHeader({ day, stops = [] }: DayHeaderProps) {
   const { t } = useLanguage();
+  const formatDistance = useFormatDistance();
   const { totalMinutes, totalKm } = computeTripTotals(stops);
   return (
     <View style={styles.dayHeader}>
@@ -208,7 +209,7 @@ function DayHeader({ day, stops = [] }: DayHeaderProps) {
       {stops.length > 0 && (
         <View style={styles.dayHeaderMeta}>
           <Text style={styles.dayHeaderMetaText}>🕐 {formatMinutes(totalMinutes, t.units.min)}</Text>
-          <Text style={styles.dayHeaderMetaText}>📍 {formatKm(totalKm, t.units.km)}</Text>
+          <Text style={styles.dayHeaderMetaText}>📍 {formatDistance(totalKm)}</Text>
           <Text style={styles.dayHeaderMetaText}>🏛️ {t.units.stops(stops.length)}</Text>
         </View>
       )}
@@ -298,6 +299,7 @@ function PreferencesForm({ tour, onGenerate }: PreferencesFormProps) {
 export default function TourScreen({ navigation, route }: Props) {
   const { tour } = route.params;
   const { t, language } = useLanguage();
+  const formatDistance = useFormatDistance();
   const { addCity, getItinerary, saveItinerary } = usePinned();
 
   const savedItinerary = getItinerary(tour.id);
@@ -515,7 +517,7 @@ export default function TourScreen({ navigation, route }: Props) {
                   return (
                     <>
                       <Text style={styles.heroMetaItem}>🕐 {formatMinutes(totalMinutes, t.units.min)}</Text>
-                      <Text style={styles.heroMetaItem}>📍 {formatKm(totalKm, t.units.km)}</Text>
+                      <Text style={styles.heroMetaItem}>📍 {formatDistance(totalKm)}</Text>
                       <Text style={styles.heroMetaItem}>🏛️ {t.units.stops(stopsToShow.length)}</Text>
                     </>
                   );
