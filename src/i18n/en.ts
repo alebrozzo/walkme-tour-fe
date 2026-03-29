@@ -19,6 +19,8 @@ const en: Translations = {
     errorTitle: 'Tour unavailable',
     serverErrorMessage: 'The server encountered an error. Using local city data.',
     requestErrorMessage: 'Could not load tour data for this city. Using local city data.',
+    loadingTour: 'Loading tour data…',
+    timeoutErrorMessage: 'The request timed out. Please try again.',
   },
   difficulty: {
     easy: 'Easy',

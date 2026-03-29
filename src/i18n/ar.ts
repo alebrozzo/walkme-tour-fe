@@ -19,6 +19,8 @@ const ar: Translations = {
     errorTitle: 'الجولة غير متوفرة',
     serverErrorMessage: 'حدث خطأ في الخادم. سيتم استخدام بيانات المدينة المحلية.',
     requestErrorMessage: 'تعذر تحميل بيانات الجولة لهذه المدينة. سيتم استخدام بيانات المدينة المحلية.',
+    loadingTour: 'جارٍ تحميل بيانات الجولة…',
+    timeoutErrorMessage: 'انتهت مهلة الطلب. يرجى المحاولة مرة أخرى.',
   },
   difficulty: {
     easy: 'سهل',

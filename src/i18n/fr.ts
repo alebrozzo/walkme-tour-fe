@@ -20,6 +20,8 @@ const fr: Translations = {
     serverErrorMessage: 'Le serveur a rencontré une erreur. Les données locales de la ville seront utilisées.',
     requestErrorMessage:
       'Impossible de charger les données du circuit pour cette ville. Les données locales seront utilisées.',
+    loadingTour: 'Chargement des données du circuit…',
+    timeoutErrorMessage: 'La requête a expiré. Veuillez réessayer.',
   },
   difficulty: {
     easy: 'Facile',

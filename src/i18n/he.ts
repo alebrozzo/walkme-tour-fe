@@ -19,6 +19,8 @@ const he: Translations = {
     errorTitle: 'הסיור אינו זמין',
     serverErrorMessage: 'אירעה שגיאה בשרת. נעשה שימוש בנתוני העיר המקומיים.',
     requestErrorMessage: 'לא ניתן לטעון את נתוני הסיור עבור עיר זו. נעשה שימוש בנתוני העיר המקומיים.',
+    loadingTour: 'טוען נתוני סיור…',
+    timeoutErrorMessage: 'הבקשה פגה. אנא נסה שנית.',
   },
   difficulty: {
     easy: 'קל',
