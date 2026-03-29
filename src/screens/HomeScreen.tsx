@@ -396,6 +396,7 @@ const styles = StyleSheet.create({
     marginBottom: 12,
   },
   pinnedCard: {
+    backgroundColor: '#FFFFFF',
     borderRadius: 12,
     marginBottom: 10,
     paddingHorizontal: 16,
@@ -404,7 +405,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
+    shadowOpacity: 0.07,
     shadowRadius: 6,
     elevation: 3,
   },
@@ -413,8 +414,8 @@ const styles = StyleSheet.create({
     height: 48,
     borderRadius: 8,
     marginEnd: 12,
-    borderWidth: 2,
-    borderColor: 'rgba(255,255,255,0.45)',
+    borderWidth: 1,
+    borderColor: 'rgba(0,0,0,0.08)',
   },
   pinnedCardContent: {
     flex: 1,
@@ -422,11 +423,11 @@ const styles = StyleSheet.create({
   pinnedCardCity: {
     fontSize: 18,
     fontWeight: '700',
-    color: '#FFFFFF',
+    color: '#1A1A2E',
   },
   pinnedCardCountry: {
     fontSize: 13,
-    color: 'rgba(255,255,255,0.8)',
+    color: '#7F8C8D',
     marginTop: 2,
   },
   pinnedCardUnpin: {

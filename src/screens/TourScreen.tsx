@@ -751,17 +751,17 @@ const styles = StyleSheet.create({
   heroCity: {
     fontSize: 34,
     fontWeight: '800',
-    color: '#FFFFFF',
+    color: '#1A1A2E',
   },
   heroCountry: {
     fontSize: 16,
-    color: 'rgba(255,255,255,0.8)',
+    color: '#5A6376',
     marginTop: 2,
     marginBottom: 12,
   },
   heroDescription: {
     fontSize: 15,
-    color: 'rgba(255,255,255,0.9)',
+    color: '#4A5568',
     lineHeight: 22,
     marginBottom: 20,
   },
@@ -771,7 +771,7 @@ const styles = StyleSheet.create({
   },
   heroMetaItem: {
     fontSize: 13,
-    color: 'rgba(255,255,255,0.9)',
+    color: '#4A5568',
     fontWeight: '600',
   },
   sectionTitle: {
