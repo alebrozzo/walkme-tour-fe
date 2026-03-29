@@ -156,8 +156,6 @@ export default function HomeScreen({ navigation }: Props) {
   const directionStyle = isRTL ? styles.directionRTL : styles.directionLTR;
   const textAlignStyle = isRTL ? styles.textAlignRight : styles.textAlignLeft;
 
-  const TOUR_FETCH_TIMEOUT_MS = 30000;
-
   const handleCityPress = async (prediction: CityPrediction) => {
     activeRequestIdRef.current += 1;
     const requestId = activeRequestIdRef.current;
@@ -170,18 +168,15 @@ export default function HomeScreen({ navigation }: Props) {
       description: '',
       stops: [],
     };
-    const timeoutPromise = new Promise<never>((_, reject) =>
-      setTimeout(() => reject(new Error('TIMEOUT')), TOUR_FETCH_TIMEOUT_MS),
-    );
     try {
-      const apiTour = await Promise.race([fetchTourForCity(tourStub, language.code), timeoutPromise]);
+      const apiTour = await fetchTourForCity(tourStub, language.code);
       setQuery('');
       navigation.navigate('Tour', { tour: apiTour });
     } catch (error) {
       if (__DEV__) {
         console.warn(`Failed to fetch remote tour for ${prediction.city}`, error);
       }
-      if ((error as Error).message === 'TIMEOUT') {
+      if ((error as Error).name === 'AbortError') {
         Alert.alert(t.home.errorTitle, t.home.timeoutErrorMessage);
       } else if (error instanceof TourApiError && error.statusCode !== undefined) {
         const message = error.statusCode >= 500 ? t.home.serverErrorMessage : t.home.requestErrorMessage;
