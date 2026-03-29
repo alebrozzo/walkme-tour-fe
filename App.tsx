@@ -1,8 +1,11 @@
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { StatusBar } from 'expo-status-bar';
+import React from 'react';
 import { StyleSheet, View } from 'react-native';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
+
+import ErrorBoundary from './src/components/ErrorBoundary';
 import { LanguageProvider, useLanguage } from './src/contexts/LanguageContext';
 import { PinnedProvider } from './src/contexts/PinnedContext';
 import { SettingsProvider } from './src/contexts/SettingsContext';
@@ -67,12 +70,14 @@ const styles = StyleSheet.create({
 
 export default function App() {
   return (
-    <LanguageProvider>
-      <SettingsProvider>
-        <PinnedProvider>
-          <AppNavigator />
-        </PinnedProvider>
-      </SettingsProvider>
-    </LanguageProvider>
+    <ErrorBoundary>
+      <LanguageProvider>
+        <SettingsProvider>
+          <PinnedProvider>
+            <AppNavigator />
+          </PinnedProvider>
+        </SettingsProvider>
+      </LanguageProvider>
+    </ErrorBoundary>
   );
 }
