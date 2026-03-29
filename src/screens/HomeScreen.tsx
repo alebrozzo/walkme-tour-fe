@@ -166,7 +166,6 @@ function PinnedCard({ tour, onPress, onUnpin }: PinnedCardProps) {
           <Pressable
             style={styles.pinnedCardContent}
             onPress={onPress}
-            android_ripple={null}
             accessibilityRole="button"
             accessibilityLabel={tour.city}
           >
