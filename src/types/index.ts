@@ -1,3 +1,5 @@
+import { LanguageCode } from '@/i18n/types';
+
 export type StopType =
   | 'landmark'
   | 'museum'
@@ -41,7 +43,7 @@ export interface Tour {
   placeId: string;
   city: string;
   country: string;
-  language?: string;
+  language?: LanguageCode;
   description: string;
   /** Optional remote image URL shown in city cards/hero banners when available. */
   imageUrl?: string;
