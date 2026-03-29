@@ -88,29 +88,37 @@ export default function StopScreen({ route }: Props) {
     <SafeAreaView style={styles.safeArea} edges={['bottom']}>
       <ScrollView style={{ direction: language.isRTL ? 'rtl' : 'ltr' }} contentContainerStyle={styles.scroll}>
         {/* Header */}
-        <View style={[styles.header]}>
-          {stop.imageUrl && !imageLoadError ? (
-            <Pressable
-              onPress={() => setImageModalVisible(true)}
-              accessibilityRole="button"
-              accessibilityLabel={t.stop.viewFullScreen}
-            >
-              <Image
-                source={{ uri: stop.imageUrl }}
-                style={styles.stopImage}
-                resizeMode="cover"
-                onError={() => {
-                  setImageLoadError(true);
-                  setImageModalVisible(false);
-                }}
-              />
-            </Pressable>
-          ) : (
-            <Text style={styles.typeIcon}>{TYPE_ICON[stop.type] ?? '📌'}</Text>
-          )}
-          <Text style={styles.stopName}>{stop.name}</Text>
-          <Text style={styles.stopType}>{stopTypeLabel}</Text>
-        </View>
+        {stop.imageUrl && !imageLoadError ? (
+          <Pressable
+            style={styles.heroImageWrapper}
+            onPress={() => setImageModalVisible(true)}
+            accessibilityRole="button"
+            accessibilityLabel={t.stop.viewFullScreen}
+          >
+            <Image
+              source={{ uri: stop.imageUrl }}
+              style={styles.heroImage}
+              resizeMode="cover"
+              onError={() => {
+                setImageLoadError(true);
+                setImageModalVisible(false);
+              }}
+            />
+            <View style={styles.heroOverlay} />
+            <View style={styles.heroTextOverlay}>
+              <Text style={styles.heroStopName}>{stop.name}</Text>
+              <Text style={styles.heroStopType}>{stopTypeLabel}</Text>
+            </View>
+          </Pressable>
+        ) : (
+          <View style={styles.heroNoImage}>
+            <View style={styles.typeIconBubble}>
+              <Text style={styles.typeIcon}>{TYPE_ICON[stop.type] ?? '📌'}</Text>
+            </View>
+            <Text style={styles.stopName}>{stop.name}</Text>
+            <Text style={styles.stopType}>{stopTypeLabel}</Text>
+          </View>
+        )}
 
         {/* Full-screen image modal */}
         {stop.imageUrl && !imageLoadError && (
@@ -192,40 +200,80 @@ export default function StopScreen({ route }: Props) {
 const styles = StyleSheet.create({
   safeArea: {
     flex: 1,
-    backgroundColor: '#F5F6FA',
+    backgroundColor: '#F0F4FF',
   },
   scroll: {
     paddingBottom: 40,
   },
-  header: {
-    padding: 28,
-    paddingTop: 36,
-    paddingBottom: 36,
+  heroImageWrapper: {
+    height: 280,
+    overflow: 'hidden',
+  },
+  heroImage: {
+    width: '100%',
+    height: 280,
+  },
+  heroOverlay: {
+    position: 'absolute',
+    bottom: 0,
+    left: 0,
+    right: 0,
+    height: 130,
+    backgroundColor: 'rgba(15,23,42,0.72)',
+  },
+  heroTextOverlay: {
+    position: 'absolute',
+    bottom: 24,
+    left: 24,
+    right: 24,
+  },
+  heroStopName: {
+    fontSize: 28,
+    fontWeight: '800',
+    color: '#FFFFFF',
+    marginBottom: 4,
+  },
+  heroStopType: {
+    fontSize: 13,
+    color: 'rgba(255,255,255,0.75)',
+    fontWeight: '600',
+    textTransform: 'uppercase',
+    letterSpacing: 1,
+  },
+  heroNoImage: {
+    backgroundColor: '#EEF2FF',
+    paddingVertical: 40,
+    paddingHorizontal: 24,
     alignItems: 'center',
   },
-  typeIcon: {
-    fontSize: 48,
-    marginBottom: 12,
+  typeIconBubble: {
+    width: 88,
+    height: 88,
+    borderRadius: 44,
+    backgroundColor: '#FFFFFF',
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginBottom: 16,
+    shadowColor: '#4F46E5',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.2,
+    shadowRadius: 12,
+    elevation: 5,
   },
-  stopImage: {
-    width: 92,
-    height: 92,
-    borderRadius: 16,
-    marginBottom: 12,
-    borderWidth: 2,
-    borderColor: 'rgba(0,0,0,0.08)',
+  typeIcon: {
+    fontSize: 44,
   },
   stopName: {
     fontSize: 26,
     fontWeight: '800',
-    color: '#1A1A2E',
+    color: '#0F172A',
     textAlign: 'center',
     marginBottom: 6,
   },
   stopType: {
-    fontSize: 14,
-    color: '#5A6376',
-    fontWeight: '500',
+    fontSize: 13,
+    color: '#64748B',
+    fontWeight: '600',
     textTransform: 'uppercase',
     letterSpacing: 1,
   },
@@ -234,14 +282,16 @@ const styles = StyleSheet.create({
   },
   infoCard: {
     backgroundColor: '#FFFFFF',
-    borderRadius: 12,
+    borderRadius: 16,
     padding: 16,
     marginBottom: 20,
     shadowColor: '#000',
-    shadowOffset: { width: 0, height: 1 },
-    shadowOpacity: 0.06,
-    shadowRadius: 4,
-    elevation: 2,
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.08,
+    shadowRadius: 8,
+    elevation: 3,
+    borderWidth: 1,
+    borderColor: '#F1F5F9',
   },
   infoRow: {
     flexDirection: 'row',
@@ -255,25 +305,25 @@ const styles = StyleSheet.create({
   },
   infoLabel: {
     fontSize: 11,
-    color: '#95A5A6',
+    color: '#94A3B8',
     textTransform: 'uppercase',
     letterSpacing: 0.5,
     marginBottom: 2,
   },
   infoValue: {
     fontSize: 15,
-    color: '#1A1A2E',
-    fontWeight: '500',
+    color: '#0F172A',
+    fontWeight: '600',
   },
   divider: {
     height: 1,
-    backgroundColor: '#F0F0F0',
+    backgroundColor: '#F1F5F9',
     marginHorizontal: -16,
   },
   sectionTitle: {
     fontSize: 17,
-    fontWeight: '700',
-    color: '#1A1A2E',
+    fontWeight: '800',
+    color: '#0F172A',
     marginBottom: 10,
   },
   sectionHeader: {
@@ -310,27 +360,29 @@ const styles = StyleSheet.create({
   },
   card: {
     backgroundColor: '#FFFFFF',
-    borderRadius: 12,
+    borderRadius: 16,
     padding: 16,
     marginBottom: 20,
     shadowColor: '#000',
-    shadowOffset: { width: 0, height: 1 },
-    shadowOpacity: 0.06,
-    shadowRadius: 4,
-    elevation: 2,
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.08,
+    shadowRadius: 8,
+    elevation: 3,
+    borderWidth: 1,
+    borderColor: '#F1F5F9',
   },
   description: {
     fontSize: 15,
-    color: '#2C3E50',
-    lineHeight: 24,
+    color: '#334155',
+    lineHeight: 26,
   },
   tipsCard: {
     flexDirection: 'row',
     alignItems: 'flex-start',
     gap: 10,
-    backgroundColor: '#FFFBF0',
+    backgroundColor: '#FFFBEB',
     borderWidth: 1,
-    borderColor: '#F9E4A0',
+    borderColor: '#FDE68A',
   },
   tipsIcon: {
     fontSize: 20,
@@ -339,7 +391,7 @@ const styles = StyleSheet.create({
   tipsText: {
     flex: 1,
     fontSize: 14,
-    color: '#5D4037',
+    color: '#92400E',
     lineHeight: 22,
   },
   modalBackdrop: {
