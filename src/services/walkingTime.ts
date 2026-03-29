@@ -31,7 +31,7 @@ export function estimateWalkingTime(a: Coordinate, b: Coordinate): number {
 }
 
 /**
- * Sums the walking distance and time across all stops, computed directly from coordinates.
+ * Sums the walking distance and stop time across all stops, computed directly from coordinates.
  * Only legs within the same day are counted.
  */
 export function computeTripTotals(stops: Stop[]): { totalMinutes: number; totalKm: number } {
