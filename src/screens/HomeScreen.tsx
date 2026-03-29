@@ -10,7 +10,6 @@ import {
   Text,
   TextInput,
   TouchableOpacity,
-  TouchableWithoutFeedback,
   View,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
@@ -95,9 +94,8 @@ function PinnedCard({ tour, onPress, onRemove }: PinnedCardProps) {
 }
 
 export default function HomeScreen({ navigation }: Props) {
-  const { t, language, languages, setLanguage } = useLanguage();
+  const { t, language } = useLanguage();
   const { pinnedTours, removeCity } = usePinned();
-  const [showLangPicker, setShowLangPicker] = useState(false);
   const [query, setQuery] = useState('');
   const [predictions, setPredictions] = useState<CityPrediction[]>([]);
   const [searchLoading, setSearchLoading] = useState(false);
@@ -109,12 +107,12 @@ export default function HomeScreen({ navigation }: Props) {
     navigation.setOptions({
       title: t.appTitle,
       headerRight: () => (
-        <TouchableOpacity onPress={() => setShowLangPicker(true)} style={styles.langButton}>
-          <Text style={styles.langButtonText}>🌐</Text>
+        <TouchableOpacity onPress={() => navigation.navigate('Settings')} style={styles.langButton}>
+          <Text style={styles.langButtonText}>⚙️</Text>
         </TouchableOpacity>
       ),
     });
-  }, [navigation, t, setShowLangPicker]);
+  }, [navigation, t]);
 
   useEffect(() => {
     const q = query.trim();
@@ -266,37 +264,6 @@ export default function HomeScreen({ navigation }: Props) {
             <Text style={styles.loadingText}>{t.home.loadingTour}</Text>
           </View>
         </View>
-      </Modal>
-
-      {/* Language picker modal */}
-      <Modal visible={showLangPicker} transparent animationType="fade" onRequestClose={() => setShowLangPicker(false)}>
-        <TouchableWithoutFeedback onPress={() => setShowLangPicker(false)}>
-          <View style={styles.modalOverlay}>
-            <TouchableWithoutFeedback>
-              <View style={[styles.modalCard, directionStyle]}>
-                <Text style={styles.modalTitle}>{t.selectLanguage}</Text>
-                {languages.map((lang) => (
-                  <TouchableOpacity
-                    key={lang.code}
-                    style={[
-                      styles.langOption,
-                      isRTL ? styles.langOptionRTL : styles.langOptionLTR,
-                      language.code === lang.code && styles.langOptionSelected,
-                    ]}
-                    onPress={() => {
-                      setLanguage(lang.code);
-                      setShowLangPicker(false);
-                    }}
-                  >
-                    <Text style={[styles.langNativeName, textAlignStyle]}>{lang.nativeName}</Text>
-                    <Text style={[styles.langName, textAlignStyle]}>{t.languageNames[lang.code]}</Text>
-                    {language.code === lang.code && <Text style={styles.checkmark}>✓</Text>}
-                  </TouchableOpacity>
-                ))}
-              </View>
-            </TouchableWithoutFeedback>
-          </View>
-        </TouchableWithoutFeedback>
       </Modal>
     </SafeAreaView>
   );
@@ -461,61 +428,6 @@ const styles = StyleSheet.create({
   },
   langButtonText: {
     fontSize: 22,
-  },
-  modalOverlay: {
-    flex: 1,
-    backgroundColor: 'rgba(0,0,0,0.45)',
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  modalCard: {
-    backgroundColor: '#FFFFFF',
-    borderRadius: 16,
-    padding: 20,
-    width: 280,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.15,
-    shadowRadius: 12,
-    elevation: 8,
-  },
-  modalTitle: {
-    fontSize: 17,
-    fontWeight: '700',
-    color: '#1A1A2E',
-    marginBottom: 16,
-    textAlign: 'center',
-  },
-  langOption: {
-    alignItems: 'center',
-    paddingVertical: 12,
-    paddingHorizontal: 8,
-    borderRadius: 8,
-  },
-  langOptionLTR: {
-    flexDirection: 'row',
-  },
-  langOptionRTL: {
-    flexDirection: 'row-reverse',
-  },
-  langOptionSelected: {
-    backgroundColor: '#F0F4FF',
-  },
-  langNativeName: {
-    fontSize: 16,
-    fontWeight: '600',
-    color: '#1A1A2E',
-    flex: 1,
-  },
-  langName: {
-    fontSize: 13,
-    color: '#7F8C8D',
-    marginEnd: 8,
-  },
-  checkmark: {
-    fontSize: 16,
-    color: '#2C3E8C',
-    fontWeight: '700',
   },
   loadingOverlay: {
     flex: 1,

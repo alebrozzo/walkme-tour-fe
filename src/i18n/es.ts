@@ -31,6 +31,7 @@ const es: Translations = {
   units: {
     min: 'min',
     km: 'km',
+    mi: 'mi',
     stops: (n) => `${n} parada${n === 1 ? '' : 's'}`,
     minutes: (n) => `${n} minutos`,
   },
@@ -82,6 +83,13 @@ const es: Translations = {
   selectLanguage: 'Seleccionar idioma',
   removeCity: 'Eliminar ciudad',
   recentCities: 'Ciudades recientes',
+  settings: {
+    title: 'Ajustes',
+    language: 'Idioma',
+    distanceUnit: 'Unidad de distancia',
+    km: 'Kilómetros (km)',
+    mi: 'Millas (mi)',
+  },
 };
 
 export default es;

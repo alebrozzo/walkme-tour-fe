@@ -67,4 +67,5 @@ export type RootStackParamList = {
   Home: undefined;
   Tour: { tour: Tour };
   Stop: { stop: Stop };
+  Settings: undefined;
 };
