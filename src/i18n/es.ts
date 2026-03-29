@@ -20,6 +20,8 @@ const es: Translations = {
     serverErrorMessage: 'El servidor encontró un error. Se usarán los datos locales de la ciudad.',
     requestErrorMessage:
       'No se pudieron cargar los datos del tour para esta ciudad. Se usarán los datos locales de la ciudad.',
+    loadingTour: 'Cargando datos del tour…',
+    timeoutErrorMessage: 'La solicitud tardó demasiado. Inténtalo de nuevo.',
   },
   difficulty: {
     easy: 'Fácil',

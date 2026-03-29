@@ -30,6 +30,8 @@ export interface Translations {
     errorTitle: string;
     serverErrorMessage: string;
     requestErrorMessage: string;
+    loadingTour: string;
+    timeoutErrorMessage: string;
   };
   difficulty: Record<'easy' | 'moderate' | 'hard', string>;
   units: {

@@ -156,6 +156,8 @@ export default function HomeScreen({ navigation }: Props) {
   const directionStyle = isRTL ? styles.directionRTL : styles.directionLTR;
   const textAlignStyle = isRTL ? styles.textAlignRight : styles.textAlignLeft;
 
+  const TOUR_FETCH_TIMEOUT_MS = 30000;
+
   const handleCityPress = async (prediction: CityPrediction) => {
     activeRequestIdRef.current += 1;
     const requestId = activeRequestIdRef.current;
@@ -168,15 +170,20 @@ export default function HomeScreen({ navigation }: Props) {
       description: '',
       stops: [],
     };
+    const timeoutPromise = new Promise<never>((_, reject) =>
+      setTimeout(() => reject(new Error('TIMEOUT')), TOUR_FETCH_TIMEOUT_MS),
+    );
     try {
-      const apiTour = await fetchTourForCity(tourStub, language.code);
+      const apiTour = await Promise.race([fetchTourForCity(tourStub, language.code), timeoutPromise]);
       setQuery('');
       navigation.navigate('Tour', { tour: apiTour });
     } catch (error) {
       if (__DEV__) {
         console.warn(`Failed to fetch remote tour for ${prediction.city}`, error);
       }
-      if (error instanceof TourApiError && error.statusCode !== undefined) {
+      if ((error as Error).message === 'TIMEOUT') {
+        Alert.alert(t.home.errorTitle, t.home.timeoutErrorMessage);
+      } else if (error instanceof TourApiError && error.statusCode !== undefined) {
         const message = error.statusCode >= 500 ? t.home.serverErrorMessage : t.home.requestErrorMessage;
         Alert.alert(t.home.errorTitle, message);
       } else {
@@ -248,6 +255,23 @@ export default function HomeScreen({ navigation }: Props) {
           )}
         </View>
       </ScrollView>
+
+      {/* Loading overlay */}
+      <Modal
+        visible={loadingCityId !== null}
+        transparent
+        animationType="fade"
+        onRequestClose={() => {
+          /* intentionally blocked */
+        }}
+      >
+        <View style={styles.loadingOverlay}>
+          <View style={styles.loadingCard}>
+            <ActivityIndicator size="large" color="#2C3E8C" />
+            <Text style={styles.loadingText}>{t.home.loadingTour}</Text>
+          </View>
+        </View>
+      </Modal>
 
       {/* Language picker modal */}
       <Modal visible={showLangPicker} transparent animationType="fade" onRequestClose={() => setShowLangPicker(false)}>
@@ -497,5 +521,29 @@ const styles = StyleSheet.create({
     fontSize: 16,
     color: '#2C3E8C',
     fontWeight: '700',
+  },
+  loadingOverlay: {
+    flex: 1,
+    backgroundColor: 'rgba(0,0,0,0.5)',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  loadingCard: {
+    backgroundColor: '#FFFFFF',
+    borderRadius: 16,
+    paddingVertical: 28,
+    paddingHorizontal: 36,
+    alignItems: 'center',
+    gap: 16,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.15,
+    shadowRadius: 12,
+    elevation: 8,
+  },
+  loadingText: {
+    fontSize: 15,
+    fontWeight: '500',
+    color: '#1A1A2E',
   },
 });
