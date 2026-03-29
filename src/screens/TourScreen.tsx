@@ -41,25 +41,54 @@ function recalculateStops(stops: Stop[]): Stop[] {
   });
 }
 
-function stopToLocation(s: Stop): string {
+function stopToGeoLocation(s: Stop): string {
   return `${s.coordinate.latitude},${s.coordinate.longitude}`;
 }
 
-function stopToLabel(s: Stop): string {
+function stopName(s: Stop): string {
   return encodeURIComponent(s.name);
+}
+
+// Returns the display label or coordinates for use in the waypoints text param.
+function stopWaypointLabel(s: Stop): string {
+  return s.googlePlaceId ? stopName(s) : stopToGeoLocation(s);
 }
 
 function buildGoogleMapsUrl(stops: Stop[]): string {
   if (stops.length === 0) {
     return '';
   }
-  const origin = stopToLabel(stops[0]);
-  const destination = stopToLabel(stops[stops.length - 1]);
-  const waypoints = stops.slice(1, -1).map(stopToLabel);
-  let url = `https://www.google.com/maps/dir/?api=1&origin=${origin}&destination=${destination}&travelmode=walking`;
-  if (waypoints.length > 0) {
-    url += `&waypoints=${waypoints.join('|')}`;
+
+  if (stops.length === 1) {
+    const s = stops[0];
+    let url = `https://www.google.com/maps/search/?api=1&query=${stopName(s)}`;
+    if (s.googlePlaceId) {
+      url += `&query_place_id=${s.googlePlaceId}`;
+    }
+    return url;
   }
+
+  const first = stops[0];
+  const last = stops[stops.length - 1];
+  const middle = stops.slice(1, -1);
+
+  const originParam = first.googlePlaceId
+    ? `&origin=${stopName(first)}&origin_place_id=${first.googlePlaceId}`
+    : `&origin=${stopToGeoLocation(first)}`;
+  const destinationParam = last.googlePlaceId
+    ? `&destination=${stopName(last)}&destination_place_id=${last.googlePlaceId}`
+    : `&destination=${stopToGeoLocation(last)}`;
+
+  let url = `https://www.google.com/maps/dir/?api=1${originParam}${destinationParam}&travelmode=walking`;
+
+  if (middle.length > 0) {
+    url += `&waypoints=${middle.map(stopWaypointLabel).join('|')}`;
+    const waypointPlaceIds = middle.map((s) => s.googlePlaceId ?? '');
+    if (waypointPlaceIds.some(Boolean)) {
+      url += `&waypoint_place_ids=${waypointPlaceIds.join('|')}`;
+    }
+  }
+
   return url;
 }
 
@@ -68,11 +97,11 @@ function buildAppleMapsUrl(stops: Stop[]): string {
     return '';
   }
   if (stops.length === 1) {
-    const location = stopToLocation(stops[0]);
-    return `https://maps.apple.com/?q=${encodeURIComponent(stops[0].name)}&ll=${location}`;
+    const location = stopToGeoLocation(stops[0]);
+    return `https://maps.apple.com/?q=${stopName(stops[0])}&ll=${location}`;
   }
-  const origin = stopToLabel(stops[0]);
-  const destinations = stops.slice(1).map(stopToLabel);
+  const origin = stopName(stops[0]);
+  const destinations = stops.slice(1).map(stopName);
   return `https://maps.apple.com/?saddr=${origin}&daddr=${destinations.join('+to:')}&dirflg=w`;
 }
 
