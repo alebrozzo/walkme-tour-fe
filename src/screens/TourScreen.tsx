@@ -41,12 +41,17 @@ function recalculateStops(stops: Stop[]): Stop[] {
   });
 }
 
-function stopToLocation(s: Stop): string {
+function stopToGeoLocation(s: Stop): string {
   return `${s.coordinate.latitude},${s.coordinate.longitude}`;
 }
 
 function stopName(s: Stop): string {
   return encodeURIComponent(s.name);
+}
+
+// Returns the display label or coordinates for use in the waypoints text param.
+function stopWaypointLabel(s: Stop): string {
+  return s.googlePlaceId ? stopName(s) : stopToGeoLocation(s);
 }
 
 function buildGoogleMapsUrl(stops: Stop[]): string {
@@ -67,20 +72,17 @@ function buildGoogleMapsUrl(stops: Stop[]): string {
   const last = stops[stops.length - 1];
   const middle = stops.slice(1, -1);
 
-  let url =
-    `https://www.google.com/maps/dir/?api=1` +
-    `&origin=${stopName(first)}` +
-    `&destination=${stopName(last)}` +
-    `&travelmode=walking`;
+  const originParam = first.googlePlaceId
+    ? `&origin=${stopName(first)}&origin_place_id=${first.googlePlaceId}`
+    : `&origin=${stopToGeoLocation(first)}`;
+  const destinationParam = last.googlePlaceId
+    ? `&destination=${stopName(last)}&destination_place_id=${last.googlePlaceId}`
+    : `&destination=${stopToGeoLocation(last)}`;
 
-  if (first.googlePlaceId) {
-    url += `&origin_place_id=${first.googlePlaceId}`;
-  }
-  if (last.googlePlaceId) {
-    url += `&destination_place_id=${last.googlePlaceId}`;
-  }
+  let url = `https://www.google.com/maps/dir/?api=1${originParam}${destinationParam}&travelmode=walking`;
+
   if (middle.length > 0) {
-    url += `&waypoints=${middle.map(stopName).join('|')}`;
+    url += `&waypoints=${middle.map(stopWaypointLabel).join('|')}`;
     const waypointPlaceIds = middle.map((s) => s.googlePlaceId ?? '');
     if (waypointPlaceIds.some(Boolean)) {
       url += `&waypoint_place_ids=${waypointPlaceIds.join('|')}`;
@@ -95,7 +97,7 @@ function buildAppleMapsUrl(stops: Stop[]): string {
     return '';
   }
   if (stops.length === 1) {
-    const location = stopToLocation(stops[0]);
+    const location = stopToGeoLocation(stops[0]);
     return `https://maps.apple.com/?q=${encodeURIComponent(stops[0].name)}&ll=${location}`;
   }
   const origin = stopName(stops[0]);
