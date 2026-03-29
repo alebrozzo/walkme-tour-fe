@@ -1,4 +1,5 @@
 import { Stop, TripPreferences } from '../types';
+import { estimateWalkingTime } from './walkingTime';
 
 const API_DELAY_MS = 1500;
 
@@ -23,8 +24,9 @@ export async function generateRecommendedStops(allStops: Stop[], preferences: Tr
 
     while (stopIndex < allStops.length) {
       const stop = allStops[stopIndex];
+      const prevStop = selected[selected.length - 1];
       // Walking time only applies within the same day; no walking overhead at the start of a new day
-      const walkFromPrev = isFirstStopOfDay ? 0 : (selected[selected.length - 1].walkingTime ?? 0);
+      const walkFromPrev = isFirstStopOfDay || !prevStop ? 0 : estimateWalkingTime(prevStop.coordinate, stop.coordinate);
       const needed = stop.duration + walkFromPrev;
       if (needed <= remainingToday) {
         selected.push({ ...stop, order, day });
@@ -39,5 +41,10 @@ export async function generateRecommendedStops(allStops: Stop[], preferences: Tr
     }
   }
 
-  return selected;
+  // Set correct walkingTime between consecutive stops within the same day
+  return selected.map((s, i) => {
+    const next = i < selected.length - 1 ? selected[i + 1] : undefined;
+    const sameDay = next && next.day === s.day;
+    return { ...s, walkingTime: sameDay ? estimateWalkingTime(s.coordinate, next.coordinate) : undefined };
+  });
 }

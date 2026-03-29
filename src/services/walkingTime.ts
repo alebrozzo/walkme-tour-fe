@@ -1,4 +1,4 @@
-import { Coordinate } from '../types';
+import { Coordinate, Stop } from '../types';
 
 const EARTH_RADIUS_KM = 6371;
 const WALKING_SPEED_KM_H = 5;
@@ -28,4 +28,23 @@ export function estimateWalkingTime(a: Coordinate, b: Coordinate): number {
   const distanceKm = haversineDistanceKm(a, b) * 1.3; // detour factor
   const minutes = (distanceKm / WALKING_SPEED_KM_H) * MINUTES_PER_HOUR;
   return Math.round(minutes);
+}
+
+/**
+ * Sums the walking distance and time across all stops, computed directly from coordinates.
+ * Only legs within the same day are counted.
+ */
+export function computeTripTotals(stops: Stop[]): { totalMinutes: number; totalKm: number } {
+  let totalMinutes = 0;
+  let totalKm = 0;
+  for (let i = 0; i < stops.length - 1; i++) {
+    const current = stops[i];
+    const next = stops[i + 1];
+    if (current.day === next.day) {
+      const distKm = haversineDistanceKm(current.coordinate, next.coordinate) * 1.3;
+      totalKm += distKm;
+      totalMinutes += Math.round((distKm / WALKING_SPEED_KM_H) * MINUTES_PER_HOUR);
+    }
+  }
+  return { totalMinutes, totalKm };
 }

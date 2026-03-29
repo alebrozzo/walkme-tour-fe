@@ -20,7 +20,8 @@ import { TYPE_ICON } from '../constants/stopTypes';
 import { useLanguage } from '../contexts/LanguageContext';
 import { usePinned } from '../contexts/PinnedContext';
 import { generateRecommendedStops } from '../services/generateStops';
-import { estimateWalkingTime } from '../services/walkingTime';
+import { computeTripTotals, estimateWalkingTime } from '../services/walkingTime';
+import { formatKm, formatMinutes } from '../utils/formatLabels';
 import SwipeableRow from '../components/SwipeableRow';
 
 type Props = NativeStackScreenProps<RootStackParamList, 'Tour'>;
@@ -500,9 +501,16 @@ export default function TourScreen({ navigation, route }: Props) {
               <Text style={styles.heroCountry}>{tour.country}</Text>
               <Text style={styles.heroDescription}>{tour.description}</Text>
               <View style={styles.heroMeta}>
-                <Text style={styles.heroMetaItem}>🕐 {'TODO, maybe'}</Text>
-                <Text style={styles.heroMetaItem}>📍 {'TODO, maybe'}</Text>
-                <Text style={styles.heroMetaItem}>🏛️ {t.units.stops(stopsToShow.length)}</Text>
+                {(() => {
+                  const { totalMinutes, totalKm } = computeTripTotals(stopsToShow);
+                  return (
+                    <>
+                      <Text style={styles.heroMetaItem}>🕐 {formatMinutes(totalMinutes, t.units.min)}</Text>
+                      <Text style={styles.heroMetaItem}>📍 {formatKm(totalKm, t.units.km)}</Text>
+                      <Text style={styles.heroMetaItem}>🏛️ {t.units.stops(stopsToShow.length)}</Text>
+                    </>
+                  );
+                })()}
               </View>
             </View>
             <Text style={styles.sectionTitle}>{t.tour.recommendedStops}</Text>
