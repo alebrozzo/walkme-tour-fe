@@ -1,7 +1,15 @@
-/** Formats a duration in minutes as "Xh Ym" (when ≥ 60) or "X min". */
-export function formatMinutes(totalMinutes: number, minUnit: string): string {
+/** Formats a duration in minutes using localized units. */
+export function formatMinutes(totalMinutes: number, minUnit: string, hourUnit?: string): string {
   if (totalMinutes >= 60) {
-    return `${Math.floor(totalMinutes / 60)}h ${totalMinutes % 60}m`;
+    const hours = Math.floor(totalMinutes / 60);
+    const minutes = totalMinutes % 60;
+    const resolvedHourUnit = hourUnit ?? 'h';
+
+    if (minutes === 0) {
+      return `${hours}${resolvedHourUnit}`;
+    }
+
+    return `${hours}${resolvedHourUnit} ${minutes} ${minUnit}`;
   }
   return `${totalMinutes} ${minUnit}`;
 }
