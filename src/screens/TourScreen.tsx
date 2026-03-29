@@ -45,17 +45,22 @@ function stopToLocation(s: Stop): string {
   return `${s.coordinate.latitude},${s.coordinate.longitude}`;
 }
 
-function stopToLabel(s: Stop): string {
-  return encodeURIComponent(s.name);
+function stopToNameQuery(s: Stop, city: string, country: string): string {
+  return encodeURIComponent(`${s.name}, ${city}, ${country}`);
 }
 
-function buildGoogleMapsUrl(stops: Stop[]): string {
+function buildGoogleMapsUrl(stops: Stop[], city: string, country: string): string {
   if (stops.length === 0) {
     return '';
   }
-  const origin = stopToLabel(stops[0]);
-  const destination = stopToLabel(stops[stops.length - 1]);
-  const waypoints = stops.slice(1, -1).map(stopToLabel);
+
+  if (stops.length === 1) {
+    return `https://www.google.com/maps/search/?api=1&query=${stopToNameQuery(stops[0], city, country)}`;
+  }
+
+  const origin = stopToNameQuery(stops[0], city, country);
+  const destination = stopToNameQuery(stops[stops.length - 1], city, country);
+  const waypoints = stops.slice(1, -1).map((s) => stopToNameQuery(s, city, country));
   let url = `https://www.google.com/maps/dir/?api=1&origin=${origin}&destination=${destination}&travelmode=walking`;
   if (waypoints.length > 0) {
     url += `&waypoints=${waypoints.join('|')}`;
@@ -63,7 +68,7 @@ function buildGoogleMapsUrl(stops: Stop[]): string {
   return url;
 }
 
-function buildAppleMapsUrl(stops: Stop[]): string {
+function buildAppleMapsUrl(stops: Stop[], city: string, country: string): string {
   if (stops.length === 0) {
     return '';
   }
@@ -71,15 +76,15 @@ function buildAppleMapsUrl(stops: Stop[]): string {
     const location = stopToLocation(stops[0]);
     return `https://maps.apple.com/?q=${encodeURIComponent(stops[0].name)}&ll=${location}`;
   }
-  const origin = stopToLabel(stops[0]);
-  const destinations = stops.slice(1).map(stopToLabel);
+  const origin = stopToNameQuery(stops[0], city, country);
+  const destinations = stops.slice(1).map((s) => stopToNameQuery(s, city, country));
   return `https://maps.apple.com/?saddr=${origin}&daddr=${destinations.join('+to:')}&dirflg=w`;
 }
 
-async function openDirections(stops: Stop[]): Promise<void> {
+async function openDirections(stops: Stop[], city: string, country: string): Promise<void> {
   if (stops.length === 0) return;
   if (Platform.OS === 'ios') {
-    const appleUrl = buildAppleMapsUrl(stops);
+    const appleUrl = buildAppleMapsUrl(stops, city, country);
     try {
       await Linking.openURL(appleUrl);
       return;
@@ -90,7 +95,7 @@ async function openDirections(stops: Stop[]): Promise<void> {
       // Fall through to Google Maps web URL
     }
   }
-  const googleUrl = buildGoogleMapsUrl(stops);
+  const googleUrl = buildGoogleMapsUrl(stops, city, country);
   await Linking.openURL(googleUrl);
 }
 
@@ -481,7 +486,7 @@ export default function TourScreen({ navigation, route }: Props) {
               style={[styles.mapButton]}
               onPress={async () => {
                 try {
-                  await openDirections(stopsToShow);
+                  await openDirections(stopsToShow, tour.city, tour.country);
                 } catch (error) {
                   if (__DEV__) {
                     console.warn('Failed to open maps URL', error);
