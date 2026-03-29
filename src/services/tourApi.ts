@@ -73,7 +73,7 @@ export async function fetchTourForCity(localTour: Tour, languageCode: LanguageCo
   try {
     const params = new URLSearchParams({
       placeId: localTour.placeId,
-      name: localTour.city,
+      city: localTour.city,
       country: localTour.country,
       language: languageCode,
     });

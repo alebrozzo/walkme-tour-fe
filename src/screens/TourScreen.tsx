@@ -961,7 +961,7 @@ const styles = StyleSheet.create({
     opacity: 0.5,
   },
   generateButtonText: {
-    color: '#FFFFFF',
+    color: '#1A1A2E',
     fontSize: 16,
     fontWeight: '700',
   },
