@@ -140,7 +140,7 @@ function StopRow({ stop, onPress }: StopRowProps) {
   return (
     <TouchableOpacity style={styles.stopRow} onPress={onPress} activeOpacity={0.85}>
       <View style={styles.orderBubble}>
-        <Text style={styles.orderText}>{String.fromCharCode(64 + stop.order)}</Text>
+        <Text style={styles.orderText}>{stop.order}</Text>
       </View>
       <View style={styles.stopInfo}>
         <View style={styles.stopNameRow}>
@@ -741,12 +741,10 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     marginEnd: 12,
-    backgroundColor: '#FFFFFF',
-    borderWidth: 2,
-    borderColor: '#4F46E5',
+    backgroundColor: '#4F46E5',
   },
   orderText: {
-    color: '#4F46E5',
+    color: '#FFFFFF',
     fontSize: 14,
     fontWeight: '700',
   },
