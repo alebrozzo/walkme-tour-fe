@@ -1,11 +1,9 @@
-import React, { useCallback, useEffect, useLayoutEffect, useRef, useState } from 'react';
+import React, { useEffect, useLayoutEffect, useRef, useState } from 'react';
 import {
   ActivityIndicator,
   Alert,
-  Animated,
   Image,
   Modal,
-  PanResponder,
   Pressable,
   ScrollView,
   StyleSheet,
@@ -22,6 +20,7 @@ import { useLanguage } from '../contexts/LanguageContext';
 import { usePinned } from '../contexts/PinnedContext';
 import { fetchTourForCity, TourApiError } from '../services/tourApi';
 import { searchCities, CityPrediction } from '../services/placesApi';
+import SwipeableRow from '../components/SwipeableRow';
 
 type Props = NativeStackScreenProps<RootStackParamList, 'Home'>;
 
@@ -53,9 +52,6 @@ function PlaceResult({ prediction, loading, onPress }: PlaceResultProps) {
   );
 }
 
-const SWIPE_DELETE_WIDTH = 72;
-const SWIPE_THRESHOLD_PX = 5;
-
 interface PinnedCardProps {
   tour: Tour;
   onPress: () => void;
@@ -66,117 +62,35 @@ function PinnedCard({ tour, onPress, onRemove }: PinnedCardProps) {
   const { t, language } = useLanguage();
   const [imageLoadError, setImageLoadError] = useState(false);
   const isRTL = language.isRTL;
-  const isRTLRef = useRef(isRTL);
-  isRTLRef.current = isRTL;
-
-  const translateX = useRef(new Animated.Value(0)).current;
-  const currentValueRef = useRef(0);
-  const startOffsetRef = useRef(0);
-  const [isOpen, setIsOpen] = useState(false);
 
   useEffect(() => {
     setImageLoadError(false);
   }, [tour.imageUrl]);
 
-  useEffect(() => {
-    const id = translateX.addListener(({ value }) => {
-      currentValueRef.current = value;
-    });
-    return () => translateX.removeListener(id);
-  }, [translateX]);
-
-  const snapToStable = useCallback(
-    (rawCurrent: number) => {
-      const rtl = isRTLRef.current;
-      if (rawCurrent > SWIPE_DELETE_WIDTH / 2) {
-        Animated.spring(translateX, {
-          toValue: rtl ? SWIPE_DELETE_WIDTH : -SWIPE_DELETE_WIDTH,
-          useNativeDriver: true,
-        }).start();
-        setIsOpen(true);
-      } else {
-        Animated.spring(translateX, { toValue: 0, useNativeDriver: true }).start();
-        setIsOpen(false);
-      }
-    },
-    [translateX],
-  );
-  const snapToStableRef = useRef(snapToStable);
-  snapToStableRef.current = snapToStable;
-
-  const close = useCallback(() => {
-    Animated.spring(translateX, { toValue: 0, useNativeDriver: true }).start();
-    setIsOpen(false);
-  }, [translateX]);
-
-  const panResponder = useRef(
-    PanResponder.create({
-      onMoveShouldSetPanResponder: (_, gs) => Math.abs(gs.dx) > Math.abs(gs.dy) && Math.abs(gs.dx) > SWIPE_THRESHOLD_PX,
-      onPanResponderGrant: () => {
-        const rtl = isRTLRef.current;
-        startOffsetRef.current = rtl ? currentValueRef.current : -currentValueRef.current;
-      },
-      onPanResponderMove: (_, gs) => {
-        const rtl = isRTLRef.current;
-        const rawTotal = startOffsetRef.current + (rtl ? gs.dx : -gs.dx);
-        const clamped = Math.min(Math.max(rawTotal, 0), SWIPE_DELETE_WIDTH);
-        translateX.setValue(rtl ? clamped : -clamped);
-      },
-      onPanResponderRelease: (_, gs) => {
-        const rtl = isRTLRef.current;
-        snapToStableRef.current(startOffsetRef.current + (rtl ? gs.dx : -gs.dx));
-      },
-      onPanResponderTerminate: () => {
-        const rtl = isRTLRef.current;
-        snapToStableRef.current(rtl ? currentValueRef.current : -currentValueRef.current);
-      },
-    }),
-  ).current;
-
   return (
-    <View style={styles.pinnedCardShadowWrapper}>
-      <View style={[styles.pinnedCardClip, { direction: 'ltr' }]}>
-        <View style={[styles.swipeDeleteArea, isRTL ? styles.swipeDeleteAreaRTL : styles.swipeDeleteAreaLTR]}>
-          <TouchableOpacity
-            style={styles.swipeDeleteButton}
-            onPress={() => {
-              close();
-              onRemove();
-            }}
-            accessibilityRole="button"
-            accessibilityLabel={t.removeCity}
-            accessibilityElementsHidden={!isOpen}
-            importantForAccessibility={isOpen ? 'yes' : 'no'}
-          >
-            <Text style={styles.swipeDeleteIcon}>🗑️</Text>
-          </TouchableOpacity>
-        </View>
-        <Animated.View
-          style={[styles.pinnedCard, { direction: isRTL ? 'rtl' : 'ltr' }, { transform: [{ translateX }] }]}
-          {...panResponder.panHandlers}
+    <SwipeableRow onDelete={onRemove} isRTL={isRTL} deleteAccessibilityLabel={t.removeCity}>
+      <View style={styles.pinnedCard}>
+        {tour.imageUrl && !imageLoadError ? (
+          <Image
+            source={{ uri: tour.imageUrl }}
+            style={styles.pinnedCardThumb}
+            resizeMode="cover"
+            onError={() => setImageLoadError(true)}
+          />
+        ) : null}
+        <Pressable
+          style={styles.pinnedCardContent}
+          onPress={onPress}
+          android_ripple={null}
+          accessibilityRole="button"
+          accessibilityLabel={tour.city}
         >
-          {tour.imageUrl && !imageLoadError ? (
-            <Image
-              source={{ uri: tour.imageUrl }}
-              style={styles.pinnedCardThumb}
-              resizeMode="cover"
-              onError={() => setImageLoadError(true)}
-            />
-          ) : null}
-          <Pressable
-            style={styles.pinnedCardContent}
-            onPress={onPress}
-            android_ripple={null}
-            accessibilityRole="button"
-            accessibilityLabel={tour.city}
-          >
-            <Text style={styles.pinnedCardCity}>{tour.city}</Text>
-            <Text style={styles.pinnedCardCountry}>{tour.country}</Text>
-          </Pressable>
-              <Text style={styles.pinnedCardChevron}>{isRTL ? '‹' : '›'}</Text>
-        </Animated.View>
+          <Text style={styles.pinnedCardCity}>{tour.city}</Text>
+          <Text style={styles.pinnedCardCountry}>{tour.country}</Text>
+        </Pressable>
+        <Text style={styles.pinnedCardChevron}>{isRTL ? '‹' : '›'}</Text>
       </View>
-    </View>
+    </SwipeableRow>
   );
 }
 
@@ -483,50 +397,12 @@ const styles = StyleSheet.create({
     color: '#1A1A2E',
     marginBottom: 12,
   },
-  pinnedCardShadowWrapper: {
-    marginBottom: 10,
-    borderRadius: 12,
-    backgroundColor: '#F5F6FA',
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.07,
-    shadowRadius: 6,
-    elevation: 3,
-  },
-  pinnedCardClip: {
-    borderRadius: 12,
-    overflow: 'hidden',
-  },
   pinnedCard: {
     backgroundColor: '#FFFFFF',
     paddingHorizontal: 16,
     paddingVertical: 16,
     flexDirection: 'row',
     alignItems: 'center',
-  },
-  swipeDeleteArea: {
-    position: 'absolute',
-    top: 0,
-    bottom: 0,
-    width: SWIPE_DELETE_WIDTH,
-    backgroundColor: '#E74C3C',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  swipeDeleteAreaLTR: {
-    right: 0,
-  },
-  swipeDeleteAreaRTL: {
-    left: 0,
-  },
-  swipeDeleteButton: {
-    flex: 1,
-    alignItems: 'center',
-    justifyContent: 'center',
-    width: SWIPE_DELETE_WIDTH,
-  },
-  swipeDeleteIcon: {
-    fontSize: 22,
   },
   pinnedCardThumb: {
     width: 48,
