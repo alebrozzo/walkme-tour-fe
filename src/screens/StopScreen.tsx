@@ -69,6 +69,15 @@ export default function StopScreen({ route }: Props) {
   const cancelRef = useRef<(() => void) | null>(null);
 
   const stopTypeLabel = t.stopTypes[stop.type] ?? stop.type.charAt(0).toUpperCase() + stop.type.slice(1);
+  const badgeLabels = (stop.badges ?? []).map((badge) => ({
+    key: badge,
+    label: t.stop.badgeLabels[badge],
+    isPrimary: badge === 'must-see',
+  }));
+  const ratingText =
+    stop.rating !== undefined
+      ? `${stop.rating.toFixed(1)}/5${stop.ratingCount ? ` (${stop.ratingCount})` : ''}`
+      : undefined;
 
   const handleListen = useCallback(async () => {
     if (isSpeaking) {
@@ -207,6 +216,21 @@ export default function StopScreen({ route }: Props) {
         )}
 
         <View style={styles.body}>
+          {badgeLabels.length > 0 ? (
+            <View style={styles.badgesSection}>
+              <Text style={styles.sectionTitle}>{t.stop.badges}</Text>
+              <View style={styles.badgesWrap}>
+                {badgeLabels.map((badge) => (
+                  <View key={badge.key} style={[styles.badgeChip, badge.isPrimary && styles.badgeChipPrimary]}>
+                    <Text style={[styles.badgeChipText, badge.isPrimary && styles.badgeChipTextPrimary]}>
+                      {badge.label}
+                    </Text>
+                  </View>
+                ))}
+              </View>
+            </View>
+          ) : null}
+
           {/* Info cards */}
           <View style={styles.infoCard}>
             <InfoRow
@@ -225,7 +249,26 @@ export default function StopScreen({ route }: Props) {
                 <InfoRow icon="💰" label={t.stop.price} value={stop.price} />
               </>
             ) : null}
+            {ratingText ? (
+              <>
+                <View style={styles.divider} />
+                <InfoRow icon="⭐" label={t.stop.rating} value={ratingText} />
+              </>
+            ) : null}
           </View>
+
+          {stop.openingHours && stop.openingHours.length > 0 ? (
+            <>
+              <Text style={styles.sectionTitle}>{t.stop.openingHours}</Text>
+              <View style={styles.card}>
+                {stop.openingHours.map((line) => (
+                  <Text key={line} style={styles.openingHoursLine}>
+                    {line}
+                  </Text>
+                ))}
+              </View>
+            </>
+          ) : null}
 
           {/* Description */}
           <View style={styles.sectionHeader}>
@@ -245,6 +288,29 @@ export default function StopScreen({ route }: Props) {
           <View style={styles.card}>
             <Text style={styles.description}>{stop.description}</Text>
           </View>
+
+          {stop.knownFor ? (
+            <>
+              <Text style={styles.sectionTitle}>{t.stop.knownFor}</Text>
+              <View style={[styles.card, styles.knownForCard]}>
+                <Text style={styles.knownForText}>{stop.knownFor}</Text>
+              </View>
+            </>
+          ) : null}
+
+          {stop.highlights && stop.highlights.length > 0 ? (
+            <>
+              <Text style={styles.sectionTitle}>{t.stop.highlights}</Text>
+              <View style={styles.card}>
+                {stop.highlights.map((highlight) => (
+                  <View key={highlight} style={styles.highlightRow}>
+                    <Text style={styles.highlightBullet}>•</Text>
+                    <Text style={styles.highlightText}>{highlight}</Text>
+                  </View>
+                ))}
+              </View>
+            </>
+          ) : null}
 
           {/* Tips */}
           {stop.tips ? (
@@ -344,6 +410,31 @@ const styles = StyleSheet.create({
   },
   body: {
     padding: 16,
+  },
+  badgesSection: {
+    marginBottom: 20,
+  },
+  badgesWrap: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    gap: 8,
+  },
+  badgeChip: {
+    paddingHorizontal: 12,
+    paddingVertical: 7,
+    borderRadius: 999,
+    backgroundColor: '#E2E8F0',
+  },
+  badgeChipPrimary: {
+    backgroundColor: '#FDE68A',
+  },
+  badgeChipText: {
+    fontSize: 12,
+    fontWeight: '700',
+    color: '#334155',
+  },
+  badgeChipTextPrimary: {
+    color: '#92400E',
   },
   infoCard: {
     backgroundColor: '#FFFFFF',
@@ -455,6 +546,36 @@ const styles = StyleSheet.create({
     fontSize: 15,
     color: '#334155',
     lineHeight: 26,
+  },
+  openingHoursLine: {
+    fontSize: 14,
+    color: '#334155',
+    lineHeight: 22,
+  },
+  knownForCard: {
+    backgroundColor: '#F8FAFC',
+  },
+  knownForText: {
+    fontSize: 15,
+    color: '#0F172A',
+    lineHeight: 24,
+    fontWeight: '600',
+  },
+  highlightRow: {
+    flexDirection: 'row',
+    alignItems: 'flex-start',
+    gap: 10,
+  },
+  highlightBullet: {
+    fontSize: 18,
+    lineHeight: 22,
+    color: '#4F46E5',
+  },
+  highlightText: {
+    flex: 1,
+    fontSize: 14,
+    color: '#334155',
+    lineHeight: 22,
   },
   tipsCard: {
     flexDirection: 'row',

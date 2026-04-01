@@ -11,6 +11,8 @@ export type StopType =
   | 'market'
   | 'beach';
 
+export type StopBadge = 'must-see' | 'photo-spot' | 'family-friendly' | 'historic' | 'indoor' | 'outdoor' | 'free';
+
 export type Difficulty = 'easy' | 'moderate' | 'hard';
 
 export interface Coordinate {
@@ -36,6 +38,18 @@ export interface Stop {
   price?: string;
   /** Google Maps Place ID, used to render the place name correctly in Maps URLs. */
   googlePlaceId?: string;
+  /** Localized opening hours from Google Places, one line per day when available. */
+  openingHours?: string[];
+  /** Average rating from Google Places. */
+  rating?: number;
+  /** Number of ratings behind the average rating. */
+  ratingCount?: number;
+  /** Concise highlights generated for decision-making on the stop screen. */
+  highlights?: string[];
+  /** Short explanation of what this stop is known for. */
+  knownFor?: string;
+  /** Curated and derived badges shown as chips on the stop screen. */
+  badges?: StopBadge[];
   /** Day number this stop belongs to in a multi-day itinerary (1-based). */
   day?: number;
 }

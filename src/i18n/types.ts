@@ -1,4 +1,4 @@
-import { StopType } from '../types';
+import { StopBadge, StopType } from '../types';
 
 export type LanguageCode = 'en' | 'ar' | 'he' | 'es' | 'fr';
 
@@ -69,11 +69,17 @@ export interface Translations {
     about: string;
     visitorTips: string;
     price: string;
+    openingHours: string;
+    rating: string;
+    highlights: string;
+    knownFor: string;
+    badges: string;
     listenAbout: string;
     stopListening: string;
     viewFullScreen: string;
     closeImage: string;
     openInMaps: string;
+    badgeLabels: Record<StopBadge, string>;
   };
   stopTypes: Record<StopType, string>;
   language: string;

@@ -29,6 +29,13 @@ interface ApiStop {
   description: string;
   duration: number;
   price?: string;
+  openingHours?: Stop['openingHours'];
+  rating?: number;
+  ratingCount?: number;
+  highlights?: Stop['highlights'];
+  knownFor?: string;
+  badges?: Stop['badges'];
+  googlePlaceId?: string;
 }
 
 interface ApiTour {
