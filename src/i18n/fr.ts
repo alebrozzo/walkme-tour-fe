@@ -67,6 +67,7 @@ const fr: Translations = {
     stopListening: 'Arrêter',
     viewFullScreen: 'Voir en plein écran',
     closeImage: "Fermer l'image",
+    openInMaps: 'Ouvrir dans Plans',
   },
   stopTypes: {
     landmark: 'Monument',

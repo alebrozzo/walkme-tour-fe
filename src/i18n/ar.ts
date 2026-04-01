@@ -66,6 +66,7 @@ const ar: Translations = {
     stopListening: 'إيقاف',
     viewFullScreen: 'عرض بحجم كامل',
     closeImage: 'إغلاق الصورة',
+    openInMaps: 'فتح في الخرائط',
   },
   stopTypes: {
     landmark: 'معلم',
