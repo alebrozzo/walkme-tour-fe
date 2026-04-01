@@ -119,7 +119,7 @@ export default function StopScreen({ route }: Props) {
     }
     let googleUrl = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(stop.name)}`;
     if (stop.googlePlaceId) {
-      googleUrl += `&query_place_id=${stop.googlePlaceId}`;
+      googleUrl += `&query_place_id=${encodeURIComponent(stop.googlePlaceId)}`;
     }
     try {
       await Linking.openURL(googleUrl);
