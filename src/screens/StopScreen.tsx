@@ -107,7 +107,7 @@ export default function StopScreen({ route }: Props) {
   const handleOpenMaps = useCallback(async () => {
     if (Platform.OS === 'ios') {
       const { latitude, longitude } = stop.coordinate;
-      const appleUrl = `maps://maps.apple.com/?ll=${latitude},${longitude}&q=${encodeURIComponent(stop.name)}`;
+      const appleUrl = `maps://?ll=${latitude},${longitude}&q=${encodeURIComponent(stop.name)}`;
       try {
         await Linking.openURL(appleUrl);
         return;
