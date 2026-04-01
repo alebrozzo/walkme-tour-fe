@@ -66,6 +66,7 @@ const he: Translations = {
     stopListening: 'עצור',
     viewFullScreen: 'הצג במסך מלא',
     closeImage: 'סגור תמונה',
+    openInMaps: 'פתח במפות',
   },
   stopTypes: {
     landmark: 'אתר',

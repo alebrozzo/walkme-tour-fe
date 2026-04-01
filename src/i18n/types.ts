@@ -73,6 +73,7 @@ export interface Translations {
     stopListening: string;
     viewFullScreen: string;
     closeImage: string;
+    openInMaps: string;
   };
   stopTypes: Record<StopType, string>;
   language: string;

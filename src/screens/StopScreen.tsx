@@ -1,5 +1,16 @@
 import React, { useCallback, useEffect, useRef, useState } from 'react';
-import { Image, Modal, Pressable, ScrollView, StatusBar, StyleSheet, Text, View } from 'react-native';
+import {
+  Image,
+  Linking,
+  Modal,
+  Platform,
+  Pressable,
+  ScrollView,
+  StatusBar,
+  StyleSheet,
+  Text,
+  View,
+} from 'react-native';
 import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import * as Speech from 'expo-speech';
@@ -13,13 +24,34 @@ interface InfoRowProps {
   icon: string;
   label: string;
   value: string;
+  onPress?: () => void;
+  accessibilityHint?: string;
+  isRTL?: boolean;
 }
 
-function InfoRow({ icon, label, value }: InfoRowProps) {
+function InfoRow({ icon, label, value, onPress, accessibilityHint, isRTL }: InfoRowProps) {
+  if (onPress) {
+    return (
+      <Pressable
+        style={({ pressed }) => [styles.infoRow, pressed && styles.infoRowPressed]}
+        onPress={onPress}
+        accessibilityRole="link"
+        accessibilityLabel={`${label}: ${value}`}
+        accessibilityHint={accessibilityHint}
+      >
+        <Text style={styles.infoIcon}>{icon}</Text>
+        <View style={styles.infoRowContent}>
+          <Text style={styles.infoLabel}>{label}</Text>
+          <Text style={[styles.infoValue, styles.infoValueLink]}>{value}</Text>
+        </View>
+        <Text style={styles.infoRowChevron}>{isRTL ? '‹' : '›'}</Text>
+      </Pressable>
+    );
+  }
   return (
     <View style={styles.infoRow}>
       <Text style={styles.infoIcon}>{icon}</Text>
-      <View>
+      <View style={styles.infoRowContent}>
         <Text style={styles.infoLabel}>{label}</Text>
         <Text style={styles.infoValue}>{value}</Text>
       </View>
@@ -71,6 +103,32 @@ export default function StopScreen({ route }: Props) {
       if (!cancelled) setIsSpeaking(false);
     }
   }, [isSpeaking, stop.description, language.code]);
+
+  const handleOpenMaps = useCallback(async () => {
+    if (Platform.OS === 'ios') {
+      const { latitude, longitude } = stop.coordinate;
+      const appleUrl = `maps://maps.apple.com/?ll=${latitude},${longitude}&q=${encodeURIComponent(stop.name)}`;
+      try {
+        await Linking.openURL(appleUrl);
+        return;
+      } catch {
+        if (__DEV__) {
+          console.warn('Failed to open Apple Maps, falling back to Google Maps');
+        }
+      }
+    }
+    let googleUrl = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(stop.name)}`;
+    if (stop.googlePlaceId) {
+      googleUrl += `&query_place_id=${stop.googlePlaceId}`;
+    }
+    try {
+      await Linking.openURL(googleUrl);
+    } catch {
+      if (__DEV__) {
+        console.warn('Failed to open Google Maps URL');
+      }
+    }
+  }, [stop.coordinate, stop.name, stop.googlePlaceId]);
 
   useEffect(
     () => () => {
@@ -151,7 +209,14 @@ export default function StopScreen({ route }: Props) {
         <View style={styles.body}>
           {/* Info cards */}
           <View style={styles.infoCard}>
-            <InfoRow icon="📍" label={t.stop.address} value={stop.address} />
+            <InfoRow
+              icon="📍"
+              label={t.stop.address}
+              value={stop.address}
+              onPress={handleOpenMaps}
+              accessibilityHint={t.stop.openInMaps}
+              isRTL={language.isRTL}
+            />
             <View style={styles.divider} />
             <InfoRow icon="⏱" label={t.stop.timeAtStop} value={t.units.minutes(stop.duration)} />
             {stop.price ? (
@@ -299,6 +364,17 @@ const styles = StyleSheet.create({
     paddingVertical: 8,
     gap: 12,
   },
+  infoRowPressed: {
+    opacity: 0.6,
+  },
+  infoRowContent: {
+    flex: 1,
+  },
+  infoRowChevron: {
+    fontSize: 18,
+    color: '#94A3B8',
+    alignSelf: 'center',
+  },
   infoIcon: {
     fontSize: 18,
     marginTop: 2,
@@ -314,6 +390,10 @@ const styles = StyleSheet.create({
     fontSize: 15,
     color: '#0F172A',
     fontWeight: '600',
+  },
+  infoValueLink: {
+    color: '#4F46E5',
+    textDecorationLine: 'underline',
   },
   divider: {
     height: 1,

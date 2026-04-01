@@ -66,6 +66,7 @@ const en: Translations = {
     stopListening: 'Stop',
     viewFullScreen: 'View full screen',
     closeImage: 'Close image',
+    openInMaps: 'Open in Maps',
   },
   stopTypes: {
     landmark: 'Landmark',
