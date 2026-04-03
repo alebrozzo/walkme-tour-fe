@@ -91,6 +91,8 @@ To run a deployment:
 3. Enter the `ref` to deploy (for example `main` or `feature/deploy-to-web`).
 4. Click **Run workflow**.
 
+The workflow exports the app with a repository base path (for example `/walkme-tour-fe`) so it works on GitHub Pages project URLs.
+
 ## Project Structure
 
 ```
