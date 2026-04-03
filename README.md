@@ -74,7 +74,7 @@ npm run build:web
 
 The generated static site is output to `dist/`.
 
-### Automatic deployment
+### Manual deployment
 
 A GitHub Actions workflow at `.github/workflows/deploy-web.yml` deploys `dist/` to GitHub Pages when triggered manually.
 
@@ -88,7 +88,8 @@ To run a deployment:
 
 1. Open the **Actions** tab on GitHub.
 2. Select the **Deploy Web** workflow.
-3. Click **Run workflow**.
+3. Enter the `ref` to deploy (for example `main` or `feature/deploy-to-web`).
+4. Click **Run workflow**.
 
 ## Project Structure
 
