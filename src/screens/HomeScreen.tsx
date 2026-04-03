@@ -129,12 +129,11 @@ export default function HomeScreen({ navigation }: Props) {
       try {
         const results = await searchCities(q, language.code, controller.signal);
         if (requestId !== latestSearchIdRef.current) return;
-        if (__DEV__) {
-          console.log({ results });
-        }
+        console.log('[HomeScreen] search results', { q, count: results.length, results });
         setPredictions(results);
       } catch (e) {
         if ((e as Error).name !== 'AbortError' && requestId === latestSearchIdRef.current) {
+          console.error('[HomeScreen] search error', e);
           setPredictions([]);
         }
       } finally {
@@ -171,9 +170,7 @@ export default function HomeScreen({ navigation }: Props) {
       setQuery('');
       navigation.navigate('Tour', { tour: apiTour });
     } catch (error) {
-      if (__DEV__) {
-        console.warn(`Failed to fetch remote tour for ${prediction.city}`, error);
-      }
+      console.warn(`[HomeScreen] Failed to fetch remote tour for ${prediction.city}`, error);
       if ((error as Error).name === 'AbortError') {
         Alert.alert(t.home.errorTitle, t.home.timeoutErrorMessage);
       } else if (error instanceof TourApiError && error.statusCode !== undefined) {
