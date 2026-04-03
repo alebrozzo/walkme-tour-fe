@@ -2,7 +2,7 @@ import { Platform } from 'react-native';
 import { LanguageCode } from '@/i18n/translations';
 import { Stop, Tour } from '../types';
 import { getCurrentCorrelationId } from '../utils/correlationId';
-import { logInfo, logError } from '../utils/logger';
+import { logInfo } from '../utils/logger';
 
 const REQUEST_TIMEOUT_MS = 20000;
 const LOCALHOST_PORT = 3000;
