@@ -1,6 +1,8 @@
 import { Platform } from 'react-native';
 import { LanguageCode } from '@/i18n/translations';
 import { Stop, Tour } from '../types';
+import { getCurrentCorrelationId } from '../utils/correlationId';
+import { logInfo, logError } from '../utils/logger';
 
 const REQUEST_TIMEOUT_MS = 20000;
 const LOCALHOST_PORT = 3000;
@@ -78,12 +80,16 @@ export async function fetchTourForCity(localTour: Tour, languageCode: LanguageCo
       language: languageCode,
     });
 
-    console.log(`Fetching tour data from API: ${baseUrl}/api/cities?${params.toString()}`);
-    const response = await fetch(`${baseUrl}/api/cities?${params.toString()}`, {
+    const correlationId = getCurrentCorrelationId();
+    const url = `${baseUrl}/api/cities?${params.toString()}`;
+    logInfo('tourApi', 'Fetching tour data from API', { url, correlationId });
+
+    const response = await fetch(url, {
       method: 'GET',
       signal: controller.signal,
       headers: {
         Accept: 'application/json',
+        'X-Correlation-ID': correlationId,
       },
     });
 
