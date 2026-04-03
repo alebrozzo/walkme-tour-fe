@@ -62,6 +62,34 @@ npm run web
 
 After running `npm start`, scan the QR code with Expo Go on your phone, or press `a` for Android or `i` for iOS in the terminal.
 
+## Deploying Web (GitHub Pages)
+
+This project can be deployed as a static web app using GitHub Pages.
+
+### Manual production build
+
+```bash
+npm run build:web
+```
+
+The generated static site is output to `dist/`.
+
+### Automatic deployment
+
+A GitHub Actions workflow at `.github/workflows/deploy-web.yml` deploys `dist/` to GitHub Pages when triggered manually.
+
+To enable it:
+
+1. Open repository settings on GitHub.
+2. Go to **Pages**.
+3. Set **Source** to **GitHub Actions**.
+
+To run a deployment:
+
+1. Open the **Actions** tab on GitHub.
+2. Select the **Deploy Web** workflow.
+3. Click **Run workflow**.
+
 ## Project Structure
 
 ```
