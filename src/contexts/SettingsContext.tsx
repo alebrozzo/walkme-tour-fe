@@ -25,20 +25,26 @@ export function SettingsProvider({ children }: { children: ReactNode }) {
   const [enableLogging, setEnableLoggingState] = useState<boolean>(false);
 
   useEffect(() => {
-    Promise.all([
-      AsyncStorage.getItem(DISTANCE_UNIT_STORAGE_KEY).then((stored) => {
-        if (stored === 'km' || stored === 'mi') {
-          setDistanceUnitState(stored);
-        }
-      }),
-      AsyncStorage.getItem(ENABLE_LOGGING_STORAGE_KEY).then((stored) => {
-        if (stored === 'true') {
-          setEnableLoggingState(true);
-        } else if (stored === 'false') {
-          setEnableLoggingState(false);
-        }
-      }),
-    ]);
+    (async () => {
+      try {
+        await Promise.all([
+          AsyncStorage.getItem(DISTANCE_UNIT_STORAGE_KEY).then((stored) => {
+            if (stored === 'km' || stored === 'mi') {
+              setDistanceUnitState(stored);
+            }
+          }),
+          AsyncStorage.getItem(ENABLE_LOGGING_STORAGE_KEY).then((stored) => {
+            if (stored === 'true') {
+              setEnableLoggingState(true);
+            } else if (stored === 'false') {
+              setEnableLoggingState(false);
+            }
+          }),
+        ]);
+      } catch {
+        // Ignore hydration errors and keep default settings.
+      }
+    })();
   }, []);
 
   const setDistanceUnit = useCallback((unit: DistanceUnit) => {
