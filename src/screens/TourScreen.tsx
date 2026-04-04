@@ -827,14 +827,14 @@ const styles = StyleSheet.create({
     marginTop: 20,
     marginBottom: 10,
     paddingHorizontal: 14,
-    paddingVertical: 7,
+    paddingVertical: 10,
     borderRadius: 20,
-    backgroundColor: '#EEF2FF',
+    backgroundColor: '#F0F4FF',
     borderWidth: 1,
     borderColor: '#C7D2FE',
   },
   dayHeaderText: {
-    fontSize: 13,
+    fontSize: 16,
     fontWeight: '800',
     letterSpacing: 0.5,
     color: '#4F46E5',
@@ -843,11 +843,11 @@ const styles = StyleSheet.create({
   dayHeaderMeta: {
     flexDirection: 'row',
     gap: 10,
-    marginTop: 4,
+    marginTop: 6,
   },
   dayHeaderMetaText: {
-    fontSize: 12,
-    opacity: 0.6,
+    fontSize: 14,
+    color: '#374151',
   },
   walkingLine: {
     flex: 1,
