@@ -61,6 +61,7 @@ export interface Translations {
     removeStop: string;
     removeStopTitle: string;
     removeStopMessage: string;
+    removeDay: string;
     confirmRemove: string;
     cancelRemove: string;
   };

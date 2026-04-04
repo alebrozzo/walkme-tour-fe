@@ -54,6 +54,7 @@ const he: Translations = {
     removeStop: 'הסר עצירה',
     removeStopTitle: 'הסר עצירה',
     removeStopMessage: 'האם אתה בטוח שברצונך להסיר עצירה זו מהמסלול?',
+    removeDay: 'הסר יום',
     confirmRemove: 'הסר',
     cancelRemove: 'ביטול',
   },

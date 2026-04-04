@@ -55,6 +55,7 @@ const es: Translations = {
     removeStop: 'Eliminar parada',
     removeStopTitle: 'Eliminar parada',
     removeStopMessage: '¿Seguro que quieres eliminar esta parada del itinerario?',
+    removeDay: 'Eliminar día',
     confirmRemove: 'Eliminar',
     cancelRemove: 'Cancelar',
   },

@@ -35,20 +35,6 @@ function getMaxFilledDay(stops: Stop[]): number {
 }
 
 /**
- * Renumbers stop days to close any gaps so days are always consecutive starting at 1.
- * The relative order of stops and their day groupings are preserved.
- */
-function compactDays(stops: Stop[]): Stop[] {
-  const seenDays = new Set<number>();
-  for (const stop of stops) {
-    seenDays.add(stop.day ?? 1);
-  }
-  const dayMap = new Map<number, number>();
-  Array.from(seenDays).forEach((d, i) => dayMap.set(d, i + 1));
-  return stops.map((stop) => ({ ...stop, day: dayMap.get(stop.day ?? 1) ?? stop.day }));
-}
-
-/**
  * Recalculates order numbers and walking times for the entire stops array.
  * Walking times are estimated from coordinates; the last stop of each day gets none.
  */
@@ -391,7 +377,7 @@ export default function TourScreen({ navigation, route }: Props) {
         if (stop.day != null && stop.day > 1) {
           const next = [...generatedStops];
           next[fromIndex] = { ...stop, day: stop.day - 1 };
-          const updated = recalculateStops(compactDays(next));
+          const updated = recalculateStops(next);
           setGeneratedStops(updated);
           const prefs = lastPrefsRef.current;
           if (prefs) {
@@ -407,7 +393,7 @@ export default function TourScreen({ navigation, route }: Props) {
         if (stop.day != null && stop.day < totalDays) {
           const next = [...generatedStops];
           next[fromIndex] = { ...stop, day: stop.day + 1 };
-          const updated = recalculateStops(compactDays(next));
+          const updated = recalculateStops(next);
           setGeneratedStops(updated);
           const prefs = lastPrefsRef.current;
           if (prefs) {
@@ -433,7 +419,7 @@ export default function TourScreen({ navigation, route }: Props) {
         next[fromIndex] = { ...next[fromIndex], day: fromDay };
         next[toIndex] = { ...next[toIndex], day: toDay };
       }
-      const updated = recalculateStops(compactDays(next));
+      const updated = recalculateStops(next);
       setGeneratedStops(updated);
       // Persist updated order
       const prefs = lastPrefsRef.current;
@@ -460,7 +446,7 @@ export default function TourScreen({ navigation, route }: Props) {
                 return prev;
               }
               const next = prev.filter((stop) => stop.id !== stopId);
-              const updated = recalculateStops(compactDays(next));
+              const updated = recalculateStops(next);
               const prefs = lastPrefsRef.current;
               if (prefs) {
                 saveItinerary({ tourId: tour.id, preferences: prefs, stops: updated });
@@ -472,6 +458,23 @@ export default function TourScreen({ navigation, route }: Props) {
       ]);
     },
     [generatedStops, tour.id, saveItinerary, t],
+  );
+
+  const handleRemoveDay = useCallback(
+    (day: number) => {
+      if (!generatedStops) return;
+      // Shift all stops on days above the deleted day down by one
+      const next = generatedStops.map((stop) =>
+        stop.day != null && stop.day > day ? { ...stop, day: stop.day - 1 } : stop,
+      );
+      const updated = recalculateStops(next);
+      setGeneratedStops(updated);
+      const prefs = lastPrefsRef.current;
+      if (prefs) {
+        saveItinerary({ tourId: tour.id, preferences: prefs, stops: updated });
+      }
+    },
+    [generatedStops, tour.id, saveItinerary],
   );
 
   // Use the currently generated stops (kept in sync with any saved itinerary)
@@ -592,7 +595,14 @@ export default function TourScreen({ navigation, route }: Props) {
           return (
             <View>
               {emptyDayHeaders.map((d) => (
-                <DayHeader key={`empty-day-${d}`} day={d} />
+                <SwipeableRow
+                  key={`empty-day-${d}`}
+                  onDelete={() => handleRemoveDay(d)}
+                  isRTL={language.isRTL}
+                  deleteAccessibilityLabel={t.tour.removeDay}
+                >
+                  <DayHeader day={d} />
+                </SwipeableRow>
               ))}
               {isNewDay && item.day !== null && item.day !== undefined ? (
                 <DayHeader day={item.day} stops={stopsToShow.filter((s) => s.day === item.day)} />
