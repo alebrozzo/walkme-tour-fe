@@ -28,15 +28,33 @@ import SwipeableRow from '../components/SwipeableRow';
 type Props = NativeStackScreenProps<RootStackParamList, 'Tour'>;
 
 /**
- * Recalculates order numbers and walking times for the entire stops array.
- * Walking times are estimated from coordinates; the last stop of each day gets none.
- */
-/**
  * Returns the highest day number used in the stops array.
  */
 function getMaxFilledDay(stops: Stop[]): number {
   return stops.reduce((max, s) => Math.max(max, s.day ?? 1), 0);
 }
+
+/**
+ * Renumbers stop days to close any gaps so days are always consecutive starting at 1.
+ * The relative order of stops and their day groupings are preserved.
+ */
+function compactDays(stops: Stop[]): Stop[] {
+  const seenDays: number[] = [];
+  for (const stop of stops) {
+    const d = stop.day ?? 1;
+    if (!seenDays.includes(d)) {
+      seenDays.push(d);
+    }
+  }
+  const dayMap = new Map<number, number>();
+  seenDays.forEach((d, i) => dayMap.set(d, i + 1));
+  return stops.map((stop) => ({ ...stop, day: dayMap.get(stop.day ?? 1) ?? stop.day }));
+}
+
+/**
+ * Recalculates order numbers and walking times for the entire stops array.
+ * Walking times are estimated from coordinates; the last stop of each day gets none.
+ */
 
 function recalculateStops(stops: Stop[]): Stop[] {
   return stops.map((stop, i) => {
@@ -376,7 +394,7 @@ export default function TourScreen({ navigation, route }: Props) {
         if (stop.day != null && stop.day > 1) {
           const next = [...generatedStops];
           next[fromIndex] = { ...stop, day: stop.day - 1 };
-          const updated = recalculateStops(next);
+          const updated = recalculateStops(compactDays(next));
           setGeneratedStops(updated);
           const prefs = lastPrefsRef.current;
           if (prefs) {
@@ -392,7 +410,7 @@ export default function TourScreen({ navigation, route }: Props) {
         if (stop.day != null && stop.day < totalDays) {
           const next = [...generatedStops];
           next[fromIndex] = { ...stop, day: stop.day + 1 };
-          const updated = recalculateStops(next);
+          const updated = recalculateStops(compactDays(next));
           setGeneratedStops(updated);
           const prefs = lastPrefsRef.current;
           if (prefs) {
@@ -418,7 +436,7 @@ export default function TourScreen({ navigation, route }: Props) {
         next[fromIndex] = { ...next[fromIndex], day: fromDay };
         next[toIndex] = { ...next[toIndex], day: toDay };
       }
-      const updated = recalculateStops(next);
+      const updated = recalculateStops(compactDays(next));
       setGeneratedStops(updated);
       // Persist updated order
       const prefs = lastPrefsRef.current;
@@ -445,7 +463,7 @@ export default function TourScreen({ navigation, route }: Props) {
                 return prev;
               }
               const next = prev.filter((stop) => stop.id !== stopId);
-              const updated = recalculateStops(next);
+              const updated = recalculateStops(compactDays(next));
               const prefs = lastPrefsRef.current;
               if (prefs) {
                 saveItinerary({ tourId: tour.id, preferences: prefs, stops: updated });
