@@ -205,14 +205,15 @@ interface DayHeaderProps {
   day: number;
   stops?: Stop[];
   isAddDay?: boolean;
+  variant?: 'card' | 'plain';
 }
 
-function DayHeader({ day, stops = [], isAddDay = false }: DayHeaderProps) {
+function DayHeader({ day, stops = [], isAddDay = false, variant = 'card' }: DayHeaderProps) {
   const { t } = useLanguage();
   const formatDistance = useFormatDistance();
   const { totalMinutes, totalKm } = computeTripTotals(stops);
   return (
-    <View style={styles.dayHeader}>
+    <View style={variant === 'plain' ? styles.dayHeaderBase : [styles.dayHeaderBase, styles.dayHeader]}>
       <Text style={styles.dayHeaderText}>{isAddDay ? t.tour.addDay : t.tour.day(day)}</Text>
       {stops.length > 0 && (
         <View style={styles.dayHeaderMeta}>
@@ -600,8 +601,9 @@ export default function TourScreen({ navigation, route }: Props) {
                   onDelete={() => handleRemoveDay(d)}
                   isRTL={language.isRTL}
                   deleteAccessibilityLabel={t.tour.removeDay}
+                  style={styles.emptyDaySwipeableRow}
                 >
-                  <DayHeader day={d} />
+                  <DayHeader day={d} variant="plain" />
                 </SwipeableRow>
               ))}
               {isNewDay && item.day !== null && item.day !== undefined ? (
@@ -823,18 +825,24 @@ const styles = StyleSheet.create({
     marginVertical: 4,
     paddingHorizontal: 8,
   },
+  dayHeaderBase: {
+    paddingHorizontal: 14,
+    paddingVertical: 10,
+  },
   dayHeader: {
     marginTop: 20,
     marginBottom: 10,
-    paddingHorizontal: 14,
-    paddingVertical: 7,
     borderRadius: 20,
-    backgroundColor: '#EEF2FF',
+    backgroundColor: '#F0F4FF',
     borderWidth: 1,
     borderColor: '#C7D2FE',
   },
+  emptyDaySwipeableRow: {
+    marginTop: 20,
+    marginBottom: 0,
+  },
   dayHeaderText: {
-    fontSize: 13,
+    fontSize: 16,
     fontWeight: '800',
     letterSpacing: 0.5,
     color: '#4F46E5',
@@ -843,11 +851,11 @@ const styles = StyleSheet.create({
   dayHeaderMeta: {
     flexDirection: 'row',
     gap: 10,
-    marginTop: 4,
+    marginTop: 6,
   },
   dayHeaderMetaText: {
-    fontSize: 12,
-    opacity: 0.6,
+    fontSize: 14,
+    color: '#374151',
   },
   walkingLine: {
     flex: 1,
