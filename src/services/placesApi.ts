@@ -28,7 +28,7 @@ export async function searchCities(
   signal?: AbortSignal,
 ): Promise<CityPrediction[]> {
   const apiKey = process.env.EXPO_PUBLIC_GOOGLE_PLACES_API_KEY;
-  console.log('[placesApi] searchCities called', { query, languageCode, hasApiKey: Boolean(apiKey) });
+  console.log('[placesApi] searchCities called', { languageCode });
 
   if (!query.trim()) {
     console.log('[placesApi] empty query, returning []');
