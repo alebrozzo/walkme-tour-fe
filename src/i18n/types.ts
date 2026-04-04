@@ -53,6 +53,7 @@ export interface Translations {
     adjustPreferences: string;
     walkingMinutes: (n: number) => string;
     day: (n: number) => string;
+    addDay: string;
     free: string;
     viewOnMap: string;
     moveUp: string;
@@ -60,6 +61,7 @@ export interface Translations {
     removeStop: string;
     removeStopTitle: string;
     removeStopMessage: string;
+    removeDay: string;
     confirmRemove: string;
     cancelRemove: string;
   };
