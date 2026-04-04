@@ -39,15 +39,12 @@ function getMaxFilledDay(stops: Stop[]): number {
  * The relative order of stops and their day groupings are preserved.
  */
 function compactDays(stops: Stop[]): Stop[] {
-  const seenDays: number[] = [];
+  const seenDays = new Set<number>();
   for (const stop of stops) {
-    const d = stop.day ?? 1;
-    if (!seenDays.includes(d)) {
-      seenDays.push(d);
-    }
+    seenDays.add(stop.day ?? 1);
   }
   const dayMap = new Map<number, number>();
-  seenDays.forEach((d, i) => dayMap.set(d, i + 1));
+  Array.from(seenDays).forEach((d, i) => dayMap.set(d, i + 1));
   return stops.map((stop) => ({ ...stop, day: dayMap.get(stop.day ?? 1) ?? stop.day }));
 }
 
