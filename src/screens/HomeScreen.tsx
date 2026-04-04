@@ -130,11 +130,11 @@ export default function HomeScreen({ navigation }: Props) {
       try {
         const results = await searchCities(q, language.code, controller.signal);
         if (requestId !== latestSearchIdRef.current) return;
-        logMessage('log', 'HomeScreen', 'search results', { q, count: results.length });
+        logMessage('log', 'search results', { q, count: results.length });
         setPredictions(results);
       } catch (e) {
         if ((e as Error).name !== 'AbortError' && requestId === latestSearchIdRef.current) {
-          logMessage('error', 'HomeScreen', 'search error', { error: String(e) });
+          logMessage('error', 'search error', { error: String(e) });
           setPredictions([]);
         }
       } finally {
@@ -171,7 +171,7 @@ export default function HomeScreen({ navigation }: Props) {
       setQuery('');
       navigation.navigate('Tour', { tour: apiTour });
     } catch (error) {
-      logMessage('warn', 'HomeScreen', `Failed to fetch remote tour for ${prediction.city}`, { error: String(error) });
+      logMessage('warn', `Failed to fetch remote tour for ${prediction.city}`, { error: String(error) });
       if ((error as Error).name === 'AbortError') {
         Alert.alert(t.home.errorTitle, t.home.timeoutErrorMessage);
       } else if (error instanceof TourApiError && error.statusCode !== undefined) {

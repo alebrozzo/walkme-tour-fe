@@ -65,7 +65,7 @@ function getApiBaseUrl(): string | null {
 export async function fetchTourForCity(localTour: Tour, languageCode: LanguageCode): Promise<Tour> {
   const baseUrl = getApiBaseUrl();
   if (!baseUrl) {
-    logMessage('warn', 'tourApi', 'API base URL is not configured. Returning local tour data only.');
+    logMessage('warn', 'API base URL is not configured. Returning local tour data only.');
     return localTour;
   }
 
@@ -82,7 +82,7 @@ export async function fetchTourForCity(localTour: Tour, languageCode: LanguageCo
 
     const correlationId = getCurrentCorrelationId();
     const url = `${baseUrl}/api/cities?${params.toString()}`;
-    logMessage('log', 'tourApi', 'Fetching tour data from API', { url, correlationId });
+    logMessage('log', 'Fetching tour data from API', { url, correlationId });
 
     const response = await fetch(url, {
       method: 'GET',

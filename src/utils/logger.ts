@@ -20,9 +20,9 @@ export function setLoggingContext(context: Partial<LogContext>): void {
 /**
  * Format log message with correlation ID and optional context
  */
-function formatLogMessage(namespace: string, message: string, data?: Record<string, unknown>): string {
+function formatLogMessage(message: string, data?: Record<string, unknown>): string {
   const correlationId = getCurrentCorrelationId();
-  const baseMsg = `[${namespace}] [${correlationId}] ${message}`;
+  const baseMsg = `[${correlationId}] ${message}`;
 
   if (data && Object.keys(data).length > 0) {
     return `${baseMsg} ${JSON.stringify(data)}`;
@@ -34,12 +34,12 @@ function formatLogMessage(namespace: string, message: string, data?: Record<stri
 /**
  * Log a message if logging is enabled
  */
-export function logMessage(level: LogLevel, namespace: string, message: string, data?: Record<string, unknown>): void {
+export function logMessage(level: LogLevel, message: string, data?: Record<string, unknown>): void {
   if (!logContext.enableLogging) {
     return;
   }
 
-  const formattedMsg = formatLogMessage(namespace, message, data);
+  const formattedMsg = formatLogMessage(message, data);
 
   if (level === 'log') {
     console.log(formattedMsg);

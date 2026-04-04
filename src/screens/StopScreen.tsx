@@ -113,7 +113,7 @@ export default function StopScreen({ route }: Props) {
         await Linking.openURL(appleUrl);
         return;
       } catch {
-        logMessage('warn', 'StopScreen', 'Failed to open Apple Maps, falling back to Google Maps');
+        logMessage('warn', 'Failed to open Apple Maps, falling back to Google Maps');
       }
     }
     let googleUrl = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(stop.name)}`;
@@ -123,7 +123,7 @@ export default function StopScreen({ route }: Props) {
     try {
       await Linking.openURL(googleUrl);
     } catch {
-      logMessage('warn', 'StopScreen', 'Failed to open Google Maps URL');
+      logMessage('warn', 'Failed to open Google Maps URL');
     }
   }, [stop.coordinate, stop.name, stop.googlePlaceId]);
 
