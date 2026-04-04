@@ -13,10 +13,7 @@ class ErrorBoundary extends React.Component<{ children: React.ReactNode }, { has
   }
 
   componentDidCatch(error: Error, info: React.ErrorInfo) {
-    logMessage('error', 'Caught error', {
-      error: error.message,
-      componentStack: info.componentStack ?? undefined,
-    });
+    logMessage('error', `Caught error: ${error.message} stack=${info.componentStack ?? ''}`);
   }
 
   render() {

@@ -82,7 +82,7 @@ export async function fetchTourForCity(localTour: Tour, languageCode: LanguageCo
 
     const correlationId = getCurrentCorrelationId();
     const url = `${baseUrl}/api/cities?${params.toString()}`;
-    logMessage('log', 'Fetching tour data from API', { url, correlationId });
+    logMessage('log', `Fetching tour data from API url=${url} correlationId=${correlationId}`);
 
     const response = await fetch(url, {
       method: 'GET',

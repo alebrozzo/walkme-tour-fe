@@ -29,7 +29,7 @@ export async function searchCities(
   signal?: AbortSignal,
 ): Promise<CityPrediction[]> {
   const apiKey = process.env.EXPO_PUBLIC_GOOGLE_PLACES_API_KEY;
-  logMessage('log', 'searchCities called', { query, languageCode, hasApiKey: Boolean(apiKey) });
+  logMessage('log', `searchCities called query=${query} lang=${languageCode} hasApiKey=${Boolean(apiKey)}`);
 
   if (!query.trim()) {
     logMessage('log', 'empty query, returning []');
@@ -58,19 +58,19 @@ export async function searchCities(
       }),
     });
   } catch (err) {
-    logMessage('error', 'fetch threw', { error: String(err) });
+    logMessage('error', `fetch threw: ${String(err)}`);
     throw err;
   }
 
-  logMessage('log', 'response status', { status: response.status });
+  logMessage('log', `response status ${response.status}`);
   if (!response.ok) {
     const body = await response.text().catch(() => '');
-    logMessage('error', 'Places Autocomplete error', { status: response.status, body });
+    logMessage('error', `Places Autocomplete error status=${response.status} body=${body}`);
     throw new Error(`Places Autocomplete error: ${response.status}`);
   }
 
   const data = (await response.json()) as AutocompleteResponse;
-  logMessage('log', 'suggestions count', { count: data.suggestions?.length ?? 0 });
+  logMessage('log', `suggestions count ${data.suggestions?.length ?? 0}`);
 
   return (data.suggestions ?? []).map(({ placePrediction: p }) => {
     const secondary = p.structuredFormat?.secondaryText?.text ?? '';
