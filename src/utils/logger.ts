@@ -1,13 +1,46 @@
 import { getCurrentCorrelationId } from './correlationId';
 
 type LogLevel = 'log' | 'warn' | 'error';
+type LogLevelThreshold = LogLevel | null;
 
 interface LogContext {
-  enableLogging: boolean;
+  minLogLevel: LogLevelThreshold;
+}
+
+const LOG_LEVEL_PRIORITY: Record<LogLevel, number> = {
+  log: 0,
+  warn: 1,
+  error: 2,
+};
+
+function parseMinLogLevel(value: string | undefined): LogLevelThreshold {
+  if (!value) {
+    return __DEV__ ? 'log' : 'warn';
+  }
+
+  const normalized = value.trim().toLowerCase();
+  if (normalized === 'log' || normalized === 'warn' || normalized === 'error') {
+    return normalized;
+  }
+
+  if (normalized === 'none' || normalized === 'false') {
+    return null;
+  }
+
+  return __DEV__ ? 'log' : 'warn';
+}
+
+function shouldLog(level: LogLevel): boolean {
+  const minLogLevel = logContext.minLogLevel;
+  if (!minLogLevel) {
+    return false;
+  }
+
+  return LOG_LEVEL_PRIORITY[level] >= LOG_LEVEL_PRIORITY[minLogLevel];
 }
 
 const logContext: LogContext = {
-  enableLogging: false,
+  minLogLevel: parseMinLogLevel(process.env.EXPO_PUBLIC_LOG_LEVEL),
 };
 
 /**
@@ -30,7 +63,7 @@ function formatLogMessage(message: string, data?: string): string {
  * Log a message if logging is enabled
  */
 export function logMessage(level: LogLevel, message: string, data?: string): void {
-  if (!logContext.enableLogging) {
+  if (!shouldLog(level)) {
     return;
   }
 
