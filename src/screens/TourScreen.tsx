@@ -213,7 +213,7 @@ function DayHeader({ day, stops = [], isAddDay = false, variant = 'card' }: DayH
   const formatDistance = useFormatDistance();
   const { totalMinutes, totalKm } = computeTripTotals(stops);
   return (
-    <View style={variant === 'plain' ? styles.dayHeaderRow : styles.dayHeader}>
+    <View style={variant === 'plain' ? styles.dayHeaderBase : [styles.dayHeaderBase, styles.dayHeader]}>
       <Text style={styles.dayHeaderText}>{isAddDay ? t.tour.addDay : t.tour.day(day)}</Text>
       {stops.length > 0 && (
         <View style={styles.dayHeaderMeta}>
@@ -825,19 +825,17 @@ const styles = StyleSheet.create({
     marginVertical: 4,
     paddingHorizontal: 8,
   },
+  dayHeaderBase: {
+    paddingHorizontal: 14,
+    paddingVertical: 10,
+  },
   dayHeader: {
     marginTop: 20,
     marginBottom: 10,
-    paddingHorizontal: 14,
-    paddingVertical: 10,
     borderRadius: 20,
     backgroundColor: '#F0F4FF',
     borderWidth: 1,
     borderColor: '#C7D2FE',
-  },
-  dayHeaderRow: {
-    paddingHorizontal: 14,
-    paddingVertical: 10,
   },
   emptyDaySwipeableRow: {
     marginTop: 20,
