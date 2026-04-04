@@ -130,7 +130,7 @@ export default function HomeScreen({ navigation }: Props) {
       try {
         const results = await searchCities(q, language.code, controller.signal);
         if (requestId !== latestSearchIdRef.current) return;
-        logMessage('log', `search results q=${q} count=${results.length}`);
+        logMessage('info', `search results q=${q} count=${results.length}`);
         setPredictions(results);
       } catch (e) {
         if ((e as Error).name !== 'AbortError' && requestId === latestSearchIdRef.current) {

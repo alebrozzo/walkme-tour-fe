@@ -1,6 +1,6 @@
 import { getCurrentCorrelationId } from './correlationId';
 
-type LogLevel = 'log' | 'warn' | 'error';
+type LogLevel = 'info' | 'warn' | 'error';
 type LogLevelThreshold = LogLevel | null;
 
 interface LogContext {
@@ -8,26 +8,30 @@ interface LogContext {
 }
 
 const LOG_LEVEL_PRIORITY: Record<LogLevel, number> = {
-  log: 0,
+  info: 0,
   warn: 1,
   error: 2,
 };
 
 function parseMinLogLevel(value: string | undefined): LogLevelThreshold {
   if (!value) {
-    return __DEV__ ? 'log' : 'warn';
+    return __DEV__ ? 'info' : 'warn';
   }
 
   const normalized = value.trim().toLowerCase();
-  if (normalized === 'log' || normalized === 'warn' || normalized === 'error') {
+  if (normalized === 'info' || normalized === 'warn' || normalized === 'error') {
     return normalized;
+  }
+
+  if (normalized === 'log') {
+    return 'info';
   }
 
   if (normalized === 'none' || normalized === 'false') {
     return null;
   }
 
-  return __DEV__ ? 'log' : 'warn';
+  return __DEV__ ? 'info' : 'warn';
 }
 
 function shouldLog(level: LogLevel): boolean {
@@ -69,7 +73,7 @@ export function logMessage(level: LogLevel, message: string, data?: string): voi
 
   const formattedMsg = formatLogMessage(message, data);
 
-  if (level === 'log') {
+  if (level === 'info') {
     console.log(formattedMsg);
   } else if (level === 'warn') {
     console.warn(formattedMsg);
