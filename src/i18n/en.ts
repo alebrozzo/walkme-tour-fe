@@ -54,6 +54,7 @@ const en: Translations = {
     removeStop: 'Remove stop',
     removeStopTitle: 'Remove stop',
     removeStopMessage: 'Are you sure you want to remove this stop from the itinerary?',
+    removeDay: 'Remove day',
     confirmRemove: 'Remove',
     cancelRemove: 'Cancel',
   },

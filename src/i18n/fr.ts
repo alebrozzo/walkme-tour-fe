@@ -55,6 +55,7 @@ const fr: Translations = {
     removeStop: "Supprimer l'arrêt",
     removeStopTitle: "Supprimer l'arrêt",
     removeStopMessage: "Voulez-vous vraiment supprimer cet arrêt de l'itinéraire\u00a0?",
+    removeDay: 'Supprimer le jour',
     confirmRemove: 'Supprimer',
     cancelRemove: 'Annuler',
   },

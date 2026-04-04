@@ -54,6 +54,7 @@ const ar: Translations = {
     removeStop: 'إزالة المحطة',
     removeStopTitle: 'إزالة المحطة',
     removeStopMessage: 'هل أنت متأكد من إزالة هذه المحطة من المسار؟',
+    removeDay: 'إزالة اليوم',
     confirmRemove: 'إزالة',
     cancelRemove: 'إلغاء',
   },
