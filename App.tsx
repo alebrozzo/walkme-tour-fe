@@ -8,14 +8,13 @@ import { SafeAreaProvider } from 'react-native-safe-area-context';
 import ErrorBoundary from './src/components/ErrorBoundary';
 import { LanguageProvider, useLanguage } from './src/contexts/LanguageContext';
 import { PinnedProvider } from './src/contexts/PinnedContext';
-import { SettingsProvider, useSettings } from './src/contexts/SettingsContext';
+import { SettingsProvider } from './src/contexts/SettingsContext';
 import HomeScreen from './src/screens/HomeScreen';
 import SettingsScreen from './src/screens/SettingsScreen';
 import StopScreen from './src/screens/StopScreen';
 import TourScreen from './src/screens/TourScreen';
 import { RootStackParamList } from './src/types';
 import { resetCorrelationId } from './src/utils/correlationId';
-import { setLoggingContext } from './src/utils/logger';
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
 
@@ -23,15 +22,10 @@ const Stack = createNativeStackNavigator<RootStackParamList>();
  * Component to initialize logging and correlation ID
  */
 function AppInitializer({ children }: { children: React.ReactNode }) {
-  const { enableLogging } = useSettings();
-
   useEffect(() => {
     // Initialize correlation ID on app start
     resetCorrelationId();
-
-    // Initialize logging context with current settings
-    setLoggingContext({ enableLogging });
-  }, [enableLogging]);
+  }, []);
 
   return <>{children}</>;
 }

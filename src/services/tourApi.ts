@@ -2,7 +2,7 @@ import { Platform } from 'react-native';
 import { LanguageCode } from '@/i18n/translations';
 import { Stop, Tour } from '../types';
 import { getCurrentCorrelationId } from '../utils/correlationId';
-import { logInfo } from '../utils/logger';
+import { logMessage } from '../utils/logger';
 
 const REQUEST_TIMEOUT_MS = 20000;
 const LOCALHOST_PORT = 3000;
@@ -65,7 +65,7 @@ function getApiBaseUrl(): string | null {
 export async function fetchTourForCity(localTour: Tour, languageCode: LanguageCode): Promise<Tour> {
   const baseUrl = getApiBaseUrl();
   if (!baseUrl) {
-    console.warn('API base URL is not configured. Returning local tour data only.');
+    logMessage('warn', 'API base URL is not configured. Returning local tour data only.');
     return localTour;
   }
 
@@ -82,7 +82,7 @@ export async function fetchTourForCity(localTour: Tour, languageCode: LanguageCo
 
     const correlationId = getCurrentCorrelationId();
     const url = `${baseUrl}/api/cities?${params.toString()}`;
-    logInfo('tourApi', 'Fetching tour data from API', { url, correlationId });
+    logMessage('info', `Fetching tour data from API url=${url}`);
 
     const response = await fetch(url, {
       method: 'GET',
