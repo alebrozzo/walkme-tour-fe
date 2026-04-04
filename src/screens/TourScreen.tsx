@@ -601,6 +601,7 @@ export default function TourScreen({ navigation, route }: Props) {
                   onDelete={() => handleRemoveDay(d)}
                   isRTL={language.isRTL}
                   deleteAccessibilityLabel={t.tour.removeDay}
+                  style={styles.emptyDaySwipeableRow}
                 >
                   <DayHeader day={d} variant="row" />
                 </SwipeableRow>
@@ -837,6 +838,10 @@ const styles = StyleSheet.create({
   dayHeaderRow: {
     paddingHorizontal: 14,
     paddingVertical: 10,
+  },
+  emptyDaySwipeableRow: {
+    marginTop: 20,
+    marginBottom: 0,
   },
   dayHeaderText: {
     fontSize: 16,

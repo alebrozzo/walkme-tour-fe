@@ -1,5 +1,5 @@
 import React, { useCallback, useEffect, useRef, useState } from 'react';
-import { Animated, PanResponder, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { Animated, PanResponder, StyleSheet, Text, TouchableOpacity, View, ViewStyle } from 'react-native';
 
 export const SWIPE_DELETE_WIDTH = 72;
 export const SWIPE_THRESHOLD_PX = 5;
@@ -9,9 +9,10 @@ export interface SwipeableRowProps {
   onDelete: () => void;
   isRTL: boolean;
   deleteAccessibilityLabel: string;
+  style?: ViewStyle;
 }
 
-export function SwipeableRow({ children, onDelete, isRTL, deleteAccessibilityLabel }: SwipeableRowProps) {
+export function SwipeableRow({ children, onDelete, isRTL, deleteAccessibilityLabel, style }: SwipeableRowProps) {
   const translateX = useRef(new Animated.Value(0)).current;
   const isRTLRef = useRef(isRTL);
   isRTLRef.current = isRTL;
@@ -75,7 +76,7 @@ export function SwipeableRow({ children, onDelete, isRTL, deleteAccessibilityLab
   ).current;
 
   return (
-    <View style={styles.wrapper}>
+    <View style={[styles.wrapper, style]}>
       <View style={[styles.clip, { direction: 'ltr' }]}>
         <View style={[styles.deleteArea, isRTL ? styles.deleteAreaRTL : styles.deleteAreaLTR]}>
           <TouchableOpacity
