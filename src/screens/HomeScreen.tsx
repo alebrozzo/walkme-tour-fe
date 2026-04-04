@@ -18,6 +18,7 @@ import { RootStackParamList, Tour } from '../types';
 import { useLanguage } from '../contexts/LanguageContext';
 import { usePinned } from '../contexts/PinnedContext';
 import { fetchTourForCity, TourApiError } from '../services/tourApi';
+import { logMessage } from '../utils/logger';
 import { searchCities, CityPrediction } from '../services/placesApi';
 import SwipeableRow from '../components/SwipeableRow';
 
@@ -129,11 +130,11 @@ export default function HomeScreen({ navigation }: Props) {
       try {
         const results = await searchCities(q, language.code, controller.signal);
         if (requestId !== latestSearchIdRef.current) return;
-        console.log('[HomeScreen] search results', { q, count: results.length, results });
+        logMessage('log', 'HomeScreen', 'search results', { q, count: results.length });
         setPredictions(results);
       } catch (e) {
         if ((e as Error).name !== 'AbortError' && requestId === latestSearchIdRef.current) {
-          console.error('[HomeScreen] search error', e);
+          logMessage('error', 'HomeScreen', 'search error', { error: String(e) });
           setPredictions([]);
         }
       } finally {
@@ -170,7 +171,7 @@ export default function HomeScreen({ navigation }: Props) {
       setQuery('');
       navigation.navigate('Tour', { tour: apiTour });
     } catch (error) {
-      console.warn(`[HomeScreen] Failed to fetch remote tour for ${prediction.city}`, error);
+      logMessage('warn', 'HomeScreen', `Failed to fetch remote tour for ${prediction.city}`, { error: String(error) });
       if ((error as Error).name === 'AbortError') {
         Alert.alert(t.home.errorTitle, t.home.timeoutErrorMessage);
       } else if (error instanceof TourApiError && error.statusCode !== undefined) {

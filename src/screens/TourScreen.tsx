@@ -1,4 +1,5 @@
 import React, { useCallback, useEffect, useLayoutEffect, useRef, useState } from 'react';
+import { logMessage } from '../utils/logger';
 import {
   ActivityIndicator,
   Alert,
@@ -114,9 +115,9 @@ async function openDirections(stops: Stop[]): Promise<void> {
       await Linking.openURL(appleUrl);
       return;
     } catch (error) {
-      if (__DEV__) {
-        console.warn('Failed to open Apple Maps URL, falling back to Google Maps', error);
-      }
+      logMessage('warn', 'TourScreen', 'Failed to open Apple Maps URL, falling back to Google Maps', {
+        error: String(error),
+      });
       // Fall through to Google Maps web URL
     }
   }
@@ -531,9 +532,7 @@ export default function TourScreen({ navigation, route }: Props) {
                 try {
                   await openDirections(stopsToShow);
                 } catch (error) {
-                  if (__DEV__) {
-                    console.warn('Failed to open maps URL', error);
-                  }
+                  logMessage('warn', 'TourScreen', 'Failed to open maps URL', { error: String(error) });
                 }
               }}
               activeOpacity={0.85}

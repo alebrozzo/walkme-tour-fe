@@ -49,18 +49,3 @@ export function logMessage(level: LogLevel, namespace: string, message: string, 
     console.error(formattedMsg);
   }
 }
-
-/**
- * Convenience functions
- */
-export function logInfo(namespace: string, message: string, data?: Record<string, unknown>): void {
-  logMessage('log', namespace, message, data);
-}
-
-export function logWarn(namespace: string, message: string, data?: Record<string, unknown>): void {
-  logMessage('warn', namespace, message, data);
-}
-
-export function logError(namespace: string, message: string, data?: Record<string, unknown>): void {
-  logMessage('error', namespace, message, data);
-}

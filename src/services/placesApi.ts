@@ -1,4 +1,5 @@
 import { LanguageCode } from '../i18n/types';
+import { logMessage } from '../utils/logger';
 
 export interface CityPrediction {
   placeId: string;
@@ -28,18 +29,18 @@ export async function searchCities(
   signal?: AbortSignal,
 ): Promise<CityPrediction[]> {
   const apiKey = process.env.EXPO_PUBLIC_GOOGLE_PLACES_API_KEY;
-  console.log('[placesApi] searchCities called', { query, languageCode, hasApiKey: Boolean(apiKey) });
+  logMessage('log', 'placesApi', 'searchCities called', { query, languageCode, hasApiKey: Boolean(apiKey) });
 
   if (!query.trim()) {
-    console.log('[placesApi] empty query, returning []');
+    logMessage('log', 'placesApi', 'empty query, returning []');
     return [];
   }
   if (!apiKey) {
-    console.warn('[placesApi] EXPO_PUBLIC_GOOGLE_PLACES_API_KEY is not set — returning []');
+    logMessage('warn', 'placesApi', 'EXPO_PUBLIC_GOOGLE_PLACES_API_KEY is not set — returning []');
     return [];
   }
 
-  console.log('[placesApi] calling Places Autocomplete API');
+  logMessage('log', 'placesApi', 'calling Places Autocomplete API');
   let response: Response;
   try {
     response = await fetch(AUTOCOMPLETE_URL, {
@@ -57,19 +58,19 @@ export async function searchCities(
       }),
     });
   } catch (err) {
-    console.error('[placesApi] fetch threw', err);
+    logMessage('error', 'placesApi', 'fetch threw', { error: String(err) });
     throw err;
   }
 
-  console.log('[placesApi] response status', response.status);
+  logMessage('log', 'placesApi', 'response status', { status: response.status });
   if (!response.ok) {
     const body = await response.text().catch(() => '');
-    console.error('[placesApi] Places Autocomplete error', { status: response.status, body });
+    logMessage('error', 'placesApi', 'Places Autocomplete error', { status: response.status, body });
     throw new Error(`Places Autocomplete error: ${response.status}`);
   }
 
   const data = (await response.json()) as AutocompleteResponse;
-  console.log('[placesApi] suggestions count', data.suggestions?.length ?? 0);
+  logMessage('log', 'placesApi', 'suggestions count', { count: data.suggestions?.length ?? 0 });
 
   return (data.suggestions ?? []).map(({ placePrediction: p }) => {
     const secondary = p.structuredFormat?.secondaryText?.text ?? '';

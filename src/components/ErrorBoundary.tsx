@@ -1,5 +1,6 @@
 import React from 'react';
 import { Text, View } from 'react-native';
+import { logMessage } from '../utils/logger';
 
 class ErrorBoundary extends React.Component<{ children: React.ReactNode }, { hasError: boolean; error: Error | null }> {
   constructor(props: { children: React.ReactNode }) {
@@ -12,10 +13,10 @@ class ErrorBoundary extends React.Component<{ children: React.ReactNode }, { has
   }
 
   componentDidCatch(error: Error, info: React.ErrorInfo) {
-    if (__DEV__) {
-      console.error('[ErrorBoundary] Caught error:', error);
-      console.error('[ErrorBoundary] Component stack:', info.componentStack);
-    }
+    logMessage('error', 'ErrorBoundary', 'Caught error', {
+      error: error.message,
+      componentStack: info.componentStack ?? undefined,
+    });
   }
 
   render() {
