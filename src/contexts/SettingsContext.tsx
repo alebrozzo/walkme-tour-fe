@@ -34,7 +34,7 @@ export function SettingsProvider({ children }: { children: ReactNode }) {
 
   const setDistanceUnit = useCallback((unit: DistanceUnit) => {
     setDistanceUnitState(unit);
-    AsyncStorage.setItem(DISTANCE_UNIT_STORAGE_KEY, unit);
+    void AsyncStorage.setItem(DISTANCE_UNIT_STORAGE_KEY, unit).catch(() => {});
   }, []);
 
   return <SettingsContext.Provider value={{ distanceUnit, setDistanceUnit }}>{children}</SettingsContext.Provider>;
