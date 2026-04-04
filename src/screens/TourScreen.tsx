@@ -1,5 +1,4 @@
 import React, { useCallback, useEffect, useLayoutEffect, useRef, useState } from 'react';
-import { logMessage } from '../utils/logger';
 import {
   ActivityIndicator,
   Alert,
@@ -16,14 +15,15 @@ import {
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
-import { RootStackParamList, Stop, TripPreferences } from '../types';
+import type { RootStackParamList, Stop, TripPreferences } from '../types';
 import { TYPE_ICON } from '../constants/stopTypes';
 import { useLanguage } from '../contexts/LanguageContext';
 import { usePinned } from '../contexts/PinnedContext';
 import { generateRecommendedStops } from '../services/generateStops';
 import { computeTripTotals, estimateWalkingTime } from '../services/walkingTime';
+import { logMessage } from '../utils/logger';
 import { formatMinutes, useFormatDistance } from '../utils/formatLabels';
-import SwipeableRow from '../components/SwipeableRow';
+import { SwipeableRow } from '../components/SwipeableRow';
 
 type Props = NativeStackScreenProps<RootStackParamList, 'Tour'>;
 

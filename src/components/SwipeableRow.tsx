@@ -11,7 +11,7 @@ export interface SwipeableRowProps {
   deleteAccessibilityLabel: string;
 }
 
-export default function SwipeableRow({ children, onDelete, isRTL, deleteAccessibilityLabel }: SwipeableRowProps) {
+export function SwipeableRow({ children, onDelete, isRTL, deleteAccessibilityLabel }: SwipeableRowProps) {
   const translateX = useRef(new Animated.Value(0)).current;
   const isRTLRef = useRef(isRTL);
   isRTLRef.current = isRTL;

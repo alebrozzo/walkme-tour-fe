@@ -20,7 +20,7 @@ import { usePinned } from '../contexts/PinnedContext';
 import { fetchTourForCity, TourApiError } from '../services/tourApi';
 import { logMessage } from '../utils/logger';
 import { searchCities, CityPrediction } from '../services/placesApi';
-import SwipeableRow from '../components/SwipeableRow';
+import { SwipeableRow } from '../components/SwipeableRow';
 
 type Props = NativeStackScreenProps<RootStackParamList, 'Home'>;
 
