@@ -46,6 +46,7 @@ const ar: Translations = {
     adjustPreferences: 'تعديل التفضيلات',
     walkingMinutes: (n) => `${n} دقائق مشي`,
     day: (n) => `اليوم ${n}`,
+    addDay: 'إضافة يوم',
     free: 'مجاني',
     viewOnMap: 'عرض على الخريطة',
     moveUp: 'نقل لأعلى',

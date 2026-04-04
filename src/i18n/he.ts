@@ -46,6 +46,7 @@ const he: Translations = {
     adjustPreferences: 'שנה העדפות',
     walkingMinutes: (n) => `${n} דקות הליכה`,
     day: (n) => `יום ${n}`,
+    addDay: 'הוסף יום',
     free: 'חינם',
     viewOnMap: 'הצג במפה',
     moveUp: 'הזז למעלה',

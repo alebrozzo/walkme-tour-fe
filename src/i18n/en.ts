@@ -46,6 +46,7 @@ const en: Translations = {
     adjustPreferences: 'Adjust Preferences',
     walkingMinutes: (n) => `${n} min walk`,
     day: (n) => `Day ${n}`,
+    addDay: 'Add day',
     free: 'Free',
     viewOnMap: 'View on Map',
     moveUp: 'Move up',

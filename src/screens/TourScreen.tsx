@@ -31,6 +31,13 @@ type Props = NativeStackScreenProps<RootStackParamList, 'Tour'>;
  * Recalculates order numbers and walking times for the entire stops array.
  * Walking times are estimated from coordinates; the last stop of each day gets none.
  */
+/**
+ * Returns the highest day number used in the stops array.
+ */
+function getMaxFilledDay(stops: Stop[]): number {
+  return stops.reduce((max, s) => Math.max(max, s.day ?? 1), 0);
+}
+
 function recalculateStops(stops: Stop[]): Stop[] {
   return stops.map((stop, i) => {
     const next = i < stops.length - 1 ? stops[i + 1] : undefined;
@@ -196,15 +203,16 @@ function WalkingConnector({ walkingTime }: WalkingConnectorProps) {
 interface DayHeaderProps {
   day: number;
   stops?: Stop[];
+  isAddDay?: boolean;
 }
 
-function DayHeader({ day, stops = [] }: DayHeaderProps) {
+function DayHeader({ day, stops = [], isAddDay = false }: DayHeaderProps) {
   const { t } = useLanguage();
   const formatDistance = useFormatDistance();
   const { totalMinutes, totalKm } = computeTripTotals(stops);
   return (
     <View style={styles.dayHeader}>
-      <Text style={styles.dayHeaderText}>{t.tour.day(day)}</Text>
+      <Text style={styles.dayHeaderText}>{isAddDay ? t.tour.addDay : t.tour.day(day)}</Text>
       {stops.length > 0 && (
         <View style={styles.dayHeaderMeta}>
           <Text style={styles.dayHeaderMetaText}>🕐 {formatMinutes(totalMinutes, t.units.min)}</Text>
@@ -359,7 +367,8 @@ export default function TourScreen({ navigation, route }: Props) {
     (fromIndex: number, direction: -1 | 1) => {
       if (!generatedStops) return;
       const toIndex = fromIndex + direction;
-      const totalDays = lastPrefsRef.current?.days ?? 1;
+      const maxFilledDay = getMaxFilledDay(generatedStops);
+      const totalDays = maxFilledDay + 1;
 
       // Boundary: first stop moving up → move to previous day without swapping
       if (toIndex < 0) {
@@ -452,6 +461,10 @@ export default function TourScreen({ navigation, route }: Props) {
 
   // Use the currently generated stops (kept in sync with any saved itinerary)
   const stopsToShow = generatedStops;
+
+  // Always show exactly one extra empty "Add day" beyond the last filled day
+  const maxFilledDay = stopsToShow ? getMaxFilledDay(stopsToShow) : 0;
+  const effectiveTotalDays = maxFilledDay + 1;
 
   if (loading) {
     return (
@@ -549,9 +562,8 @@ export default function TourScreen({ navigation, route }: Props) {
           const isNewDay = index === 0 || item.day !== prevStop?.day;
           // Only show walking connector within the same day
           const walkingTime = !isNewDay && prevStop ? prevStop.walkingTime : undefined;
-          const totalDays = lastPrefsRef.current?.days ?? 1;
           const canMoveUp = index > 0 || (item.day != null && item.day > 1);
-          const canMoveDown = index < stopsToShow.length - 1 || (item.day != null && item.day < totalDays);
+          const canMoveDown = index < stopsToShow.length - 1 || (item.day != null && item.day < effectiveTotalDays);
 
           // Show headers for empty days that precede this stop's day
           const emptyDayHeaders: number[] = [];
@@ -608,22 +620,13 @@ export default function TourScreen({ navigation, route }: Props) {
           );
         }}
         ListFooterComponent={
-          lastPrefsRef.current && stopsToShow.length > 0
+          stopsToShow.length > 0
             ? () => {
-                const totalDays = lastPrefsRef.current?.days ?? 1;
-                const lastDay = stopsToShow[stopsToShow.length - 1].day ?? totalDays;
-                const trailing: number[] = [];
-                for (let d = lastDay + 1; d <= totalDays; d++) {
-                  trailing.push(d);
-                }
-                if (trailing.length === 0) {
-                  return null;
-                }
+                const lastDay = stopsToShow[stopsToShow.length - 1].day ?? maxFilledDay;
+                const addDayNumber = lastDay + 1;
                 return (
                   <View>
-                    {trailing.map((d) => (
-                      <DayHeader key={`trailing-day-${d}`} day={d} />
-                    ))}
+                    <DayHeader key={`add-day-${addDayNumber}`} day={addDayNumber} isAddDay />
                   </View>
                 );
               }
