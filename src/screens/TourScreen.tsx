@@ -205,15 +205,15 @@ interface DayHeaderProps {
   day: number;
   stops?: Stop[];
   isAddDay?: boolean;
-  variant?: 'pill' | 'row';
+  variant?: 'card' | 'plain';
 }
 
-function DayHeader({ day, stops = [], isAddDay = false, variant = 'pill' }: DayHeaderProps) {
+function DayHeader({ day, stops = [], isAddDay = false, variant = 'card' }: DayHeaderProps) {
   const { t } = useLanguage();
   const formatDistance = useFormatDistance();
   const { totalMinutes, totalKm } = computeTripTotals(stops);
   return (
-    <View style={variant === 'row' ? styles.dayHeaderRow : styles.dayHeader}>
+    <View style={variant === 'plain' ? styles.dayHeaderRow : styles.dayHeader}>
       <Text style={styles.dayHeaderText}>{isAddDay ? t.tour.addDay : t.tour.day(day)}</Text>
       {stops.length > 0 && (
         <View style={styles.dayHeaderMeta}>
@@ -603,7 +603,7 @@ export default function TourScreen({ navigation, route }: Props) {
                   deleteAccessibilityLabel={t.tour.removeDay}
                   style={styles.emptyDaySwipeableRow}
                 >
-                  <DayHeader day={d} variant="row" />
+                  <DayHeader day={d} variant="plain" />
                 </SwipeableRow>
               ))}
               {isNewDay && item.day !== null && item.day !== undefined ? (
